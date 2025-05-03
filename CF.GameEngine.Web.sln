@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDFCR.Shared.Http", "IDFCR\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CF.GameEngine.Shared", "CF.GameEngine\CF.GameEngine.Shared\CF.GameEngine.Shared.csproj", "{BA6565EC-0E1E-4041-B40E-7660C2F21493}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CF.GameEngine.MigrationTool", "CF.GameEngine\CF.GameEngine.MigrationTool\CF.GameEngine.MigrationTool.csproj", "{50496DF1-C3B1-41A7-9809-BCF450A44D12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,18 @@ Global
 		{BA6565EC-0E1E-4041-B40E-7660C2F21493}.Release|x64.Build.0 = Release|Any CPU
 		{BA6565EC-0E1E-4041-B40E-7660C2F21493}.Release|x86.ActiveCfg = Release|Any CPU
 		{BA6565EC-0E1E-4041-B40E-7660C2F21493}.Release|x86.Build.0 = Release|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Debug|x64.Build.0 = Debug|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Debug|x86.Build.0 = Debug|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Release|x64.ActiveCfg = Release|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Release|x64.Build.0 = Release|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Release|x86.ActiveCfg = Release|Any CPU
+		{50496DF1-C3B1-41A7-9809-BCF450A44D12}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
