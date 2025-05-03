@@ -4,13 +4,14 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>3f9564c1-a8bd-4db2-b7a1-8d12479519ea</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\IDFCR\IDFCR.Shared.Http\IDFCR.Shared.Http.csproj" />
-    <ProjectReference Include="..\..\CF.GameEngine.Infrastructure\CF.GameEngine.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\CF.GameEngine.Infrastructure.SqlServer\CF.GameEngine.Infrastructure.SqlServer.csproj" />
   </ItemGroup>
 
 </Project>

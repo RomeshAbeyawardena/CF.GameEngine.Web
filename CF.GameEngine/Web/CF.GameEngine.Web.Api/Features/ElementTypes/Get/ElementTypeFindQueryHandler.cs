@@ -5,12 +5,12 @@ using MediatR;
 
 namespace CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 
-public class ElementTypeFindQueryHandler(IElementTypeRepository elementTypeRepository) : IRequestHandler<ElementTypeFindQuery, IUnitResult<ElementTypeResponse>>
+public class ElementTypeFindQueryHandler(IElementTypeRepository elementTypeRepository) : IRequestHandler<ElementTypeFindQuery, IUnitResult<ElementTypeResponseDetail>>
 {
-    public async Task<IUnitResult<ElementTypeResponse>> Handle(ElementTypeFindQuery request, CancellationToken cancellationToken)
+    public async Task<IUnitResult<ElementTypeResponseDetail>> Handle(ElementTypeFindQuery request, CancellationToken cancellationToken)
     {
         var result = await elementTypeRepository.GetElementTypeById(request.ElementTypeId, cancellationToken);
             
-        return result.Convert(x => x.Map<ElementTypeResponse>());
+        return result.Convert(x => x.Map<ElementTypeResponseDetail>());
     }
 }

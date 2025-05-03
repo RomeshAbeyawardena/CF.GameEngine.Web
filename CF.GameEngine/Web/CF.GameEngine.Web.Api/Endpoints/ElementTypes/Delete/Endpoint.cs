@@ -15,9 +15,9 @@ public static class Endpoint
         return result.ToApiResult();
     }
 
-    public static IEndpointRouteBuilder MapDeleteElementType(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder AddDeleteElementTypeEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapDelete("/api/element-type/{id}", DeleteElementTypeAsync)
+        builder.MapDelete("/api/element-type/{id:guid}", DeleteElementTypeAsync)
             .WithName("DeleteElementType")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound)

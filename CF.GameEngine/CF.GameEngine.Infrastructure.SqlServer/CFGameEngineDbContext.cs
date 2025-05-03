@@ -2,6 +2,6 @@
 
 namespace CF.GameEngine.Infrastructure.SqlServer;
 
-internal class CFGameEngineDbContext : DbContext
+internal class CFGameEngineDbContext(DbContextOptions<CFGameEngineDbContext> options) : DbContext(options)
 {
 }

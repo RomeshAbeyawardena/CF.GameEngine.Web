@@ -3,4 +3,4 @@ using MediatR;
 
 namespace CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 
-public record ElementTypeFindQuery(Guid ElementTypeId) : IRequest<IUnitResult<ElementTypeResponse>>;
+public record ElementTypeFindQuery(Guid ElementTypeId) : IRequest<IUnitResult<ElementTypeResponseDetail>>;
