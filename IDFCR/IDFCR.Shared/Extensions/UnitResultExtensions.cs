@@ -22,7 +22,7 @@ public static class UnitResultExtensions
         }
 
         var result = new UnitResult<TDestination>(converter(unitResult.Result), unitResult.Action, unitResult.IsSuccess, unitResult.Exception);
-
+        CloneMeta(unitResult, result);
         return result;
     }
 
