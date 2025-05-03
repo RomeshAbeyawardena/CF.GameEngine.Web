@@ -72,7 +72,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
 
     protected IQueryable<TDb> GetPaged(IPagedQuery pagedQuery, IQueryable<TDb> source)
     {
-        return GetPaged(new ConventionalPagedQuery(pagedQuery), source);
+        return GetPaged(pagedQuery.ToConventional(), source);
     }
 
     protected IQueryable<TDb> GetPaged(IConventionalPagedQuery pagedQuery, IQueryable<TDb> source)
