@@ -8,5 +8,9 @@ namespace CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 public record ElementTypeQuery(string? ExternalReference, string? Key, string? NameContains, int? PageSize, int? PageIndex, bool NoTracking = true) 
     : PagedQuery(PageIndex, PageSize), IElementTypePagedFilter, IRequest<IUnitPagedResult<ElementTypeResponse>>
 {
-
+    public static bool TryParse(string value, out ElementTypeQuery? query)
+    {
+        query = null;
+        return true;
+    }
 }

@@ -20,7 +20,7 @@ public static class Endpoint
 
     public static IEndpointRouteBuilder AddPutElementTypeEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapPut("/api/element-types/{id}", UpdateElementTypeAsync)
+        builder.MapPut("/api/element-types/{id:guid}", UpdateElementTypeAsync)
             .WithName("UpdateElementType")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)

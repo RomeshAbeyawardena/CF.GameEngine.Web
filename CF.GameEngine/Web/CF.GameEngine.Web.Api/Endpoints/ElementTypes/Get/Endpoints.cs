@@ -8,10 +8,11 @@ namespace CF.GameEngine.Web.Api.Endpoints.ElementTypes.Get;
 public static class Endpoints
 {
     public static async Task<IResult> GetPagedElementsAsync(
-        ElementTypeQuery query, IMediator mediator,
+        string? externalReference, string? key, string? nameContains, int? pageSize, int? pageIndex,
+        IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(query, cancellationToken);
+        var result = await mediator.Send(new ElementTypeQuery(externalReference, key, nameContains, pageSize, pageIndex), cancellationToken);
         return result.ToApiResult();
     }
 
@@ -31,7 +32,7 @@ public static class Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        builder.MapGet("/api/element-types/{id}", GetElementTypeAsync)
+        builder.MapGet("/api/element-types/{id:guid}", GetElementTypeAsync)
             .WithName("GetElementType")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
