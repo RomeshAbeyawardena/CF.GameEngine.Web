@@ -3,7 +3,7 @@ using IDFCR.Shared.Abstractions.Records;
 
 namespace CF.GameEngine.Web.Api.Features.ElementTypes;
 
-public record ElementTypeDto : MappableBase<IElementType>, IElementType
+public record ElementTypeDto : MappableBase<IElementType>, IEditableElementType, IElementType
 {
     protected override IElementType Source => this;
 

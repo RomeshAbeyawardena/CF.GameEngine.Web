@@ -6,7 +6,7 @@ namespace CF.GameEngine.Web.Api.Features.ElementTypes;
 public record ElementTypeResponse : MappableBase<IElementType>, IElementTypeSummary
 {
     protected override IElementType Source => 
-        new Infrastructure.Features.ElementTypes.ElementTypeDto
+        new ElementTypeDto
         {
             Key = Key,
             Name = Name

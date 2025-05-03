@@ -2,8 +2,7 @@
 
 namespace CF.GameEngine.Infrastructure.Features.ElementTypes;
 
-public interface IEditableElementType : IMappable<IElementType>, 
-    IElementTypeDetails, IIdentifer
+public interface IEditableElementType : IElementTypeDetails, IIdentifer
 {
     
 }
