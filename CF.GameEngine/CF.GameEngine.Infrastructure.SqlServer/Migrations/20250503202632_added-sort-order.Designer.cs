@@ -4,6 +4,7 @@ using CF.GameEngine.Infrastructure.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CF.GameEngine.Infrastructure.SqlServer.Migrations
 {
     [DbContext(typeof(CFGameEngineDbContext))]
-    partial class CFGameEngineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250503202632_added-sort-order")]
+    partial class addedsortorder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
