@@ -1,4 +1,5 @@
 ﻿using CF.GameEngine.Infrastructure.Features.ElementTypes;
+using CF.GameEngine.Infrastructure.SqlServer.Filters;
 using CF.GameEngine.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
@@ -19,5 +20,13 @@ internal class ElementTypeRepository(TimeProvider timeProvider, CFGameEngineDbCo
         }
 
         return new UnitResult<ElementTypeDto>(elementType);
+    }
+
+    public Task<IUnitPagedResult<ElementTypeDto>> GetPagedAsync(IElementTypePagedFilter pagedQuery, CancellationToken cancellationToken)
+    {
+        var query = new ElementTypeFilter(pagedQuery);
+        return base.GetPagedAsync(pagedQuery, 
+            base.Set<ElementType>(pagedQuery).Where(query.ApplyFilter(Builder, pagedQuery)), 
+            cancellationToken);
     }
 }

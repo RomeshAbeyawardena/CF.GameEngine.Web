@@ -9,7 +9,7 @@ public class ElementType : MappableBase<IElementType>, IElementType
     public string ExternalReference { get; set; } = null!;
     public string Key { get; set; } = null!;
     public string Name { get; set; } = null!;
-    public string? Description { get; set; };
+    public string? Description { get; set; }
     public Guid Id { get; set; }
 
     public override void Map(IElementType source)

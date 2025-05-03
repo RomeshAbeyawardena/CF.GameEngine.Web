@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using IDFCR.Shared.Abstractions.Paging;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
@@ -48,3 +49,20 @@ public record UnitResult(Exception? Exception = null, UnitAction Action = UnitAc
 public record UnitResult<TResult>(TResult? Result = default, UnitAction Action = UnitAction.None,
     bool IsSuccess = true, Exception? Exception = null)
     : UnitResult(Exception, Action, IsSuccess), IUnitResult<TResult>;
+
+public interface IUnitPagedResult<TResult> : IUnitResult<IEnumerable<TResult>>;
+
+public record UnitPagedResult<TResult> : UnitResult<IEnumerable<TResult>>, IUnitPagedResult<TResult>
+{
+    public UnitPagedResult(IEnumerable<TResult> result, int totalRows, IPagedQuery pagedQuery, UnitAction action = UnitAction.None,
+    bool isSuccess = true, Exception? exception = null) : base(result, action, isSuccess, exception)
+    {
+        base.AddMeta("pageIndex", pagedQuery.PageIndex);
+        base.AddMeta("pageSize", pagedQuery.PageSize);
+        base.AddMeta("totalRows", totalRows);
+        if (pagedQuery.PageSize.HasValue)
+        {
+            base.AddMeta("totalPages", (int)Math.Ceiling((double)totalRows / pagedQuery.PageSize.Value));
+        }
+    }
+}

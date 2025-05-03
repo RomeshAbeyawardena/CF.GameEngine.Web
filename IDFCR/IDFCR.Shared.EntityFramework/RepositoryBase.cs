@@ -70,15 +70,13 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
 
     protected TDbContext Context => context;
 
-    protected IQueryable<TDb> GetPaged(IPagedQuery pagedQuery, IQueryable<TDb> source)
+    protected async Task<IUnitPagedResult<T>> GetPagedAsync(IPagedQuery pagedQuery, IQueryable<TDb> source, CancellationToken cancellationToken)
     {
-        return GetPaged(pagedQuery.ToConventional(), source);
-    }
+        var conventional = pagedQuery.ToConventional();
+        var result = await source.Take(conventional.Take ?? 10)
+            .Skip(conventional.Skip ?? 0).ToListAsync(cancellationToken);
 
-    protected IQueryable<TDb> GetPaged(IConventionalPagedQuery pagedQuery, IQueryable<TDb> source)
-    {
-        return source.Take(pagedQuery.Take ?? 10)
-            .Skip(pagedQuery.Skip ?? 0);
+        return new UnitPagedResult<T>(result.Select(MapDto), await source.CountAsync(cancellationToken), pagedQuery);
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
