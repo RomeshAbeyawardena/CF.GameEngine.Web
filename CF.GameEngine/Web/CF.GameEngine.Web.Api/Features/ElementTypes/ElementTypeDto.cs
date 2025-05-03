@@ -7,7 +7,7 @@ public record ElementTypeDto : MappableBase<IElementType>, IElementType
 {
     protected override IElementType Source => this;
 
-    public string ExternalReference { get; set; } = null!;
+    public string? ExternalReference { get; set; } = null!;
     public string? Description { get; set; }
     public string Key { get; set; } = null!;
     public string Name { get; set; } = null!;

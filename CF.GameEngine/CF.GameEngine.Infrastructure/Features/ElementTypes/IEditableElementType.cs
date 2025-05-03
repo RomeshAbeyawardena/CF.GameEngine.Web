@@ -16,6 +16,6 @@ public interface IElementTypeSummary : IMappable<IElementType>, IIdentifer
 
 public interface IElementTypeDetails : IElementTypeSummary
 {
-    string ExternalReference { get; }
+    string? ExternalReference { get; }
     string? Description { get; }
 }

@@ -6,7 +6,7 @@ namespace CF.GameEngine.Infrastructure.SqlServer.Models;
 public class ElementType : MappableBase<IElementType>, IElementType
 {
     protected override IElementType Source => this;
-    public string ExternalReference { get; set; } = null!;
+    public string? ExternalReference { get; set; } = null!;
     public string Key { get; set; } = null!;
     public string Name { get; set; } = null!;
     public string? Description { get; set; }
