@@ -1,20 +1,9 @@
-﻿using CF.GameEngine.Infrastructure.Features.Elements;
-using IDFCR.Shared.Abstractions.Records;
+﻿using IDFCR.Shared.Abstractions;
 
-namespace CF.GameEngine.Web.Api.Features.Element;
+namespace CF.GameEngine.Infrastructure.Features.Elements;
 
-public record ElementResponseDetail : MappableBase<IElement>, IElementDetails
+public class ElementDto : MappableBase<IElement>, IElement
 {
-    protected override IElement Source => new ElementDto
-    {
-        Id = Id,
-        Key = Key,
-        Name = Name,
-        ElementTypeId = ElementTypeId,
-        ParentElementId = ParentElementId,
-        SortOrder = SortOrder
-    };
-
     public string? ExternalReference { get; set; }
     public string? Description { get; set; }
     public string Key { get; set; } = null!;
@@ -24,6 +13,7 @@ public record ElementResponseDetail : MappableBase<IElement>, IElementDetails
     public Guid ParentElementId { get; set; }
     public Guid Id { get; set; }
 
+    protected override IElement Source => this;
     public override void Map(IElement source)
     {
         ExternalReference = source.ExternalReference;
