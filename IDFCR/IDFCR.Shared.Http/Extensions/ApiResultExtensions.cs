@@ -6,9 +6,9 @@ namespace IDFCR.Shared.Http.Extensions;
 
 public static class ApiResultExtensions
 {
-    public static IApiResult ToApiResult(this IUnitResult result)
+    private static int GetStatusCode(this UnitAction action)
     {
-        var statusCode = result.Action switch
+        return action switch
         {
             UnitAction.Add => StatusCodes.Status201Created,
             UnitAction.Update => StatusCodes.Status200OK,
@@ -16,6 +16,12 @@ public static class ApiResultExtensions
             UnitAction.Delete => StatusCodes.Status204NoContent,
             _ => StatusCodes.Status500InternalServerError,
         };
+    }
+
+    public static IApiResult ToApiResult(this IUnitResult result)
+    {
+        var statusCode = GetStatusCode(result.Action);
+
         ApiResult? apiResult = null;
         if (result.IsSuccess)
         {
@@ -28,13 +34,7 @@ public static class ApiResultExtensions
 
     public static IApiResult ToApiResult<T>(this IUnitResult<T> result, string location)
     {
-        var statusCode = result.Action switch
-        {
-            UnitAction.Add => StatusCodes.Status201Created,
-            UnitAction.Update => StatusCodes.Status200OK,
-            UnitAction.Delete => StatusCodes.Status204NoContent,
-            _ => StatusCodes.Status500InternalServerError,
-        };
+        var statusCode = GetStatusCode(result.Action);
 
         ApiResult? apiResult = null;
 

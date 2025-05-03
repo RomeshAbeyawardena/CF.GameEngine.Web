@@ -19,6 +19,8 @@ public record ElementTypeResponse : MappableBase<IElementType>, IElementTypeSumm
 
     public override void Map(IElementType source)
     {
+        SortOrder = source.SortOrder;
+        Id = source.Id;
         Key = source.Key;
         Name = source.Name;
     }

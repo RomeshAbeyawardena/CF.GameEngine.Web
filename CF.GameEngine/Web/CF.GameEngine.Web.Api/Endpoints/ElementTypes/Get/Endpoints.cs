@@ -1,4 +1,5 @@
-﻿using CF.GameEngine.Web.Api.Features.ElementTypes.Get;
+﻿using CF.GameEngine.Web.Api.Features.ElementTypes;
+using CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ public static class Endpoints
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new ElementTypeQuery(externalReference, key, nameContains, pageSize, pageIndex), cancellationToken);
-        return result.ToApiResult();
+        return result.ToApiResult(string.Empty);
     }
 
     public static async Task<IResult> GetElementTypeAsync([FromRoute] Guid id,
@@ -21,7 +22,7 @@ public static class Endpoints
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new ElementTypeFindQuery(id), cancellationToken);
-        return result.ToApiResult();
+        return result.ToApiResult(string.Empty);
     }
 
     public static IEndpointRouteBuilder AddGetElementTypeEndpoints(this IEndpointRouteBuilder builder)

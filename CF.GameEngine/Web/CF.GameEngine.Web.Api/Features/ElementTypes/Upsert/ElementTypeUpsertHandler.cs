@@ -8,6 +8,10 @@ public class ElementTypeUpsertHandler(IElementTypeRepository elementTypeReposito
 {
     public async Task<IUnitResult<Guid>> Handle(ElementTypeUpsertCommand request, CancellationToken cancellationToken)
     {
-        return await elementTypeRepository.UpsertAsync(request.ElementType.Map<Infrastructure.Features.ElementTypes.ElementTypeDto>(), cancellationToken);
+        var result = await elementTypeRepository.UpsertAsync(request.ElementType.Map<Infrastructure.Features.ElementTypes.ElementTypeDto>(), cancellationToken);
+
+        await elementTypeRepository.SaveChangesAsync(cancellationToken);
+
+        return result;
     }
 }

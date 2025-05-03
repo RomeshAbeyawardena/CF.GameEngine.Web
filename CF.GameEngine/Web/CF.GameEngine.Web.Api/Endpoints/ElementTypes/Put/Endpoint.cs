@@ -22,6 +22,7 @@ public static class Endpoint
     {
         builder.MapPut("/api/element-types/{id:guid}", UpdateElementTypeAsync)
             .WithName("UpdateElementType")
+            .DisableAntiforgery()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);

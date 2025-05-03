@@ -21,6 +21,7 @@ public static class Endpoint
     {
         builder.MapPost("/api/element-types", SaveElementTypeAsync)
             .WithName("SaveElementType")
+            .DisableAntiforgery()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
