@@ -17,8 +17,8 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(TDbContex
     private DbSet<TDb> DbSet => Context.Set<TDb>();
 
     protected ExpressionStarter<TDb> Builder => PredicateBuilder.New<TDb>(true);
-    protected abstract Func<T, TDb> Map { get; }
-    protected abstract Func<TDb, T> MapDto { get; }
+    protected virtual Func<T, TDb> Map => x => x.Map<TDb>();
+    protected virtual  Func<TDb, T> MapDto => x => x.Map<T>();
 
     protected virtual void OnAdd(TDb db, T source)
     {

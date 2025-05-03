@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\IDFCR\IDFCR.Shared.EntityFramework\IDFCR.Shared.EntityFramework.csproj" />
+    <ProjectReference Include="..\CF.GameEngine.Infrastructure\CF.GameEngine.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
