@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "CF_GameEngine_AzureFunctions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7286",
+      "launchBrowser": false
+    }
+  }
+}
