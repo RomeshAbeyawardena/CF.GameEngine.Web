@@ -7,9 +7,11 @@ namespace CF.GameEngine.Web.Api.Endpoints.ElementTypes.Get;
 
 public static class Endpoints
 {
-    public static async Task<IResult> GetPagedElementsAsync(CancellationToken cancellationToken)
+    public static async Task<IResult> GetPagedElementsAsync(
+        ElementTypeQuery query, IMediator mediator,
+        CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var result = await mediator.Send(query, cancellationToken);
     }
 
     public static async Task<IResult> GetElementTypeAsync([FromRoute] Guid id,

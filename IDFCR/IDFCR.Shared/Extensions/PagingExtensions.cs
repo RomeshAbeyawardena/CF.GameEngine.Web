@@ -4,9 +4,9 @@ namespace IDFCR.Shared.Extensions;
 
 public static class PagingExtensions
 {
-    public static PageQuery ToPageQuery(this IConventionalPagedQuery source)
+    public static PagedQuery ToPageQuery(this IConventionalPagedQuery source)
     {
-        var result = new PageQuery();
+        var result = new PagedQuery();
         result.Map(source);
         return result;
     }
