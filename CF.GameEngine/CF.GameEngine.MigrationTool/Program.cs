@@ -11,7 +11,7 @@ Console.WriteLine("GameEngine.Web Migration tool v1.0");
 var host = new HostBuilder()
     .ConfigureAppConfiguration((hostContext, config) =>
     {
-        config.AddUserSecrets("3f9564c1-a8bd-4db2-b7a1-8d12479519ea");
+        config.AddUserSecrets("9315e900-337b-4d8c-9599-6b6a66b9af5e");
     })
     .ConfigureServices((hostContext, services) =>
     {
@@ -29,13 +29,16 @@ try
     var timeOfDay = timeOfDayProvider.GetTimeOfDay();
     Console.WriteLine("{0}", timeOfDay);
 
-    if (await context.Database.CanConnectAsync())
+    if (args.Any(a => a.Equals("--verify-connection")))
     {
-        Console.WriteLine("Database is connected.");
-    }
-    else
-    {
-        Console.WriteLine("Database is not connected, if this is a server related issue the following actions will fail");
+        if (await context.Database.CanConnectAsync())
+        {
+            Console.WriteLine("Database is connected.");
+        }
+        else
+        {
+            Console.WriteLine("Database is not connected, if this is a server related issue the following actions will fail");
+        }
     }
 
     if (args.Any(a => a.Equals("--migrate", StringComparison.CurrentCultureIgnoreCase)))

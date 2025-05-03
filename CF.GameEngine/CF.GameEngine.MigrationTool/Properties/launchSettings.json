@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CF.GameEngine.MigrationTool": {
+      "commandName": "Project",
+      "commandLineArgs": "--migrate --verify-connection"
+    }
+  }
+}

@@ -8,10 +8,14 @@ namespace CF.GameEngine.Infrastructure.SqlServer.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddBackendDependencies(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddBackendDependencies(this IServiceCollection services, string connectionName)
     {
         services.AddDbContext<CFGameEngineDbContext>((s, opt) =>
-            opt.UseSqlServer(s.GetRequiredService<IConfiguration>().GetConnectionString(connectionString)));
+        {
+            var connectionString = s.GetRequiredService<IConfiguration>().GetConnectionString(connectionName);
+            opt.UseSqlServer(connectionString);
+        });
+
         return services.AddScoped<IElementTypeRepository, ElementTypeRepository>();
     }
 }
