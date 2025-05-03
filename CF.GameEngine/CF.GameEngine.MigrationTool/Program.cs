@@ -37,7 +37,7 @@ try
         }
         else
         {
-            Console.WriteLine("Database is not connected, if this is a server related issue the following actions will fail");
+            Console.WriteLine("Database is not connected, if this is a server related issue the following actions will fail{0}\t* Migrations{0}\t* Seeding", Environment.NewLine);
         }
     }
 
