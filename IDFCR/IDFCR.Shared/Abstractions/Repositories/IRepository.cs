@@ -6,4 +6,5 @@ public interface IRepository<T> : IUnitOfWork
 {
     Task<IUnitResult<Guid>> UpsertAsync(T value, CancellationToken cancellationToken);
     Task<T?> FindAsync(CancellationToken cancellationToken, params object[] keyValues);
+    Task<IUnitResult> DeleteAsync(object[] keyValues, CancellationToken cancellationToken);
 }

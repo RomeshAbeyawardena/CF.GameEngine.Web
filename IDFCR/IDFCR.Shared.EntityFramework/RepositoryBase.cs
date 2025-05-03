@@ -117,4 +117,16 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(TDbContex
 
         return MapDto(result);
     }
+
+    public async Task<IUnitResult> DeleteAsync(object[] keyValues, CancellationToken cancellationToken)
+    {
+        var entity = await DbSet.FindAsync([keyValues], cancellationToken);
+        if (entity == null)
+        {
+            return new UnitResult(new EntityNotFoundException(typeof(T), keyValues));
+        }
+
+        DbSet.Remove(entity);
+        return new UnitResult(null, UnitAction.Delete, true);
+    }
 }
