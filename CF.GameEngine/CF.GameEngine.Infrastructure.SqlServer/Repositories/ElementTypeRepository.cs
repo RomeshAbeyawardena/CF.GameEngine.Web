@@ -3,8 +3,8 @@ using CF.GameEngine.Infrastructure.SqlServer.Models;
 
 namespace CF.GameEngine.Infrastructure.SqlServer.Repositories;
 
-internal class ElementTypeRepository(CFGameEngineDbContext context)
-    : RepositoryBase<IElementType, ElementType, ElementTypeDto>(context), 
+internal class ElementTypeRepository(TimeProvider timeProvider, CFGameEngineDbContext context)
+    : RepositoryBase<IElementType, ElementType, ElementTypeDto>(timeProvider, context), 
     IElementTypeRepository
 {
 }

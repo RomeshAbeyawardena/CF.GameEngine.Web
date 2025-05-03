@@ -5,10 +5,13 @@ using IDFCR.Shared.Abstractions.Repositories;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
+using System;
 
 namespace IDFCR.Shared.EntityFramework;
 
-public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(TDbContext context) 
+public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
+    TimeProvider timeProvider,
+    TDbContext context) 
     : IRepository<T>
     where T : class, IMappable<TAbstraction>, IIdentifer
     where TDb : class, IMappable<TAbstraction>, IIdentifer
@@ -22,7 +25,10 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(TDbContex
 
     protected virtual void OnAdd(TDb db, T source)
     {
-
+        if (db is IAuditCreatedTimestamp createdTimestamp)
+        {
+            createdTimestamp.CreatedTimestampUtc = timeProvider.GetUtcNow();
+        }
     }
 
     protected virtual void BeforeUpdate(TDb db, T source)
@@ -32,7 +38,10 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(TDbContex
 
     protected virtual void OnUpdate(TDb db, T source)
     {
-        
+        if (db is IAuditModifiedTimestamp modifiedTimestamp)
+        {
+            modifiedTimestamp.ModifiedTimestampUtc = timeProvider.GetUtcNow();
+        }
     }
 
     protected virtual void OnCommit(int affectedRows)

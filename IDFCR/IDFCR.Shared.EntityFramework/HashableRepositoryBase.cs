@@ -13,8 +13,8 @@ namespace IDFCR.Shared.EntityFramework;
 /// <typeparam name="TDb"></typeparam>
 /// <typeparam name="T"></typeparam>
 /// <param name="context"></param>
-public abstract class HashableRepositoryBase<TDbContext, TAbstraction, TDb, T>(TDbContext context, IUniqueContentHasher uniqueContentHash) 
-    : RepositoryBase<TDbContext, TAbstraction, TDb, T>(context)
+public abstract class HashableRepositoryBase<TDbContext, TAbstraction, TDb, T>(TimeProvider timeProvider, TDbContext context, IUniqueContentHasher uniqueContentHash) 
+    : RepositoryBase<TDbContext, TAbstraction, TDb, T>(timeProvider, context)
     where T : class, IMappable<TAbstraction>, IIdentifer, IVerifiable
     where TDb : class, IMappable<TAbstraction>, IIdentifer, IVerifiable
     where TDbContext : DbContext
@@ -37,11 +37,13 @@ public abstract class HashableRepositoryBase<TDbContext, TAbstraction, TDb, T>(T
 
     protected override void OnAdd(TDb db, T source)
     {
+        base.OnAdd(db, source);
         db.UpdateHash(uniqueContentHash.CreateHash);
     }
 
     protected override void OnUpdate(TDb db, T source)
     {
+        base.OnUpdate(db, source);
         db.UpdateHash(uniqueContentHash.CreateHash);
     }
 }
