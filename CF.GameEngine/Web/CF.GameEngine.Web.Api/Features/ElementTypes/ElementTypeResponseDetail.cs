@@ -18,7 +18,7 @@ public record ElementTypeResponseDetail : MappableBase<IElementType>, IElementTy
     public string Name { get; set; } = null!;
     public string ExternalReference { get; set; } = null!;
     public string? Description { get; set; }
-    public Guid Id { get; set; };
+    public Guid Id { get; set; }
 
     public override void Map(IElementType source)
     {

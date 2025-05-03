@@ -11,6 +11,6 @@ public class ElementTypeQueryHandler(IElementTypeRepository elementTypeRepositor
     {
         var result = await elementTypeRepository.GetPagedAsync(request, cancellationToken);
         
-        var n = result.Convert(x => x.Select(y => y.Map<ElementTypeResponse>()));
+        return result.Convert(x => x.Map<ElementTypeResponse>());
     }
 }

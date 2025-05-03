@@ -1,6 +1,7 @@
 ﻿using CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
+using MessagePack;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CF.GameEngine.Web.Api.Endpoints.ElementTypes.Get;
@@ -12,6 +13,7 @@ public static class Endpoints
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(query, cancellationToken);
+        return result.ToApiResult();
     }
 
     public static async Task<IResult> GetElementTypeAsync([FromRoute] Guid id,
