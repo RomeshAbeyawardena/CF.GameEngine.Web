@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>3f9564c1-a8bd-4db2-b7a1-8d12479519ea</UserSecretsId>
+    <UserSecretsId>9315e900-337b-4d8c-9599-6b6a66b9af5e</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.5.0" />
