@@ -4,6 +4,7 @@ public enum UnitAction
 {
     None = 0,
     Add,
+    Get,
     Update,
     Delete
 }

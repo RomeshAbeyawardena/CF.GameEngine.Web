@@ -12,6 +12,7 @@ public static class ApiResultExtensions
         {
             UnitAction.Add => StatusCodes.Status201Created,
             UnitAction.Update => StatusCodes.Status200OK,
+            UnitAction.Get => StatusCodes.Status200OK,
             UnitAction.Delete => StatusCodes.Status204NoContent,
             _ => StatusCodes.Status500InternalServerError,
         };

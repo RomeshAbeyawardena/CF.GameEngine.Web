@@ -20,7 +20,7 @@ internal class ElementTypeRepository(TimeProvider timeProvider, CFGameEngineDbCo
             return new UnitResult(new EntityNotFoundException("Element", elementTypeId)).As<ElementTypeDto>();
         }
 
-        return new UnitResult<ElementTypeDto>(elementType);
+        return new UnitResult<ElementTypeDto>(elementType, UnitAction.Get);
     }
 
     public Task<IUnitPagedResult<ElementTypeDto>> GetPagedAsync(IElementTypePagedFilter pagedQuery, CancellationToken cancellationToken)
