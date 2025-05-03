@@ -6,6 +6,7 @@ using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
 using System;
+using IDFCR.Shared.Abstractions.Paging;
 
 namespace IDFCR.Shared.EntityFramework;
 
@@ -68,6 +69,17 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     }
 
     protected TDbContext Context => context;
+
+    protected IQueryable<TDb> GetPaged(IPagedQuery pagedQuery, IQueryable<TDb> source)
+    {
+        return GetPaged(new ConventionalPagedQuery(pagedQuery), source);
+    }
+
+    protected IQueryable<TDb> GetPaged(IConventionalPagedQuery pagedQuery, IQueryable<TDb> source)
+    {
+        return source.Take(pagedQuery.Take ?? 10)
+            .Skip(pagedQuery.Skip ?? 0);
+    }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
