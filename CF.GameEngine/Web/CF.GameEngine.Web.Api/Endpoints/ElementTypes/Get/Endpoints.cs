@@ -1,6 +1,5 @@
-﻿namespace CF.GameEngine.Web.Api.Endpoints.ElementTypes.Get
+﻿namespace CF.GameEngine.Web.Api.Endpoints.ElementTypes.Get;
+
+public static class Endpoints
 {
-    public class Endpoints
-    {
-    }
 }

@@ -2,7 +2,7 @@
 using IDFCR.Shared.Abstractions.Results;
 using MediatR;
 
-namespace CF.GameEngine.Web.Api.Features.ElementTypes;
+namespace CF.GameEngine.Web.Api.Features.ElementTypes.Delete;
 
 public class ElementTypeDeleteCommandHandler<IElement>(IElementTypeRepository elementTypeRepository) : IRequestHandler<ElementTypeDeleteCommand, IUnitResult>
 {
