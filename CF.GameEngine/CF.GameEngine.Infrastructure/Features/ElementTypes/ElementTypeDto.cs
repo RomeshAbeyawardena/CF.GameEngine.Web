@@ -10,6 +10,7 @@ public class ElementTypeDto : MappableBase<IElementType>, IElementType
     public string Name { get; set; } = null!;
     public string? Description { get; set; }
     public Guid Id { get; set; }
+    public int? SortOrder { get; set; }
 
     public override void Map(IElementType source)
     {
@@ -18,6 +19,7 @@ public class ElementTypeDto : MappableBase<IElementType>, IElementType
         Name = source.Name;
         Description = source.Description;
         Id = source.Id;
+        SortOrder = source.SortOrder;
     }
 }
 

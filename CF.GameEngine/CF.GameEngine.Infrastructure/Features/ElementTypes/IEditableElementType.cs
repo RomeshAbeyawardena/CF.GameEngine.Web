@@ -10,6 +10,7 @@ public interface IEditableElementType : IMappable<IElementType>,
 
 public interface IElementTypeSummary : IMappable<IElementType>, IIdentifer
 {
+    int? SortOrder { get; }
     string Key { get; }
     string Name { get; }
 }

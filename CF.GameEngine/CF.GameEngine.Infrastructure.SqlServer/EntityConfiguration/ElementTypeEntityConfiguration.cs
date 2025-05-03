@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CF.GameEngine.Infrastructure.SqlServer.Extensions.EntityConfiguration;
+namespace CF.GameEngine.Infrastructure.SqlServer.EntityConfiguration;
 
 internal class ElementTypeEntityConfiguration : IEntityTypeConfiguration<ElementType>
 {
@@ -28,5 +28,8 @@ internal class ElementTypeEntityConfiguration : IEntityTypeConfiguration<Element
 
         builder.Property(x => x.Description)
             .HasMaxLength(250);
+
+        builder.Property(x => x.SortOrder)
+            .IsRequired(false);
     }
 }

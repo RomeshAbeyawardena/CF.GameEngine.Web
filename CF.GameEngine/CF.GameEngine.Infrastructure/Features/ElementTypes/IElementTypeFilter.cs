@@ -3,7 +3,7 @@ using IDFCR.Shared.Abstractions.Paging;
 
 namespace CF.GameEngine.Infrastructure.Features.ElementTypes;
 
-public interface IElementTypePagedFilter : IElementTypeFilter, IPagedQuery;
+public interface IElementTypePagedFilter : IElementTypeFilter, IPagedQuery, IEntityOrder;
 
 public interface IElementTypeFilter : IFilter<IElementTypeFilter>
 {

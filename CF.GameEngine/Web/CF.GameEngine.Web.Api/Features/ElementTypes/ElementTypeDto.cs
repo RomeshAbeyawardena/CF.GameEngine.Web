@@ -12,6 +12,7 @@ public record ElementTypeDto : MappableBase<IElementType>, IElementType
     public string Key { get; set; } = null!;
     public string Name { get; set; } = null!;
     public Guid Id { get; set; }
+    public int? SortOrder { get; set; }
 
     public override void Map(IElementType source)
     {
@@ -20,5 +21,6 @@ public record ElementTypeDto : MappableBase<IElementType>, IElementType
         Name = source.Name;
         Description = source.Description;
         Id = source.Id;
+        SortOrder = source.SortOrder;
     }
 }

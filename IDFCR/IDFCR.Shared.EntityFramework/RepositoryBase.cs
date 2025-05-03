@@ -5,7 +5,7 @@ using IDFCR.Shared.Abstractions.Repositories;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
-using System;
+using System.Linq.Dynamic.Core;
 using IDFCR.Shared.Abstractions.Paging;
 
 namespace IDFCR.Shared.EntityFramework;
@@ -70,12 +70,19 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
 
     protected TDbContext Context => context;
 
-    protected async Task<IUnitPagedResult<T>> GetPagedAsync(IPagedQuery pagedQuery, IQueryable<TDb> source, CancellationToken cancellationToken)
+    protected async Task<IUnitPagedResult<T>> GetPagedAsync(IPagedQuery pagedQuery, IEntityOrder entityOrder, IQueryable<TDb> source, CancellationToken cancellationToken)
     {
         var conventional = pagedQuery.ToConventional();
-        var result = await source.Take(conventional.Take ?? 10)
-            .Skip(conventional.Skip ?? 0).ToListAsync(cancellationToken);
+        var query = source.Take(conventional.Take ?? 10)
+            .Skip(conventional.Skip ?? 0);
 
+        var order = entityOrder.ToString();
+        if (!string.IsNullOrWhiteSpace(order))
+        {
+            query = query.OrderBy(order);
+        }
+
+        var result = await query.ToListAsync(cancellationToken);
         return new UnitPagedResult<T>(result.Select(MapDto), await source.CountAsync(cancellationToken), pagedQuery);
     }
 

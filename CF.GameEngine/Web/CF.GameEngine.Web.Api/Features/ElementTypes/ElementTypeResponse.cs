@@ -14,6 +14,7 @@ public record ElementTypeResponse : MappableBase<IElementType>, IElementTypeSumm
 
     public string Key { get; set; } = null!;
     public string Name { get; set; } = null!;
+    public int? SortOrder { get; set; }
     public Guid Id { get; set; }
 
     public override void Map(IElementType source)
