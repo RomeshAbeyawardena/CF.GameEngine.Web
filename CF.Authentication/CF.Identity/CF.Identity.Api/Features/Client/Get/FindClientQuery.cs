@@ -2,7 +2,6 @@
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
-using MediatR;
 
 namespace CF.Identity.Api.Features.Client.Get;
 

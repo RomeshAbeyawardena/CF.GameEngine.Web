@@ -8,11 +8,10 @@ namespace CF.GameEngine.Web.Api.Endpoints.Element.Get;
 public static class Endpoints
 {
     public static async Task<IResult> GetPagedElementsAsync(
-        Guid? parentId, string? externalReference,
-        string? key, string? nameContains, int? pageSize, int? pageIndex,
+        [AsParameters]ElementQuery query,
         IMediator mediator, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new ElementQuery(parentId, externalReference, key, nameContains, pageSize, pageIndex), cancellationToken);
+        var result = await mediator.Send(query, cancellationToken);
 
         return result.ToApiResult(Route.BaseUrl);
     }

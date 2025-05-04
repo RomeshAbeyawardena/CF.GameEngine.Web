@@ -15,6 +15,8 @@ public static class Endpoints
         return result.ToApiResult(Route.BaseUrl);
     }
 
+    //public static async Task<IResult> GetPagedClientsAsync()
+
     public static void AddClientEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), GetClientAsync)
