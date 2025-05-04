@@ -1,8 +1,8 @@
 ﻿namespace IDFCR.Shared.Exceptions;
 
 public class EntityAlreadyExistsException(string entityType,
-    object id, Exception? innerException = null) 
-    : EntityExceptionBase(entityType, "An entity of {entity-type} already exists with '{id}'", innerException), IExposableException
+    object id, Exception? innerException = null)
+    : EntityExceptionBase(entityType, $"An entity of {{entity-type}} already exists with '{id}'", innerException), IExposableException
 {
     public EntityAlreadyExistsException(Type entityType, object id, Exception? innerException = null)
         : this(entityType.Name, id, innerException)
@@ -11,5 +11,6 @@ public class EntityAlreadyExistsException(string entityType,
     }
 
     string IExposableException.Message => FormatMessage("An entity of {entity-type} already exists");
-    string? IExposableException.Details => $"Id: '{id}' in '{EntityType}'";
+    string? IExposableException.Details => FormatMessage("Id: '{id}' in '{EntityType}'", 
+        ConfigureKeyValues(c => c.AddOrUpdate("id", id.ToString() ?? string.Empty)));
 }
