@@ -14,4 +14,14 @@ public static class Endpoint
         var result = await mediator.Send(new PostElementCommand(element), cancellationToken);
         return result.ToApiResult(Route.BaseUrl);
     }
+
+    public static void AddPostElementEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapPost(Route.BaseUrl, PostElementAsync)
+            .WithName("")
+            .WithTags("")
+            .DisableAntiforgery()
+            .Produces<Guid>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+    }
 }
