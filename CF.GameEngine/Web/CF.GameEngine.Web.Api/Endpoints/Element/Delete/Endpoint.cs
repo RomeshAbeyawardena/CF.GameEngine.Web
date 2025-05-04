@@ -1,4 +1,5 @@
 ﻿using CF.GameEngine.Web.Api.Features.Element.Delete;
+using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,9 @@ public static class Endpoint
         return result.ToApiResult();
     }
 
-    public static IEndpointRouteBuilder AddDeleteElement(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder AddDeleteElementEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapDelete("/elements/{id:guid}", DeleteElementAsync)
+        builder.MapDelete("{id:guid}".PrependUrl(Route.BaseUrl), DeleteElementAsync)
             .WithName("DeleteElement")
             .Produces(204)
             .Produces(404)

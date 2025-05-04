@@ -1,4 +1,5 @@
 ﻿using IDFCR.Shared.Abstractions.Paging;
+using IDFCR.Shared.Exceptions;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
@@ -8,6 +9,9 @@ namespace IDFCR.Shared.Abstractions.Results;
 public record UnitResult(Exception? Exception = null, UnitAction Action = UnitAction.None,
     bool IsSuccess = false) : IUnitResult
 {
+    public static IUnitResult<T> NotFound<T>(object id, Exception? innerException = null) 
+        => new UnitResult(new EntityNotFoundException(typeof(T), id, innerException), UnitAction.None).As<T>();
+
     internal readonly ConcurrentDictionary<string, object?> _metaProperties = [];
     public object? this[string key] { get => _metaProperties[key]; }
 

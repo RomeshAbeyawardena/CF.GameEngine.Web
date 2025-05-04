@@ -9,9 +9,9 @@ public interface IElementPagedFilter : IElementFilter,
     
 }
 
-public interface IElementFilter
+public interface IElementFilter : IFilter<IElementFilter>
 {
-    Guid? ParentId { get; }
+    Guid? ParentElementId { get; }
     string? ExternalReference { get; }
     string? Key { get; }
     string? NameContains { get; }

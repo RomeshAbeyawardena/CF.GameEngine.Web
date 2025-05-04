@@ -3,7 +3,6 @@ using CF.GameEngine.Infrastructure.SqlServer.Filters;
 using CF.GameEngine.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
-using IDFCR.Shared.Exceptions;
 
 namespace CF.GameEngine.Infrastructure.SqlServer.Repositories;
 
@@ -17,7 +16,7 @@ internal class ElementTypeRepository(TimeProvider timeProvider, CFGameEngineDbCo
 
         if (elementType == null)
         {
-            return new UnitResult(new EntityNotFoundException("Element", elementTypeId)).As<ElementTypeDto>();
+            return UnitResult.NotFound<ElementTypeDto>(elementTypeId);
         }
 
         return new UnitResult<ElementTypeDto>(elementType, UnitAction.Get);
