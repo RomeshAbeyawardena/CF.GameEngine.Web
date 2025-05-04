@@ -9,6 +9,15 @@
     <PackageReference Include="MediatR" Version="12.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CF.Identity.Infrastructure\CF.Identity.Infrastructure.csproj" />
     <ProjectReference Include="..\CF.Identity\CF.Identity.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="IDFCR.Shared">
+      <HintPath>..\..\..\IDFCR\IDFCR.Shared\bin\Debug\net9.0\IDFCR.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="IDFCR.Shared.Http">
+      <HintPath>..\..\..\IDFCR\IDFCR.Shared.Http\bin\Debug\net9.0\IDFCR.Shared.Http.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

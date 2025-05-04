@@ -1,6 +1,9 @@
-﻿namespace CF.Identity.Api.Endpoints.Clients.Get
+﻿namespace CF.Identity.Api.Endpoints.Clients.Get;
+
+public static class Endpoints
 {
-    public class Endpoints
+    public static Task<IResult> GetClientAsync(Guid id)
     {
+
     }
 }
