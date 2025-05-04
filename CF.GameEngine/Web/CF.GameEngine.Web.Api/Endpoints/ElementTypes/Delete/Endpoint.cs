@@ -1,4 +1,5 @@
 ﻿using CF.GameEngine.Web.Api.Features.ElementTypes.Delete;
+using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public static class Endpoint
 
     public static IEndpointRouteBuilder AddDeleteElementTypeEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapDelete("/api/element-type/{id:guid}", DeleteElementTypeAsync)
+        builder.MapDelete("{id:guid}".PrependUrl(Route.BaseUrl), DeleteElementTypeAsync)
             .WithName("DeleteElementType")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound)

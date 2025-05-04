@@ -5,6 +5,14 @@ namespace IDFCR.Shared.Extensions;
 
 public static class StringExtensions
 {
+    public static string PrependUrl(this string value, string source)
+    {
+        return Prepend(value, source, '/');
+    }
+    public static string Prepend(this string value, string source, char? separator)
+    {
+        return $"{source}{separator}{value}";
+    }
     public static string Hash(this string value, HashAlgorithmType hashAlgorithmType, 
         string? format = null, params object[] args)
     {

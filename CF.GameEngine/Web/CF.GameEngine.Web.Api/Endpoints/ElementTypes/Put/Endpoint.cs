@@ -1,5 +1,6 @@
 ﻿using CF.GameEngine.Web.Api.Features.ElementTypes;
 using CF.GameEngine.Web.Api.Features.ElementTypes.Put;
+using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,12 @@ public static class Endpoint
     {
         elementType.Id = id;
         var result = await mediator.Send(new PutElementTypeCommand(elementType), cancellationToken);
-        return result.ToApiResult();
+        return result.ToApiResult(Route.BaseUrl);
     }
 
     public static IEndpointRouteBuilder AddPutElementTypeEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapPut("/api/element-types/{id:guid}", UpdateElementTypeAsync)
+        builder.MapPut("{id:guid}".PrependUrl(Route.BaseUrl), UpdateElementTypeAsync)
             .WithName("UpdateElementType")
             .DisableAntiforgery()
             .Produces(StatusCodes.Status200OK)

@@ -14,12 +14,12 @@ public static class Endpoint
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new PostElementTypeCommand(elementType), cancellationToken);
-        return result.ToApiResult();
+        return result.ToApiResult(Route.BaseUrl);
     }
 
     public static IEndpointRouteBuilder AddPostElementTypeEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapPost("/api/element-types", SaveElementTypeAsync)
+        builder.MapPost(Route.BaseUrl, SaveElementTypeAsync)
             .WithName("SaveElementType")
             .DisableAntiforgery()
             .Produces(StatusCodes.Status200OK)

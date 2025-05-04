@@ -1,4 +1,5 @@
-﻿using CF.GameEngine.Infrastructure.Features.ElementTypes;
+﻿using CF.GameEngine.Infrastructure.Features.Elements;
+using CF.GameEngine.Infrastructure.Features.ElementTypes;
 using CF.GameEngine.Infrastructure.SqlServer.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,8 @@ public static class ServiceCollectionExtensions
             opt.UseSqlServer(connectionString);
         });
 
-        return services.AddScoped<IElementTypeRepository, ElementTypeRepository>();
+        return services
+            .AddScoped<IElementTypeRepository, ElementTypeRepository>()
+            .AddScoped<IElementRepository, ElementRepository>();
     }
 }
