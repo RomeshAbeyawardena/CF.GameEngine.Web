@@ -1,5 +1,4 @@
-﻿using CF.GameEngine.Web.Api.Features.ElementTypes;
-using CF.GameEngine.Web.Api.Features.ElementTypes.Get;
+﻿using CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;

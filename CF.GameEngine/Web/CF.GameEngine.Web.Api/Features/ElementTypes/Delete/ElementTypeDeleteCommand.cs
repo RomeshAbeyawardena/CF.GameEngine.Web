@@ -1,6 +1,4 @@
-﻿using IDFCR.Shared.Abstractions.Results;
-using IDFCR.Shared.Mediatr;
-using MediatR;
+﻿using IDFCR.Shared.Mediatr;
 
 namespace CF.GameEngine.Web.Api.Features.ElementTypes.Delete;
 
