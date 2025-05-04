@@ -43,7 +43,18 @@ try
 
     if (args.Any(a => a.Equals("--migrate", StringComparison.CurrentCultureIgnoreCase)))
     {
-        await context.Database.MigrateAsync();
+        var pending = await context.Database.GetPendingMigrationsAsync();
+
+        if (pending.Any())
+        {
+            Console.WriteLine("Pending migrations: {0}", string.Join(", ", pending));
+            Console.WriteLine("Applying migrations...");
+            await context.Database.MigrateAsync();
+        }
+        else
+        {
+            Console.WriteLine("No pending migrations.");
+        }
     }
 }
 catch (Exception exception)
