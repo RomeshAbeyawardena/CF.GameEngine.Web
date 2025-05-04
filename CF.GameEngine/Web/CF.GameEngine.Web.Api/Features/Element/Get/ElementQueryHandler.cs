@@ -1,12 +1,12 @@
 ﻿using CF.GameEngine.Infrastructure.Features.Elements;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
-using MediatR;
+using IDFCR.Shared.Mediatr;
 
 namespace CF.GameEngine.Web.Api.Features.Element.Get;
 
 public class ElementQueryHandler(IElementRepository elementRepository) 
-    : IRequestHandler<ElementQuery, IUnitPagedResult<ElementResponse>>
+    : IUnitPagedRequestHandler<ElementQuery, ElementResponse>
 {
     
     public async Task<IUnitPagedResult<ElementResponse>> Handle(ElementQuery request, CancellationToken cancellationToken)

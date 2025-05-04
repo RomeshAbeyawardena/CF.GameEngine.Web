@@ -1,6 +1,5 @@
-﻿using IDFCR.Shared.Abstractions.Results;
-using MediatR;
+﻿using IDFCR.Shared.Mediatr;
 
 namespace CF.GameEngine.Web.Api.Features.ElementTypes.Upsert;
 
-public record ElementTypeUpsertCommand(ElementTypeDto ElementType) : IRequest<IUnitResult<Guid>>;
+public record ElementTypeUpsertCommand(ElementTypeDto ElementType) : IUnitRequest<Guid>;

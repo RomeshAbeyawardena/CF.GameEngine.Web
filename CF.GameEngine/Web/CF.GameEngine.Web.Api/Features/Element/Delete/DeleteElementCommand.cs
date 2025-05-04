@@ -1,6 +1,5 @@
-﻿using IDFCR.Shared.Abstractions.Results;
-using MediatR;
+﻿using IDFCR.Shared.Mediatr;
 
 namespace CF.GameEngine.Web.Api.Features.Element.Delete;
 
-public record DeleteElementCommand(Guid ElementId) : IRequest<IUnitResult>;
+public record DeleteElementCommand(Guid ElementId) : IUnitRequest;

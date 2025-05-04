@@ -1,11 +1,12 @@
 ﻿using CF.GameEngine.Web.Api.Features.ElementTypes.Upsert;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
+using IDFCR.Shared.Mediatr;
 using MediatR;
 
 namespace CF.GameEngine.Web.Api.Features.ElementTypes.Put;
 
-public class PutElementTypeCommandHandler(IMediator mediator) : IRequestHandler<PutElementTypeCommand, IUnitResult<Guid>>
+public class PutElementTypeCommandHandler(IMediator mediator) : IUnitRequestHandler<PutElementTypeCommand, Guid>
 {
     public async Task<IUnitResult<Guid>> Handle(PutElementTypeCommand request, CancellationToken cancellationToken)
     {

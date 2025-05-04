@@ -1,10 +1,11 @@
 ﻿using CF.GameEngine.Infrastructure.Features.Elements;
 using IDFCR.Shared.Abstractions.Results;
+using IDFCR.Shared.Mediatr;
 using MediatR;
 
 namespace CF.GameEngine.Web.Api.Features.Element.Upsert;
 
-public class UpsertElementCommandHandler(IElementRepository elementRepository) : IRequestHandler<UpsertElementCommand, IUnitResult<Guid>>
+public class UpsertElementCommandHandler(IElementRepository elementRepository) : IUnitRequestHandler<UpsertElementCommand, Guid>
 {
     public async Task<IUnitResult<Guid>> Handle(UpsertElementCommand request, CancellationToken cancellationToken)
     {

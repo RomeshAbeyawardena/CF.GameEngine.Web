@@ -1,11 +1,12 @@
 ﻿using CF.GameEngine.Web.Api.Features.ElementTypes.Upsert;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
+using IDFCR.Shared.Mediatr;
 using MediatR;
 
 namespace CF.GameEngine.Web.Api.Features.ElementTypes.Post;
 
-public class PostElementTypeCommandHandler(IMediator mediator) : IRequestHandler<PostElementTypeCommand, IUnitResult<Guid>>
+public class PostElementTypeCommandHandler(IMediator mediator) : IUnitRequestHandler<PostElementTypeCommand, Guid>
 {
     public async Task<IUnitResult<Guid>> Handle(PostElementTypeCommand request, CancellationToken cancellationToken)
     {
