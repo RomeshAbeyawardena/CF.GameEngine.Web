@@ -19,10 +19,10 @@ public static class Endpoint
     public static IEndpointRouteBuilder AddDeleteElementTypeEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapDelete("{id:guid}".PrependUrl(Route.BaseUrl), DeleteElementTypeAsync)
-            .WithName("DeleteElementType")
+            .WithName(nameof(DeleteElementTypeAsync))
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithTags("Element Types");
+            .WithTags(Route.Tag);
         return builder;
 
     }

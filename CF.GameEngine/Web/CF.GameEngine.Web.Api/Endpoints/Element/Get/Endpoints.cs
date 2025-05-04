@@ -27,18 +27,18 @@ public static class Endpoints
     public static IEndpointRouteBuilder AddGetElementEndpoints(this IEndpointRouteBuilder builder)
     {
         builder.MapGet(Route.BaseUrl, GetPagedElementsAsync)
-            .WithName("GetPagedElements")
+            .WithName(nameof(GetPagedElementsAsync))
             .Produces(200)
             .Produces(400)
             .Produces(500)
-            .WithTags("Elements");
+            .WithTags(Route.Tag);
 
         builder.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), FindElementAsync)
-            .WithName("FindElement")
+            .WithName(nameof(FindElementAsync))
             .Produces(200)
             .Produces(404)
             .Produces(500)
-            .WithTags("Elements");
+            .WithTags(Route.Tag);
         return builder;
     }
 }

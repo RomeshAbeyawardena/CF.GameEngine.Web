@@ -15,13 +15,14 @@ public static class Endpoint
         return result.ToApiResult(Route.BaseUrl);
     }
 
-    public static void AddPostElementEndpoint(IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder AddPostElementEndpoint(this IEndpointRouteBuilder builder)
     {
-        app.MapPost(Route.BaseUrl, PostElementAsync)
-            .WithName("")
-            .WithTags("")
+        builder.MapPost(Route.BaseUrl, PostElementAsync)
+            .WithName(nameof(PostElementAsync))
+            .WithTags(Route.Tag)
             .DisableAntiforgery()
             .Produces<Guid>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest);
+        return builder;
     }
 }

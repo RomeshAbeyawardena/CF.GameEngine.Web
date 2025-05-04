@@ -22,7 +22,8 @@ public static class Endpoint
     public static IEndpointRouteBuilder AddPutElementTypeEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPut("{id:guid}".PrependUrl(Route.BaseUrl), UpdateElementTypeAsync)
-            .WithName("UpdateElementType")
+            .WithName(nameof(UpdateElementTypeAsync))
+            .WithTags(Route.Tag)
             .DisableAntiforgery()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)

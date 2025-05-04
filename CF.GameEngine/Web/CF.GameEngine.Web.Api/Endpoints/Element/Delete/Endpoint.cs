@@ -21,7 +21,7 @@ public static class Endpoint
             .WithName("DeleteElement")
             .Produces(204)
             .Produces(404)
-            .WithTags("Elements");
+            .WithTags(Route.Tag);
         return builder;
     }
 }

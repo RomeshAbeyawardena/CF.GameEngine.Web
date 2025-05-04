@@ -20,7 +20,8 @@ public static class Endpoint
     public static IEndpointRouteBuilder AddPostElementTypeEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost(Route.BaseUrl, SaveElementTypeAsync)
-            .WithName("SaveElementType")
+            .WithName(nameof(SaveElementTypeAsync))
+            .WithTags(Route.Tag)
             .DisableAntiforgery()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)

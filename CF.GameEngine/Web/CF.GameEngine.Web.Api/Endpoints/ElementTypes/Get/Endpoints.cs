@@ -29,13 +29,15 @@ public static class Endpoints
     public static IEndpointRouteBuilder AddGetElementTypeEndpoints(this IEndpointRouteBuilder builder)
     {
         builder.MapGet(Route.BaseUrl, GetPagedElementTypesAsync)
-            .WithName("GetElementTypes")
+            .WithName(nameof(GetPagedElementTypesAsync))
+            .WithTags(Route.Tag)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
 
         builder.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), GetElementTypeAsync)
-            .WithName("GetElementType")
+            .WithName(nameof(GetElementTypeAsync))
+            .WithTags(Route.Tag)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status400BadRequest)
