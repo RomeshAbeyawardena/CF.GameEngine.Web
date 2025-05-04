@@ -2,7 +2,7 @@
 
 public class EntityAlreadyExistsException(string entityType,
     object id, Exception? innerException = null) 
-    : InvalidOperationException($"An entity of {entityType} already exists with '{id}'", innerException), IExposableException
+    : EntityExceptionBase(entityType, "An entity of {entity-type} already exists with '{id}'", innerException), IExposableException
 {
     public EntityAlreadyExistsException(Type entityType, object id, Exception? innerException = null)
         : this(entityType.Name, id, innerException)
@@ -10,6 +10,6 @@ public class EntityAlreadyExistsException(string entityType,
 
     }
 
-    string IExposableException.Message => $"An entity of {entityType} already exists";
-    string? IExposableException.Details => $"Id: '{id}' in '{entityType}'";
+    string IExposableException.Message => FormatMessage("An entity of {entity-type} already exists");
+    string? IExposableException.Details => $"Id: '{id}' in '{EntityType}'";
 }

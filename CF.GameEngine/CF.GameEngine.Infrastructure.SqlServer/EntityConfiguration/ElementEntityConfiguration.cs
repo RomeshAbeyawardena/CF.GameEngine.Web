@@ -31,5 +31,10 @@ internal class ElementEntityConfiguration : IEntityTypeConfiguration<Element>
 
         builder.Property(x => x.SortOrder)
             .IsRequired(false);
+
+        builder.HasOne(x => x.ElementType)
+            .WithMany()
+            .HasForeignKey(x => x.ElementTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

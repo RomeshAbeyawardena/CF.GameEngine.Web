@@ -26,4 +26,6 @@ public class Element : MappableBase<IElement>, IElement
         ElementTypeId = source.ElementTypeId;
         ParentElementId = source.ParentElementId;
     }
+
+    public virtual ElementType ElementType { get; set; } = null!;
 }
