@@ -1,6 +1,6 @@
-﻿namespace CF.Identity.Api.Endpoints.Clients
+﻿namespace CF.Identity.Api.Endpoints.Clients;
+
+public static class Endpoints
 {
-    public class Endpoints
-    {
-    }
+
 }
