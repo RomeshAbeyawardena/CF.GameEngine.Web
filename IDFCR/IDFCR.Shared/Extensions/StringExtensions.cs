@@ -53,11 +53,16 @@ public static class StringExtensions
 
     public static string ReplaceAll(this string value, string newValue, params string[] values)
     {
+        return ReplaceAll(value, newValue, default, values);
+    }
+
+    public static string ReplaceAll(this string value, string newValue, StringComparison stringComparison, params string[] values)
+    {
         if (values == null || values.Length == 0)
             return value;
         foreach (var item in values)
         {
-            value = value.Replace(item, newValue);
+            value = value.Replace(item, newValue, stringComparison);
         }
         return value;
     }

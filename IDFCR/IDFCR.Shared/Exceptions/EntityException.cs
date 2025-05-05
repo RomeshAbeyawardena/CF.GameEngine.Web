@@ -3,8 +3,7 @@ using IDFCR.Shared.Extensions;
 
 namespace IDFCR.Shared.Exceptions;
 
-public abstract class EntityExceptionBase(string entityType, string message, Exception? innerException) 
-    : Exception(string.Empty, innerException)
+public abstract class EntityExceptionBase : Exception
 {
     public static IReadOnlyDictionary<string, string> ConfigureKeyValues(Action<IDictionaryBuilder<string, string>> action)
     {
@@ -19,7 +18,7 @@ public abstract class EntityExceptionBase(string entityType, string message, Exc
         foreach(var (key, value) in values)
         {
             var k = key.ToKebabCase();
-            message = message.Replace(k, value);
+            message = message.Replace($"{{{k}}}", value);
         }
         return message;
     }
@@ -35,18 +34,25 @@ public abstract class EntityExceptionBase(string entityType, string message, Exc
         return Format(sourceMessage, vals);
     }
 
+
+    private readonly string _message;
+    protected EntityExceptionBase(string entityType, string message, Exception? innerException, params string[] affixesToRemove) : base(null, innerException)
+    {
+        EntityType = entityType.ReplaceAll(string.Empty, StringComparison.InvariantCultureIgnoreCase, [.. affixesToRemove.Prepend("dto")]);
+        _message = FormatMessage(message, EntityType);
+    }
+
     protected string FormatMessage(string sourceMessage, IReadOnlyDictionary<string, string>? values = null)
     {
         return FormatMessage(sourceMessage, EntityType, values);
     }
 
-    protected EntityExceptionBase(Type entityType, string message, Exception innerException)
-        : this(entityType.Name, message, innerException)
+    protected EntityExceptionBase(Type entityType, string message, Exception innerException, params string[] affixesToRemove)
+        : this(entityType.Name, message, innerException, affixesToRemove)
     {
     }
 
-    private readonly string _message = FormatMessage(message, entityType);
-    public string EntityType { get; } = entityType.Replace("dto", string.Empty, StringComparison.InvariantCultureIgnoreCase);
+    public string EntityType { get; }
 
     public override string Message => _message;
 }

@@ -11,6 +11,6 @@ public class EntityAlreadyExistsException(string entityType,
     }
 
     string IExposableException.Message => FormatMessage("An entity of {entity-type} already exists");
-    string? IExposableException.Details => FormatMessage("Id: '{id}' in '{EntityType}'", 
+    string? IExposableException.Details => FormatMessage("Id: '{id}' in '{entity-type}'", 
         ConfigureKeyValues(c => c.AddOrUpdate("id", id.ToString() ?? string.Empty)));
 }
