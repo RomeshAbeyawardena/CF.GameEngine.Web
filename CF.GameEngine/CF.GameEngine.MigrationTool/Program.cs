@@ -8,4 +8,6 @@ using var utility = EFMigrationUtility.MigrationUtility<CFGameEngineDbContext>(
     (hostContext, services) =>
     {
         services.AddBackendDependencies("GameEngineDb");
-    }).InitialiseAsync();
+    });
+
+await utility.InitialiseAsync();
