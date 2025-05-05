@@ -1,7 +1,6 @@
 using CF.GameEngine.Infrastructure.SqlServer.Extensions;
 using CF.GameEngine.Web.Api.Endpoints;
 using IDFCR.Shared.Http.Extensions;
-using IDFCR.Shared.Http.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,11 +17,18 @@ services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "GameEngine API",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Email = "support@cf-game-engine.org",
+            Name = "CF Game Engine Support"
+        },
         Version = "v1",
         Description = "GameEngine API"
     });
 
-    options.AddRuntimeServerDocumentFilter();
+    options
+        .UseRuntimeServer()
+        .UseOpenApiVersionFromConfig();
 });
 
 var app = builder.Build();
