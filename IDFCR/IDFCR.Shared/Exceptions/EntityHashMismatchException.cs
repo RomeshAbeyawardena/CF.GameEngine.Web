@@ -9,6 +9,6 @@ public class EntityHashMismatchException(string entityType, Exception? innerExce
         
     }
 
-    string IExposableException.Message => "The entity type '{entity-type}' has a hash mismatch.";
-    string? IExposableException.Details => details;
+    string IExposableException.Message => FormatMessage("The entity type '{entity-type}' has a hash mismatch.");
+    string? IExposableException.Details => FormatMessage(details);
 }

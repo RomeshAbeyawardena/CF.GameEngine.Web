@@ -23,8 +23,13 @@ public abstract class EntityExceptionBase : Exception
         return message;
     }
 
-    protected static string FormatMessage(string sourceMessage, string entityType, IReadOnlyDictionary<string, string>? values = null)
+    protected static string FormatMessage(string? sourceMessage, string entityType, IReadOnlyDictionary<string, string>? values = null)
     {
+        if (string.IsNullOrWhiteSpace(sourceMessage))
+        {
+            return string.Empty;
+        }
+
         var vals = values == null 
             ? []
             : new Dictionary<string, string>(values);
@@ -38,16 +43,17 @@ public abstract class EntityExceptionBase : Exception
     private readonly string _message;
     protected EntityExceptionBase(string entityType, string message, Exception? innerException, params string[] affixesToRemove) : base(null, innerException)
     {
-        EntityType = entityType.ReplaceAll(string.Empty, StringComparison.InvariantCultureIgnoreCase, [.. affixesToRemove.Prepend("dto")]);
+        EntityType = entityType.ReplaceAll(string.Empty, StringComparison.InvariantCultureIgnoreCase, [.. affixesToRemove.Prepend("dto")
+            .Prepend("db").Distinct()]);
         _message = FormatMessage(message, EntityType);
     }
 
-    protected string FormatMessage(string sourceMessage, IReadOnlyDictionary<string, string>? values = null)
+    protected string FormatMessage(string? sourceMessage, IReadOnlyDictionary<string, string>? values = null)
     {
         return FormatMessage(sourceMessage, EntityType, values);
     }
 
-    protected string FormatMessage(string sourceMessage, Action<IDictionaryBuilder<string, string>> action)
+    protected string FormatMessage(string? sourceMessage, Action<IDictionaryBuilder<string, string>> action)
     {
         return FormatMessage(sourceMessage, EntityType, ConfigureKeyValues(action));
     }

@@ -2,7 +2,7 @@
 
 public class EntityNotFoundException(string entityType,
     object id, Exception? innerException = null)
-    : NullReferenceException($"Unable to find entity of {entityType} with id '{id}'", innerException), IExposableException
+    : EntityExceptionBase(entityType, $"Unable to find entity of {{entity-type}} with id '{id}'", innerException), IExposableException
 {
     public EntityNotFoundException(Type entityType, object id, Exception? innerException = null)
         : this(entityType.Name, id, innerException)
@@ -10,6 +10,6 @@ public class EntityNotFoundException(string entityType,
         
     }
 
-    string IExposableException.Message => $"Unable to find entity of {entityType}";
-    string? IExposableException.Details => $"Id: '{id}' in '{entityType}'";
+    string IExposableException.Message => FormatMessage("Unable to find entity of {entity-type}");
+    string? IExposableException.Details => FormatMessage("Id: '{id}' in '{entity-type}'", b => b.AddOrUpdate("id", id.ToString() ?? string.Empty));
 }
