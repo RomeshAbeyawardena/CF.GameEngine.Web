@@ -28,7 +28,7 @@ services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
-
+app.UseStaticFiles();
 app.AddApiEndpoints();
 
 if (app.Environment.IsDevelopment())
@@ -42,6 +42,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "GameEngine API v1");
+        options.InjectStylesheet("/swagger-ui/swagger-dark.css");
     });
 }
 
