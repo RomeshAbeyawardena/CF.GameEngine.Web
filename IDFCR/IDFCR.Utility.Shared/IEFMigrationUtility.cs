@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace IDFCR.Utility.Shared;
 
-public interface IEFMigrationUtility<TDbContext> : IDisposable
+public interface IEFMigrationUtility<TDbContext> : IDisposable, IAsyncDisposable
     where TDbContext : DbContext
 {
     IHost? Host { get; }

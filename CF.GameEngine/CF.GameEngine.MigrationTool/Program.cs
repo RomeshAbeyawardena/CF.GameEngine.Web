@@ -9,5 +9,5 @@ using var utility = EFMigrationUtility.MigrationUtility<CFGameEngineDbContext>(
     {
         services.AddBackendDependencies("GameEngineDb");
     });
-
-await utility.InitialiseAsync();
+    
+ await utility.InitialiseAsync();

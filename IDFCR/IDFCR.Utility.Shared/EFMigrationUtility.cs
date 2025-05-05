@@ -59,4 +59,10 @@ internal class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName
     {
         Host?.Dispose();
     }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
+    }
 }
