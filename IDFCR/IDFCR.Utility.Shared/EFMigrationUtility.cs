@@ -6,21 +6,32 @@ using Microsoft.Extensions.Logging;
 
 namespace IDFCR.Utility.Shared;
 
-public record EFMigrationUtilityName(string Name, string Version);
+public static class EFMigrationUtility
+{
+    public static IEFMigrationUtility<TDbContext> MigrationUtility<TDbContext>(EFMigrationUtilityName utilityName, IEnumerable<string> args,
+    string userSecretId, Action<HostBuilderContext, IServiceCollection> configureServices)
+        where TDbContext : DbContext
+    {
+        return new EFMigrationUtility<TDbContext>(utilityName, args, userSecretId, configureServices);
+    }
+}
 
-public class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName, IEnumerable<string> args, string userSecretId, Action<HostBuilderContext, IServiceCollection> configureServices)
+internal class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName, IEnumerable<string> args, 
+    string userSecretId, Action<HostBuilderContext, IServiceCollection> configureServices) : IEFMigrationUtility<TDbContext>
     where TDbContext : DbContext
 {
-    private Task RunMigrationAssistant(IHost host, CancellationToken cancellationToken)
+    public IHost? Host { get; private set; }
+
+    public Task RunMigrationAssistant(IHost host, CancellationToken cancellationToken)
     {
         var migrationAssitant = host.Services.GetRequiredService<IEFMigrationUtilityAssistant<TDbContext>>();
 
         return migrationAssitant.RunAsync(utilityName, args, cancellationToken);
     }
 
-    public async Task InitialiseAsync(CancellationToken cancellationToken = default)
+    public async Task InitialiseAsync(bool runMigrationAssistance = true, CancellationToken cancellationToken = default)
     {
-        using var host = new HostBuilder()
+        Host = new HostBuilder()
             .ConfigureAppConfiguration((hostContext, config) =>
             {
                 config.AddUserSecrets(userSecretId);
@@ -38,6 +49,14 @@ public class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName, 
                 configureServices(hostContext, services);
             }).Build();
 
-       await RunMigrationAssistant(host, cancellationToken);
+        if (runMigrationAssistance)
+        {
+            await RunMigrationAssistant(Host, cancellationToken);
+        }
+    }
+
+    public void Dispose()
+    {
+        Host?.Dispose();
     }
 }
