@@ -1,10 +1,5 @@
 ﻿namespace IDFCR.Utility.Shared;
 
-internal interface ITimeOfDayProvider
-{
-    string GetTimeOfDay();
-}
-
 internal class TimeOfDayProvider(TimeProvider timeProvider) : ITimeOfDayProvider
 {
     public string GetTimeOfDay()
