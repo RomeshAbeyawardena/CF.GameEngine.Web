@@ -47,6 +47,11 @@ public abstract class EntityExceptionBase : Exception
         return FormatMessage(sourceMessage, EntityType, values);
     }
 
+    protected string FormatMessage(string sourceMessage, Action<IDictionaryBuilder<string, string>> action)
+    {
+        return FormatMessage(sourceMessage, EntityType, ConfigureKeyValues(action));
+    }
+
     protected EntityExceptionBase(Type entityType, string message, Exception innerException, params string[] affixesToRemove)
         : this(entityType.Name, message, innerException, affixesToRemove)
     {
