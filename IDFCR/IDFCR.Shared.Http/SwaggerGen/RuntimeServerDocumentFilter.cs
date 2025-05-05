@@ -22,7 +22,5 @@ public class RuntimeServerDocumentFilter(IHttpContextAccessor accessor) : IDocum
             var url = $"{scheme}://{addresses}";
             swaggerDoc.Servers = [new OpenApiServer { Url = url }];
         }
-
-        
     }
 }
