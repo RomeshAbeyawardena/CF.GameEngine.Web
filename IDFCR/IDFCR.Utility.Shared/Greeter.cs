@@ -1,4 +1,4 @@
-﻿namespace CF.GameEngine.MigrationTool;
+﻿namespace IDFCR.Utility.Shared;
 
 internal interface ITimeOfDayProvider
 {
