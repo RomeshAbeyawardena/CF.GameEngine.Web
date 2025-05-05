@@ -1,4 +1,5 @@
-﻿using IDFCR.Shared.Abstractions.Results;
+﻿using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Results;
 
 namespace IDFCR.Shared.Extensions;
 
@@ -32,5 +33,16 @@ public static class UnitResultExtensions
         var results = new UnitPagedResult<TDestination>(convertedResults, unitResult.TotalRows, unitResult.PagedQuery, unitResult.Action, unitResult.IsSuccess, unitResult.Exception);
         CloneMeta(unitResult, results);
         return results;
+    }
+
+    public static IUnitResult<TDestination> Convert<TAbstraction, T, TDestination>(this IUnitResult<T> unitResult)
+    where T : IMappable<TAbstraction>, TAbstraction, new()
+    where TDestination : IMappable<TAbstraction>, TAbstraction, new()
+    {
+        return unitResult.Convert(x => { 
+            var result = new TDestination();
+            result.Map(x);
+            return result;
+        });
     }
 }
