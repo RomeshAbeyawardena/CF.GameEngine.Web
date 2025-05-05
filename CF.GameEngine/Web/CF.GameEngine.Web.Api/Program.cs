@@ -17,18 +17,14 @@ services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "GameEngine API",
-        Contact = new Microsoft.OpenApi.Models.OpenApiContact
-        {
-            Email = "support@cf-game-engine.org",
-            Name = "CF Game Engine Support"
-        },
         Version = "v1",
         Description = "GameEngine API"
     });
 
     options
         .UseRuntimeServer()
-        .UseOpenApiVersionFromConfig();
+        .UseOpenApiVersionFromConfig()
+        .UseOpenApiContactDocumentFilter();
 });
 
 var app = builder.Build();
