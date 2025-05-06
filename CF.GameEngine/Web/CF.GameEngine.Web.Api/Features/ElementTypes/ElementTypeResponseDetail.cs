@@ -3,16 +3,9 @@ using IDFCR.Shared.Abstractions.Records;
 
 namespace CF.GameEngine.Web.Api.Features.ElementTypes;
 
-public record ElementTypeResponseDetail : MappableBase<IElementType>, IElementTypeDetails
+public record ElementTypeResponseDetail : MappableBase<IElementType>, IElementTypeDetails, IElementType
 {
-    protected override IElementType Source => 
-        new Infrastructure.Features.ElementTypes.ElementTypeDto
-        {
-            Key = Key,
-            Name = Name,
-            ExternalReference = ExternalReference,
-            Description = Description
-        };
+    protected override IElementType Source => this;
 
     public string Key { get; set; } = null!;
     public string Name { get; set; } = null!;
