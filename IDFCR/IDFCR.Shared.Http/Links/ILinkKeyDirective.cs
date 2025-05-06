@@ -14,23 +14,25 @@ public record LinkKeyDirectiveOptions(IEnumerable<string> Affixes,
 }
 
     public interface ILinkKeyDirective
-{
-    string SimplifyRel(string value, LinkKeyDirectiveOptions options);
+    {
+        ILinkKeyDirectiveOptions Options { get; }
+        string SimplifyRel(string value);
     ///other methods for externally managing links
-}
+    }
 
 
 /// <summary>
 /// The default <see cref="ILinkKeyDirective"/> implementation."/>
 /// </summary>
-internal class DefaultLinkKeyDirective : ILinkKeyDirective
+internal class DefaultLinkKeyDirective(ILinkKeyDirectiveOptions options) : ILinkKeyDirective
 {
-    public string SimplifyRel(string value, LinkKeyDirectiveOptions options)
+    public ILinkKeyDirectiveOptions Options => options;
+    public string SimplifyRel(string value)
     {
         var newKey = value;
         foreach (var item in options.Affixes)
         {
-            newKey = value.Replace(item, string.Empty, options.StringComparison
+            newKey = newKey.Replace(item, string.Empty, Options.StringComparison
                 .GetValueOrDefault(StringComparison.InvariantCultureIgnoreCase));
         }
 

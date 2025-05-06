@@ -8,7 +8,7 @@ public record Customer(Guid Id, Guid TitleId, string Name, string Email, string 
 
 public class CustomerLinkBuilder : LinkBuilder<Customer>
 {
-    public CustomerLinkBuilder()
+    public CustomerLinkBuilder() : base(new DefaultLinkKeyDirective(LinkKeyDirectiveOptions.Default))
     {
         AddSelf("customer/{id}", expressions: [x => x.Id]);
         AddLink("title/{TitleId}", expressions: [x => x.TitleId]);
@@ -18,7 +18,7 @@ public class CustomerLinkBuilder : LinkBuilder<Customer>
 
 public class DeferredCustomerLinkBuilder : DeferredLinkBuilder<Customer>
 {
-    public DeferredCustomerLinkBuilder()
+    public DeferredCustomerLinkBuilder() : base(new DefaultLinkKeyDirective(LinkKeyDirectiveOptions.Default))
     {
         AddDeferredSelfLink("GetCustomerById", expressions: [x => x.Id]);
         AddDeferredLink("GetTitleById", expressions: [x => x.TitleId]);
@@ -38,7 +38,7 @@ public class MockLinkGenerator : LinkGenerator
 
     public override string? GetPathByAddress<TAddress>(TAddress address, RouteValueDictionary values, PathString pathBase = default, FragmentString fragment = default, LinkOptions? options = null)
     {
-        if(address is string strAddress)
+        if(address is string)
         {
             if (address.Equals("GetCustomerById"))
             {

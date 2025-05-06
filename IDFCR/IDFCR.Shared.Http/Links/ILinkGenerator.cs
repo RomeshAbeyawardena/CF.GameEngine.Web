@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Routing;
-using System.Dynamic;
 using System.Linq.Expressions;
 
 namespace IDFCR.Shared.Http.Links;
@@ -13,7 +12,7 @@ public interface ILinkGenerator<T>
     ILinkCollection GenerateLinks(T value);
 }
 
-internal class LinkGenerator<T>(LinkGenerator linkGenerator,
+internal class LinkGenerator<T>(LinkGenerator linkGenerator, ILinkKeyDirective linkKeyDirective,
     IReadOnlyDictionary<Expression<Func<T, object>>, ILinkReference<T>> links) : ILinkGenerator<T>
 {
     private static readonly LinkExpressionVisitor linkExpressionVisitor = new();
@@ -77,6 +76,6 @@ internal class LinkGenerator<T>(LinkGenerator linkGenerator,
 
     public ILinkCollection GenerateLinks(T value)
     {
-        return new LinkCollection(links.ToDictionary(k => k.Key.Replace("id", string.Empty, StringComparison.InvariantCultureIgnoreCase).ToLower(), k => ProduceLink(k.Value, value)));
+        return new LinkCollection(links.ToDictionary(k => linkKeyDirective.SimplifyRel(k.Key).ToLower(), k => ProduceLink(k.Value, value)));
     }
 }

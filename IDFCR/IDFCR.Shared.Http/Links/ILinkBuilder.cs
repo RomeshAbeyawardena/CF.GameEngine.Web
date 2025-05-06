@@ -26,7 +26,7 @@ public interface ILinkBuilder<T> : ILinkBuilder
     ILinkGenerator<T> Build(LinkGenerator linkGenerator);
 }
 
-public abstract class DeferredLinkBuilder<T> : LinkBuilder<T>
+public abstract class DeferredLinkBuilder<T>(ILinkKeyDirective linkKeyDirective) : LinkBuilder<T>(linkKeyDirective)
 {
     public ILinkBuilder<T> AddDeferredLink(string routeName, string method = "GET", string type = "application/json", string? rel = null,
         params Expression<Func<T, object>>[] expressions)
@@ -42,7 +42,7 @@ public abstract class DeferredLinkBuilder<T> : LinkBuilder<T>
     }
 }
 
-public abstract class LinkBuilder<T> : ILinkBuilder<T>
+public abstract class LinkBuilder<T>(ILinkKeyDirective linkKeyDirective) : ILinkBuilder<T>
 {
     private readonly Dictionary<Expression<Func<T, object>>, ILinkReference<T>> _linkDictionary = [];
     protected IDictionary<Expression<Func<T, object>>, ILinkReference<T>> LinkDictionary => _linkDictionary;
@@ -71,6 +71,6 @@ public abstract class LinkBuilder<T> : ILinkBuilder<T>
 
     public ILinkGenerator<T> Build(LinkGenerator linkGenerator)
     {
-        return new LinkGenerator<T>(linkGenerator, _linkDictionary);
+        return new LinkGenerator<T>(linkGenerator, linkKeyDirective, _linkDictionary);
     }
 }
