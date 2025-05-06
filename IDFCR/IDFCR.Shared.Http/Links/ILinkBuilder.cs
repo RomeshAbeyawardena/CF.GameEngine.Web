@@ -3,7 +3,11 @@ using System.Linq.Expressions;
 
 namespace IDFCR.Shared.Http.Links;
 
-public interface ILinkBuilder<T>
+/// <summary>
+/// Represents a marker interface
+/// </summary>
+public interface ILinkBuilder;
+public interface ILinkBuilder<T> : ILinkBuilder
 {
     ILinkBuilder<T> AddSelf(string hrefTemplate, string method = "GET", string type = "application/json", params Expression<Func<T, object>>[] expressions);
     /// <summary>
