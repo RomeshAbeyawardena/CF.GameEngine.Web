@@ -8,10 +8,9 @@ public record Customer(Guid Id, string Name, string Email, string PhoneNumber, s
 
 public class CustomerLinkBuilder : LinkBuilder<Customer>
 {
-    public CustomerLinkBuilder(LinkGenerator linkGenerator)
+    public CustomerLinkBuilder()
     {
-        var path = linkGenerator.GetPathByName("CustomerById", new { Id = "{id}" });
-        AddSelf(c => c.Id, path);
+        AddSelf("customer/{id}", expressions: [x => x.Id]);
     }
 }
 
@@ -49,8 +48,8 @@ public class Tests
     [Test]
     public void Test1()
     {
-        var builder = new CustomerLinkBuilder(new MockLinkGenerator());
-        var generator = builder.Build();
+        var builder = new CustomerLinkBuilder();
+        var generator = builder.Build(new MockLinkGenerator());
         var links = generator.GenerateLinks(new(Guid.Parse("5a33c641-60dd-47da-be0e-74b5498f3bc1"), "John", "john.doe@customer.net", "0021943322", "32 Baker street"));
     }
 }

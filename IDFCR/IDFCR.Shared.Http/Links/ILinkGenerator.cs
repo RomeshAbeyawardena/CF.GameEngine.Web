@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.AspNetCore.Routing;
+using System.Dynamic;
+using System.Linq.Expressions;
 
 namespace IDFCR.Shared.Http.Links;
 
@@ -11,27 +13,34 @@ public interface ILinkGenerator<T>
     ILinkCollection GenerateLinks(T value);
 }
 
-internal class LinkGenerator<T>(
-    IReadOnlyDictionary<Expression<Func<T, object>>, ILinkReference> links) : ILinkGenerator<T>
+internal class LinkGenerator<T>(LinkGenerator linkGenerator,
+    IReadOnlyDictionary<Expression<Func<T, object>>, ILinkReference<T>> links) : ILinkGenerator<T>
 {
-    private static Dictionary<string, ILink<T>> ResolveLinks(IReadOnlyDictionary<Expression<Func<T, object>>, ILinkReference> links)
+    private static readonly LinkExpressionVisitor linkExpressionVisitor = new();
+    private static string? GetMemberName(Expression<Func<T, object>> expression)
+    {
+        linkExpressionVisitor.Visit(expression);
+        return linkExpressionVisitor.MemberName;
+    }
+
+    private static Dictionary<string, ILink<T>> ResolveLinks(IReadOnlyDictionary<Expression<Func<T, object>>, ILinkReference<T>> links)
     {
         var dictionary = new Dictionary<string, ILink<T>>();
-        LinkExpressionVisitor l = new();
+        
         foreach(var (key, value) in links)
         {
-            l.Visit(key);
-            if (l.MemberName is not null)
+            var memberName = GetMemberName(key);
+            if (!string.IsNullOrWhiteSpace(memberName))
             {
                 var relKey = value.Rel;
                 if (string.IsNullOrWhiteSpace(relKey))
                 {
-                    relKey = l.MemberName;
+                    relKey = memberName;
                 }
 
-                var link = new Link<T>(value.Href, value.Method, value.Type, key)
-                    .AddOrUpdateBag(relKey, l.MemberName);
-                
+                var link = new Link<T>(value.Href, value.Method, value.Type, value.ValueExpressions, value.RouteName)
+                    .AddOrUpdateBag(relKey, memberName);
+
                 dictionary.Add(relKey, link);
             }
         }
@@ -39,23 +48,36 @@ internal class LinkGenerator<T>(
     }
 
 #pragma warning disable CA1859 //Link is not exposed outside of this class
-    private static ILink ProduceLink(ILink<T> link, string key, T value)
+    private ILink ProduceLink(ILink<T> link, T value)
     {
-        var val = link.ValueExpression.Compile()(value);
+        var definitions = link.ValueExpressions.ToDictionary(x => GetMemberName(x) ?? throw new NullReferenceException(),  x => x.Compile()(value));
 
-        if(link.TryGetValue(key, out var aliasKey))
+        var href = link.Href;
+        
+        if (!string.IsNullOrWhiteSpace(href))
         {
-            key = aliasKey;
+            foreach(var (k,v) in definitions)
+            {
+                href = href.Replace($"{{{k}}}", v?.ToString(), StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
+        else
+        {
+            var routeValues = new RouteValueDictionary();
+            foreach (var (k, v) in definitions)
+            {
+                routeValues.Add(k, v);
+            }
+            linkGenerator.GetPathByName(link.RouteName ?? throw new NullReferenceException(), routeValues);
         }
 
-        var href = link.Href.Replace($"{{{key}}}", val.ToString() ?? string.Empty);
-        return new Link(href, link.Method, link.Type);
+        return new Link(href ?? throw new NullReferenceException(), link.Method, link.Type);
     }
 #pragma warning restore CA1859
     private readonly Dictionary<string, ILink<T>> links = ResolveLinks(links);
 
     public ILinkCollection GenerateLinks(T value)
     {
-        return new LinkCollection(links.ToDictionary(k => k.Key, k => ProduceLink(k.Value, k.Key, value)));
+        return new LinkCollection(links.ToDictionary(k => k.Key, k => ProduceLink(k.Value, value)));
     }
 }

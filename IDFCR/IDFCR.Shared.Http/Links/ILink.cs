@@ -2,25 +2,27 @@
 
 namespace IDFCR.Shared.Http.Links;
 
-public interface ILinkReference : ILink
-{
-    string? Rel { get; }
-}
-
 public interface ILinkPlaceholderBag : IReadOnlyDictionary<string, string>
 {
     
 }
 
-public interface ILink<T> : ILink, ILinkPlaceholderBag
+public interface ILink<T> : ILink
 {
-    ILink<T> AddOrUpdateBag(string key, string value);
-    Expression<Func<T, object>> ValueExpression { get; }
+    string? RouteName { get; }
+    //ILink<T> AddOrUpdateBag(string key, string value);
+    IEnumerable<Expression<Func<T, object>>> ValueExpressions { get; }
 }
+
+public interface ILinkReference<T> : ILink<T>
+{
+    string? Rel { get; }
+}
+
 
 public interface ILink
 {
-    string Href { get; }
+    string? Href { get; }
     string Method { get; }
     string Type { get; }
 }
