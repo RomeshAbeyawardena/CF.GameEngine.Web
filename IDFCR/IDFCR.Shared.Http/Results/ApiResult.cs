@@ -24,9 +24,18 @@ public record ApiResult<T>(T Data, int StatusCode) : ApiResult(StatusCode), IApi
                 firstBuilder.Merge(linkBuilders.Skip(1));
             }
             
-            firstBuilder.Build(
-                services.GetRequiredService<LinkGenerator>());
+            var links = firstBuilder.Build(
+                services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data);
+
+            foreach (var (key, value) in links)
+            {
+                if (!Links.TryAdd(key, value))
+                {
+                    Links[key] = value;
+                }
+            }
         }
+       //if there are no builders processing continues without links
     }
 
     public override async Task ExecuteAsync(HttpContext httpContext)
@@ -42,6 +51,8 @@ public record ApiResult(int StatusCode, Exception? Exception = null)
     private readonly Dictionary<string, StringValues> _rewrittenHeaders = [];
     private readonly Dictionary<string, object?> _meta = [];
     private readonly Dictionary<string, object?> _links = [];
+
+    protected IDictionary<string, object?> Links => _links;
 
     protected virtual void OnExecuteAsync(HttpContext httpContext)
     {
@@ -63,7 +74,7 @@ public record ApiResult(int StatusCode, Exception? Exception = null)
             ? new Error(exposableException)
             : new Error(Exception.Message, Exception.StackTrace);
 
-    public IReadOnlyDictionary<string, object?>? Links => _links.Count > 0 ? _links : null;
+    IReadOnlyDictionary<string, object?>? IApiResult.Links => _links.Count > 0 ? _links : null;
     public IReadOnlyDictionary<string, object?>? Meta => _meta.Count > 0 ? _meta : null;
 
     public IApiResult AddHeader(string name, StringValues values)
