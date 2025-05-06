@@ -56,7 +56,7 @@ public abstract class LinkBuilder<T> : ILinkBuilder<T>
 
     public ILinkBuilder<T> AddLink(string hrefTemplate, params Expression<Func<T, object>>[] expressions)
     {
-        return AddLink(hrefTemplate, expressions: expressions);
+        return AddLink(hrefTemplate, "GET", "application/json", expressions: expressions);
     }
 
     public ILinkBuilder<T> AddSelf(string hrefTemplate, string method = "GET", string type = "application/json", params Expression<Func<T, object>>[] expressions)
@@ -66,7 +66,7 @@ public abstract class LinkBuilder<T> : ILinkBuilder<T>
 
     public ILinkBuilder<T> AddSelf(string hrefTemplate, params Expression<Func<T, object>>[] expressions)
     {
-        return AddSelf(hrefTemplate, expressions: expressions);
+        return AddSelf(hrefTemplate, "GET", "application/json",  expressions: expressions);
     }
 
     public ILinkGenerator<T> Build(LinkGenerator linkGenerator)
