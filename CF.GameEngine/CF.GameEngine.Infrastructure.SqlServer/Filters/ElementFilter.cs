@@ -20,14 +20,17 @@ internal class ElementFilter(IElementFilter filter) :
         {
             query = query.And(x => x.ParentElementId == ParentElementId);
         }
+
         if (!string.IsNullOrWhiteSpace(ExternalReference))
         {
             query = query.And(x => x.ExternalReference == ExternalReference);
         }
+
         if (!string.IsNullOrWhiteSpace(Key))
         {
             query = query.And(x => x.Key == Key);
         }
+
         if (!string.IsNullOrWhiteSpace(NameContains))
         {
             query = query.And(x => x.Name.Contains(NameContains));
