@@ -1,23 +1,27 @@
 ﻿using IDFCR.Shared.Http.Links;
+using System.Text.Json.Serialization;
 
 namespace IDFCR.Shared.Http;
 
 public interface IHypermedia<T>
 {
     T Data { get; }
-    IReadOnlyDictionary<string, ILink?> Links { get; }
-    IReadOnlyDictionary<string, object?> Meta { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault)]
+    IReadOnlyDictionary<string, ILink?>? Links { get; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault)]
+    IReadOnlyDictionary<string, object?>? Meta { get; }
 }
 
-public abstract record Hypermedia<T>(T Data) : IHypermedia<T>
+public record Hypermedia<T>(T Data) : IHypermedia<T>
 {
-    IReadOnlyDictionary<string, ILink?> IHypermedia<T>.Links => _links;
-    IReadOnlyDictionary<string, object?> IHypermedia<T>.Meta => _meta;
+    IReadOnlyDictionary<string, ILink?>? IHypermedia<T>.Links => _links.Count > 0 ? _links : null;
+    IReadOnlyDictionary<string, object?>? IHypermedia<T>.Meta => _meta.Count > 0 ? _meta : null;
 
     private readonly Dictionary<string, ILink?> _links = [];
     private readonly Dictionary<string, object?> _meta = [];
 
-    internal Dictionary<string, ILink?> Links => Links;
+    internal Dictionary<string, ILink?> Links => _links;
     internal Dictionary<string, object?> Meta => _meta;
 }
 
