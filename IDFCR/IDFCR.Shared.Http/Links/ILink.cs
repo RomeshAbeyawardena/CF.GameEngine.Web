@@ -4,11 +4,17 @@ namespace IDFCR.Shared.Http.Links;
 
 public interface ILinkReference : ILink
 {
-    string Rel { get; }
+    string? Rel { get; }
 }
 
-public interface ILink<T> : ILink
+public interface ILinkPlaceholderBag : IReadOnlyDictionary<string, string>
 {
+    
+}
+
+public interface ILink<T> : ILink, ILinkPlaceholderBag
+{
+    ILink<T> AddOrUpdateBag(string key, string value);
     Expression<Func<T, object>> ValueExpression { get; }
 }
 

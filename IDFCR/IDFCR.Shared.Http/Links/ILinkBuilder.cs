@@ -1,11 +1,10 @@
 ﻿using System.Linq.Expressions;
-using System.Security.Cryptography.Xml;
 
 namespace IDFCR.Shared.Http.Links;
 
 public interface ILinkBuilder<T>
 {
-    ILinkBuilder<T> AddSelf<TProp>(Expression<Func<T, object>> source, string hrefTemplate, string method = "GET", string type = "application/json");
+    ILinkBuilder<T> AddSelf(Expression<Func<T, object>> source, string hrefTemplate, string method = "GET", string type = "application/json");
     /// <summary>
     /// Resolves to _links: { "{rel}": { "href": "{href_with_replacements_to_placeholders}", "method":"{method}", "type":"{type}" } }
     /// </summary>
@@ -16,7 +15,7 @@ public interface ILinkBuilder<T>
     /// <param name="method"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    ILinkBuilder<T> AddLink(Expression<Func<T,object>> source, string rel, string hrefTemplate, string method = "GET", string type = "application/json");
+    ILinkBuilder<T> AddLink(Expression<Func<T,object>> source, string hrefTemplate, string method = "GET", string type = "application/json", string? rel = null);
     ILinkGenerator<T> Build();
 }
 
@@ -24,15 +23,15 @@ public abstract class LinkBuilder<T> : ILinkBuilder<T>
 {
     private readonly Dictionary<Expression<Func<T, object>>, ILinkReference> _linkDictionary = [];
 
-    public ILinkBuilder<T> AddLink(Expression<Func<T, object>> source, string rel, string hrefTemplate, string method = "GET", string type = "application/json")
+    public ILinkBuilder<T> AddLink(Expression<Func<T, object>> source, string hrefTemplate, string method = "GET", string type = "application/json", string? rel = null)
     {
         _linkDictionary.Add(source, new LinkReference(hrefTemplate, method, type, rel));
         return this;
     }
 
-    public ILinkBuilder<T> AddSelf<TProp>(Expression<Func<T, object>> source, string hrefTemplate, string method = "GET", string type = "application/json")
+    public ILinkBuilder<T> AddSelf(Expression<Func<T, object>> source, string hrefTemplate, string method = "GET", string type = "application/json")
     {
-        _linkDictionary.Add(source, new LinkReference(hrefTemplate, method, type));
+        _linkDictionary.Add(source, new LinkReference(hrefTemplate, method, type, "_self"));
         return this;
     }
 

@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace IDFCR.Shared.Http.Links;
 
@@ -18,13 +17,22 @@ internal class LinkGenerator<T>(
     private static Dictionary<string, ILink<T>> ResolveLinks(IReadOnlyDictionary<Expression<Func<T, object>>, ILinkReference> links)
     {
         var dictionary = new Dictionary<string, ILink<T>>();
-        LinkExpressionVisitor l = new LinkExpressionVisitor();
+        LinkExpressionVisitor l = new();
         foreach(var (key, value) in links)
         {
             l.Visit(key);
             if (l.MemberName is not null)
             {
-                dictionary.Add(l.MemberName, new Link<T>(value.Href, value.Method, value.Type, key));
+                var relKey = value.Rel;
+                if (string.IsNullOrWhiteSpace(relKey))
+                {
+                    relKey = l.MemberName;
+                }
+
+                var link = new Link<T>(value.Href, value.Method, value.Type, key)
+                    .AddOrUpdateBag(relKey, l.MemberName);
+                
+                dictionary.Add(relKey, link);
             }
         }
         return dictionary;
@@ -34,6 +42,12 @@ internal class LinkGenerator<T>(
     private static ILink ProduceLink(ILink<T> link, string key, T value)
     {
         var val = link.ValueExpression.Compile()(value);
+
+        if(link.TryGetValue(key, out var aliasKey))
+        {
+            key = aliasKey;
+        }
+
         var href = link.Href.Replace($"{{{key}}}", val.ToString() ?? string.Empty);
         return new Link(href, link.Method, link.Type);
     }
