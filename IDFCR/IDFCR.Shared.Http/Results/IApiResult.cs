@@ -14,10 +14,14 @@ public interface IApiResult : IResult
         | JsonIgnoreCondition.WhenWritingDefault)]
     IError? Error { get; }
     
-    [JsonPropertyName("_meta"),
-     JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull
         | JsonIgnoreCondition.WhenWritingDefault)]
     IReadOnlyDictionary<string, object?>? Meta { get; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull
+        | JsonIgnoreCondition.WhenWritingDefault)]
+    IReadOnlyDictionary<string, object?>? Links { get; }
+
     IApiResult AddHeader(string name, StringValues values);
     IApiResult AppendMeta(IDictionary<string, object?> values);
 }

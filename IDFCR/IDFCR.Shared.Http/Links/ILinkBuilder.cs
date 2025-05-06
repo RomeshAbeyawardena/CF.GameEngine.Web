@@ -24,6 +24,8 @@ public interface ILinkBuilder<T> : ILinkBuilder
     ILinkBuilder<T> AddLink(string hrefTemplate, string method = "GET", string type = "application/json", string? rel = null, params Expression<Func<T, object>>[] expressions);
     ILinkBuilder<T> AddLink(string hrefTemplate, params Expression<Func<T, object>>[] expressions);
     ILinkGenerator<T> Build(LinkGenerator linkGenerator);
+    ILinkBuilder<T> Merge(IEnumerable<ILinkBuilder<T>> linkBuilders);
+    IReadOnlyDictionary<Expression<Func<T, object>>, ILinkReference<T>> LinkDictionary { get; }
 }
 
 public abstract class DeferredLinkBuilder<T>(ILinkKeyDirective linkKeyDirective) : LinkBuilder<T>(linkKeyDirective)
@@ -44,8 +46,10 @@ public abstract class DeferredLinkBuilder<T>(ILinkKeyDirective linkKeyDirective)
 
 public abstract class LinkBuilder<T>(ILinkKeyDirective linkKeyDirective) : ILinkBuilder<T>
 {
-    private readonly Dictionary<Expression<Func<T, object>>, ILinkReference<T>> _linkDictionary = [];
+    internal readonly Dictionary<Expression<Func<T, object>>, ILinkReference<T>> _linkDictionary = [];
     protected IDictionary<Expression<Func<T, object>>, ILinkReference<T>> LinkDictionary => _linkDictionary;
+
+    IReadOnlyDictionary<Expression<Func<T, object>>, ILinkReference<T>> ILinkBuilder<T>.LinkDictionary => _linkDictionary;
 
     public ILinkBuilder<T> AddLink(string hrefTemplate, string method = "GET", string type = "application/json", string? rel = null, params Expression<Func<T, object>>[] expressions)
     {
@@ -72,5 +76,17 @@ public abstract class LinkBuilder<T>(ILinkKeyDirective linkKeyDirective) : ILink
     public ILinkGenerator<T> Build(LinkGenerator linkGenerator)
     {
         return new LinkGenerator<T>(linkGenerator, linkKeyDirective, _linkDictionary);
+    }
+
+    public ILinkBuilder<T> Merge(IEnumerable<ILinkBuilder<T>> linkBuilders)
+    {
+        foreach(var linkBuilder in linkBuilders)
+        {
+            linkBuilder.LinkDictionary
+                .ToList()
+                .ForEach(x => _linkDictionary.TryAdd(x.Key, x.Value));
+        }
+
+        return this;
     }
 }

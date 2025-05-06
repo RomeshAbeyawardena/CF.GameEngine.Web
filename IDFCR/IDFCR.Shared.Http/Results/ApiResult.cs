@@ -1,6 +1,8 @@
 ﻿using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Http.Abstractions;
+using IDFCR.Shared.Http.Links;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 
@@ -8,6 +10,25 @@ namespace IDFCR.Shared.Http.Results;
 
 public record ApiResult<T>(T Data, int StatusCode) : ApiResult(StatusCode), IApiResult<T>
 {
+    protected override void OnExecuteAsync(HttpContext httpContext)
+    {
+        base.OnExecuteAsync(httpContext);
+        var services = httpContext.RequestServices;
+        var linkBuilders = services.GetServices<ILinkBuilder<T>>();
+        var firstBuilder = linkBuilders.FirstOrDefault();
+
+        if(firstBuilder is not null)
+        {
+            if(linkBuilders.Count() > 1)
+            {
+                firstBuilder.Merge(linkBuilders.Skip(1));
+            }
+            
+            firstBuilder.Build(
+                services.GetRequiredService<LinkGenerator>());
+        }
+    }
+
     public override async Task ExecuteAsync(HttpContext httpContext)
     {
         OnExecuteAsync(httpContext);
@@ -20,8 +41,9 @@ public record ApiResult(int StatusCode, Exception? Exception = null)
 {
     private readonly Dictionary<string, StringValues> _rewrittenHeaders = [];
     private readonly Dictionary<string, object?> _meta = [];
+    private readonly Dictionary<string, object?> _links = [];
 
-    protected void OnExecuteAsync(HttpContext httpContext)
+    protected virtual void OnExecuteAsync(HttpContext httpContext)
     {
         var timeProvider = httpContext.RequestServices.GetRequiredService<TimeProvider>();
         RequestedTimestampUtc = timeProvider.GetUtcNow();
@@ -41,6 +63,7 @@ public record ApiResult(int StatusCode, Exception? Exception = null)
             ? new Error(exposableException)
             : new Error(Exception.Message, Exception.StackTrace);
 
+    public IReadOnlyDictionary<string, object?>? Links => _links.Count > 0 ? _links : null;
     public IReadOnlyDictionary<string, object?>? Meta => _meta.Count > 0 ? _meta : null;
 
     public IApiResult AddHeader(string name, StringValues values)
