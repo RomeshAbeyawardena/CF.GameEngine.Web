@@ -30,13 +30,14 @@ internal class LinkGenerator<T>(
         return dictionary;
     }
 
+#pragma warning disable CA1859 //Link is not exposed outside of this class
     private static ILink ProduceLink(ILink<T> link, string key, T value)
     {
         var val = link.ValueExpression.Compile()(value);
         var href = link.Href.Replace($"{{{key}}}", val.ToString() ?? string.Empty);
         return new Link(href, link.Method, link.Type);
     }
-
+#pragma warning restore CA1859
     private readonly Dictionary<string, ILink<T>> links = ResolveLinks(links);
 
     public ILinkCollection GenerateLinks(T value)
