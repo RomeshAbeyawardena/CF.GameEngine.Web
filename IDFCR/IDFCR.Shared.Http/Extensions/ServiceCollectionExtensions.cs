@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using IDFCR.Shared.Http.Links;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace IDFCR.Shared.Http.Links;
+namespace IDFCR.Shared.Http.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection ConfigureLinks<TTargetAssemblyClass>(this IServiceCollection services)
+    public static IServiceCollection AddLinkDependencies<TTargetAssemblyClass>(this IServiceCollection services)
     {
         services.AddSingleton<ILinkKeyDirective, DefaultLinkKeyDirective>();
         services.AddSingleton<ILinkKeyDirectiveOptions>(LinkKeyDirectiveOptions.Default);

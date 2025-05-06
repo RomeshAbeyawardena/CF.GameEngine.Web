@@ -17,7 +17,7 @@ public static class Endpoints
         return result.ToApiResult(Route.BaseUrl);
     }
 
-    public static async Task<IResult> GetElementTypeAsync([FromRoute] Guid id,
+    public static async Task<IResult> FindElementTypeAsync([FromRoute] Guid id,
         IMediator mediator,
         CancellationToken cancellationToken)
     {
@@ -34,8 +34,8 @@ public static class Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        builder.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), GetElementTypeAsync)
-            .WithName(nameof(GetElementTypeAsync))
+        builder.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), FindElementTypeAsync)
+            .WithName(nameof(FindElementTypeAsync))
             .WithTags(Route.Tag)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)

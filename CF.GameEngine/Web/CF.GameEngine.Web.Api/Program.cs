@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services
     .AddSingleton(TimeProvider.System)
     .AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>())
+    .AddLinkDependencies<Program>()
     .AddBackendDependencies("GameEngineDb")
     .AddEndpointsApiExplorer()
     .AddHttpContextAccessor();

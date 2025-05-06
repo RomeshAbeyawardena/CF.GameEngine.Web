@@ -9,9 +9,9 @@ internal class ElementTypeFilter(IElementTypeFilter filter) : FilterBase<IElemen
 {
     protected override IElementTypeFilter Source => this;
 
-    public string? ExternalReference { get; } = filter.ExternalReference;
-    public string? Key { get; } = filter.Key;
-    public string? NameContains { get; } = filter.NameContains;
+    public string? ExternalReference { get; set; }
+    public string? Key { get; set; }
+    public string? NameContains { get; set; }
 
     public override ExpressionStarter<ElementType> ApplyFilter(ExpressionStarter<ElementType> query, IElementTypeFilter filter)
     {
@@ -35,6 +35,8 @@ internal class ElementTypeFilter(IElementTypeFilter filter) : FilterBase<IElemen
 
     public override void Map(IElementTypeFilter source)
     {
-        throw MappingNotSupportedException;
+        ExternalReference = source.ExternalReference;
+        Key = source.Key;
+        NameContains = source.NameContains;
     }
 }
