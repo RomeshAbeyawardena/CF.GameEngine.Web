@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Security.Cryptography.Xml;
 
 namespace IDFCR.Shared.Http.Links;
 
@@ -37,6 +38,6 @@ public abstract class LinkBuilder<T> : ILinkBuilder<T>
 
     public ILinkGenerator<T> Build()
     {
-        throw new NotImplementedException();
+        return new LinkGenerator<T>(_linkDictionary);
     }
 }
