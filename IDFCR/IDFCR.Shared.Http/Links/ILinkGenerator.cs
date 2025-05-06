@@ -67,7 +67,7 @@ internal class LinkGenerator<T>(LinkGenerator linkGenerator,
             {
                 routeValues.Add(k, v);
             }
-            linkGenerator.GetPathByName(link.RouteName ?? throw new NullReferenceException(), routeValues);
+            href = linkGenerator.GetPathByName(link.RouteName ?? throw new NullReferenceException(), routeValues);
         }
 
         return new Link(href ?? throw new NullReferenceException(), link.Method, link.Type);
