@@ -5,6 +5,7 @@ namespace IDFCR.Shared.Abstractions;
 public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<TFilter, TDb>
     where TFilter : IFilter<TFilter>
 {
+    protected NotSupportedException MappingNotSupportedException => new("This is a low-level filter, use the constructor parameter to map it as the parameters are read-only in this state");
     protected FilterBase(TFilter? targetFilter = default)
     {
         if (targetFilter is not null)

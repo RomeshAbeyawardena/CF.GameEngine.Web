@@ -9,25 +9,25 @@ internal class ElementTypeFilter(IElementTypeFilter filter) : FilterBase<IElemen
 {
     protected override IElementTypeFilter Source => this;
 
-    public string? ExternalReference { get; set; }
-    public string? Key { get; set; }
-    public string? NameContains { get; set; }
+    public string? ExternalReference { get; } = filter.ExternalReference;
+    public string? Key { get; } = filter.Key;
+    public string? NameContains { get; } = filter.NameContains;
 
     public override ExpressionStarter<ElementType> ApplyFilter(ExpressionStarter<ElementType> query, IElementTypeFilter filter)
     {
-        if (!string.IsNullOrWhiteSpace(filter.ExternalReference))
+        if (!string.IsNullOrWhiteSpace(ExternalReference))
         {
-            query = query.And(x => x.ExternalReference == filter.ExternalReference);
+            query = query.And(x => x.ExternalReference == ExternalReference);
         }
 
-        if (!string.IsNullOrWhiteSpace(filter.Key))
+        if (!string.IsNullOrWhiteSpace(Key))
         {
-            query = query.And(x => x.Key == filter.Key);
+            query = query.And(x => x.Key == Key);
         }
 
-        if (!string.IsNullOrWhiteSpace(filter.NameContains))
+        if (!string.IsNullOrWhiteSpace(NameContains))
         {
-            query = query.And(x => x.Name.Contains(filter.NameContains));
+            query = query.And(x => x.Name.Contains(NameContains));
         }
 
         return base.ApplyFilter(query, filter);
@@ -35,8 +35,6 @@ internal class ElementTypeFilter(IElementTypeFilter filter) : FilterBase<IElemen
 
     public override void Map(IElementTypeFilter source)
     {
-        ExternalReference = source.ExternalReference;
-        Key = source.Key;
-        NameContains = source.NameContains;
+        throw MappingNotSupportedException;
     }
 }
