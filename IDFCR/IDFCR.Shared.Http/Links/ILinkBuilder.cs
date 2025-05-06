@@ -10,6 +10,7 @@ public interface ILinkBuilder;
 public interface ILinkBuilder<T> : ILinkBuilder
 {
     ILinkBuilder<T> AddSelf(string hrefTemplate, string method = "GET", string type = "application/json", params Expression<Func<T, object>>[] expressions);
+    ILinkBuilder<T> AddSelf(string hrefTemplate, params Expression<Func<T, object>>[] expressions);
     /// <summary>
     /// Resolves to _links: { "{rel}": { "href": "{href_with_replacements_to_placeholders}", "method":"{method}", "type":"{type}" } }
     /// </summary>
@@ -21,6 +22,7 @@ public interface ILinkBuilder<T> : ILinkBuilder
     /// <param name="type"></param>
     /// <returns></returns>
     ILinkBuilder<T> AddLink(string hrefTemplate, string method = "GET", string type = "application/json", string? rel = null, params Expression<Func<T, object>>[] expressions);
+    ILinkBuilder<T> AddLink(string hrefTemplate, params Expression<Func<T, object>>[] expressions);
     ILinkGenerator<T> Build(LinkGenerator linkGenerator);
 }
 
@@ -46,9 +48,19 @@ public abstract class LinkBuilder<T> : ILinkBuilder<T>
         return this;
     }
 
+    public ILinkBuilder<T> AddLink(string hrefTemplate, params Expression<Func<T, object>>[] expressions)
+    {
+        return AddLink(hrefTemplate, expressions: expressions);
+    }
+
     public ILinkBuilder<T> AddSelf(string hrefTemplate, string method = "GET", string type = "application/json", params Expression<Func<T, object>>[] expressions)
     {
         return AddLink(hrefTemplate, method, type, "_self", expressions);
+    }
+
+    public ILinkBuilder<T> AddSelf(string hrefTemplate, params Expression<Func<T, object>>[] expressions)
+    {
+        return AddSelf(hrefTemplate, expressions: expressions);
     }
 
     public ILinkGenerator<T> Build(LinkGenerator linkGenerator)
