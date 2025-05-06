@@ -7,17 +7,6 @@ internal record LinkReference<T>(string? Href, string Method, string Type, IEnum
 
 internal record Link<T>(string? Href, string Method, string Type, IEnumerable<Expression<Func<T, object>>> ValueExpressions, 
     string? RouteName = null)
-    : LinkPlaceholderBag, ILink<T>
-{
-    public ILink<T> AddOrUpdateBag(string key, string value)
-    {
-        if(!PlaceholderBag.TryAdd(key, value))
-        {
-            PlaceholderBag[key] = value;
-        };
-
-        return this;
-    }
-}
+    : ILink<T>;
 
 internal record Link(string Href, string Method, string Type) : ILink;

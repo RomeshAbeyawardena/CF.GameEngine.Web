@@ -38,8 +38,7 @@ internal class LinkGenerator<T>(LinkGenerator linkGenerator,
                     relKey = memberName;
                 }
 
-                var link = new Link<T>(value.Href, value.Method, value.Type, value.ValueExpressions, value.RouteName)
-                    .AddOrUpdateBag(relKey, memberName);
+                var link = new Link<T>(value.Href, value.Method, value.Type, value.ValueExpressions, value.RouteName);
 
                 dictionary.Add(relKey, link);
             }
@@ -78,6 +77,6 @@ internal class LinkGenerator<T>(LinkGenerator linkGenerator,
 
     public ILinkCollection GenerateLinks(T value)
     {
-        return new LinkCollection(links.ToDictionary(k => k.Key, k => ProduceLink(k.Value, value)));
+        return new LinkCollection(links.ToDictionary(k => k.Key.Replace("id", string.Empty, StringComparison.InvariantCultureIgnoreCase).ToLower(), k => ProduceLink(k.Value, value)));
     }
 }

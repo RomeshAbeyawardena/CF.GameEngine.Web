@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Routing;
 
 namespace IDFCR.Shared.Http.Tests;
 
-public record Customer(Guid Id, string Name, string Email, string PhoneNumber, string Address);
+public record Customer(Guid Id, Guid TitleId, string Name, string Email, string PhoneNumber, string Address);
 
 public class CustomerLinkBuilder : LinkBuilder<Customer>
 {
     public CustomerLinkBuilder()
     {
         AddSelf("customer/{id}", expressions: [x => x.Id]);
+        AddLink("title/{TitleId}", expressions: [x => x.TitleId]);
     }
 }
 
@@ -50,6 +51,16 @@ public class Tests
     {
         var builder = new CustomerLinkBuilder();
         var generator = builder.Build(new MockLinkGenerator());
-        var links = generator.GenerateLinks(new(Guid.Parse("5a33c641-60dd-47da-be0e-74b5498f3bc1"), "John", "john.doe@customer.net", "0021943322", "32 Baker street"));
+        var id = Guid.Parse("5a33c641-60dd-47da-be0e-74b5498f3bc1");
+        var titleId = Guid.Parse("b9229284-6894-417e-b4a6-af8cc99eb5b0");
+        var links = generator.GenerateLinks(new(id, titleId, "John", "john.doe@customer.net", "0021943322", "32 Baker street"));
+
+        Assert.That(links, Has.Count.EqualTo(2));
+        Assert.That(links.TryGetValue("_self", out var self), Is.True);
+        Assert.That(self, Is.Not.Null);
+        Assert.That(self.Href, Is.EqualTo($"customer/{id}"));
+        Assert.That(links.TryGetValue("title", out var title), Is.True);
+        Assert.That(title, Is.Not.Null);
+        Assert.That(title.Href, Is.EqualTo($"title/{titleId}"));
     }
 }
