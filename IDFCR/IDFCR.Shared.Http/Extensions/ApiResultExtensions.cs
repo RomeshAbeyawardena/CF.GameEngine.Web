@@ -55,11 +55,11 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
-    public static IApiResult NegotiateResult<T>(this IUnitResult<T> result, IHttpContextAccessor contextAccessor, string location = null)
+    public static IApiResult NegotiateResult<T>(this IUnitResult<T> result, IHttpContextAccessor contextAccessor, string? location = null)
     {
         var context = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
 
-        var acceptHeader = context.Request.Headers["Accept"].ToString();
+        var acceptHeader = context.Request.Headers.Accept.ToString();
 
         if (acceptHeader.Contains("application/hal+json"))
         {
@@ -67,6 +67,11 @@ public static class ApiResultExtensions
         }
 
         //Defaults to JSON
+        if (string.IsNullOrWhiteSpace(location))
+        {
+            return result.ToApiResult();
+        }
+
         return result.ToApiResult(location);
     }
 
