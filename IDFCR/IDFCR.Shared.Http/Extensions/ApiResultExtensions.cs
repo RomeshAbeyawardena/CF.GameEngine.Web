@@ -54,4 +54,37 @@ public static class ApiResultExtensions
 
         return apiResult;
     }
+
+    public static IApiResult ToHypermediaResult<T>(this IUnitResult<T> result, string? location = null)
+    {
+        var statusCode = GetStatusCode(result.Action);
+
+        if (result.IsSuccess && result.Result is not null)
+        {
+            // Handle collection
+            if (result.Result is IEnumerable<T> enumerable && typeof(T) != typeof(string))
+            {
+                var listResult = new HypermediaApiListResult<T>(enumerable, statusCode);
+                listResult.AppendMeta(result.ToDictionary());
+                return listResult;
+            }
+
+            // Handle single
+            var singleResult = new HypermediaApiResult<T>(result.Result, statusCode);
+            singleResult.AppendMeta(result.ToDictionary());
+
+            if (location is not null && result.Action == UnitAction.Add)
+            {
+                singleResult.AddHeader("Location", $"{location}/{result.Result}");
+            }
+
+            return singleResult;
+        }
+
+        // Failure fallback
+        var errorResult = new ApiResult(statusCode, result.Exception);
+        errorResult.AppendMeta(result.ToDictionary());
+        return errorResult;
+    }
+
 }
