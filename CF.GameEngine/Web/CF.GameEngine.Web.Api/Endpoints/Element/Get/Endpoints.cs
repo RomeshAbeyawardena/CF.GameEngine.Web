@@ -8,7 +8,7 @@ namespace CF.GameEngine.Web.Api.Endpoints.Element.Get;
 public static class Endpoints
 {
     public static async Task<IResult> GetPagedElementsAsync(
-        [AsParameters]ElementQuery query,
+        [AsParameters]ElementQuery query, IHttpContextAccessor contextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(query, cancellationToken);
@@ -16,11 +16,11 @@ public static class Endpoints
         return result.ToHypermediaResult(Route.BaseUrl);
     }
 
-    public static async Task<IResult> FindElementAsync(Guid id,
+    public static async Task<IResult> FindElementAsync(Guid id, IHttpContextAccessor contextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new ElementFindQuery(id), cancellationToken);
-        return result.ToHypermediaResult(Route.BaseUrl);
+        return result.NegotiateResult(contextAccessor, Route.BaseUrl);
     }
 
     public static IEndpointRouteBuilder AddGetElementEndpoints(this IEndpointRouteBuilder builder)
