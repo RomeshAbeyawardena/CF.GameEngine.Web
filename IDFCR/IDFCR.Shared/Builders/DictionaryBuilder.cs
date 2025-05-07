@@ -10,7 +10,7 @@ public interface IDictionaryBuilder<TKey, TValue>
     Dictionary<TKey, TValue> Build();
 }
 
-internal class DictionaryBuilder<TKey, TValue> : IDictionaryBuilder<TKey, TValue>
+public class DictionaryBuilder<TKey, TValue> : IDictionaryBuilder<TKey, TValue>
     where TKey : notnull
 {
     private readonly ConcurrentDictionary<TKey, TValue> _dictionary = [];

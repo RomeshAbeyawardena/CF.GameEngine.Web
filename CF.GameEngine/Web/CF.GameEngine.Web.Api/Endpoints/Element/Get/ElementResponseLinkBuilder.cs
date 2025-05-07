@@ -8,6 +8,8 @@ public class ElementResponseLinkBuilder : DeferredLinkBuilder<ElementResponse>
     public ElementResponseLinkBuilder(ILinkKeyDirective linkKeyDirective) : base(linkKeyDirective)
     {
         AddDeferredSelfLink(nameof(Endpoints.FindElementAsync), expressions: [x => x.Id]);
-        AddDeferredLink(nameof(ElementTypeEndpoint.FindElementTypeAsync), expressions: [x => x.ElementTypeId]);
+        AddDeferredLink(nameof(ElementTypeEndpoint.FindElementTypeAsync), 
+            expressionResolver: c=>c.AddOrUpdate(x => x.ElementTypeId, "id"), 
+            expressions: [x => x.ElementTypeId]);
     }
 }

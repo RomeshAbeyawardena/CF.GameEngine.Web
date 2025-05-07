@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Routing;
+﻿using IDFCR.Shared.Builders;
+using Microsoft.AspNetCore.Routing;
 using System.Linq.Expressions;
 
 namespace IDFCR.Shared.Http.Links;
@@ -31,16 +32,21 @@ public interface ILinkBuilder<T> : ILinkBuilder
 public abstract class DeferredLinkBuilder<T>(ILinkKeyDirective linkKeyDirective) : LinkBuilder<T>(linkKeyDirective)
 {
     public ILinkBuilder<T> AddDeferredLink(string routeName, string method = "GET", string type = "application/json", string? rel = null,
-        params Expression<Func<T, object>>[] expressions)
+        Action<IDictionaryBuilder<Expression<Func<T, object>>, string>>? expressionResolver = null, params Expression<Func<T, object>>[] expressions)
     {
+        var dictionaryBuilder = new DictionaryBuilder<Expression<Func<T, object>>, string>();
+        expressionResolver?.Invoke(dictionaryBuilder);
+
         LinkDictionary.Add(expressions.FirstOrDefault() ?? throw new NullReferenceException("Must have an expression"), 
-            new LinkReference<T>(null, method, type, expressions, rel, routeName));
+            new LinkReference<T>(null, method, type, expressions, rel, routeName, dictionaryBuilder.Build()));
         return this;
     }
 
-    public ILinkBuilder<T> AddDeferredSelfLink(string routeName, string method = "GET", string type = "application/json", params Expression<Func<T, object>>[] expressions)
+    public ILinkBuilder<T> AddDeferredSelfLink(string routeName, string method = "GET", string type = "application/json",
+        Action<IDictionaryBuilder<Expression<Func<T, object>>, string>>? expressionResolver = null,
+        params Expression<Func<T, object>>[] expressions)
     {
-        return AddDeferredLink(routeName, method, type, "_self", expressions);
+        return AddDeferredLink(routeName, method, type, "_self", expressionResolver, expressions);
     }
 }
 

@@ -10,7 +10,7 @@ public interface ILinkPlaceholderBag : IReadOnlyDictionary<string, string>
 public interface ILink<T> : ILink
 {
     string? RouteName { get; }
-    //ILink<T> AddOrUpdateBag(string key, string value);
+    IReadOnlyDictionary<Expression<Func<T, object>>, string>? ExpressionResolver { get; }
     IEnumerable<Expression<Func<T, object>>> ValueExpressions { get; }
 }
 

@@ -62,9 +62,17 @@ internal class LinkGenerator<T>(LinkGenerator linkGenerator, ILinkKeyDirective l
         else
         {
             var routeValues = new RouteValueDictionary();
+            if (link.ExpressionResolver != null)
+            {
+
+            }
+
             foreach (var (k, v) in definitions)
             {
-                routeValues.Add(k, v);
+                if (link.ExpressionResolver != null)
+                {
+                    routeValues.Add(k, v);
+                }
             }
             href = linkGenerator.GetPathByName(link.RouteName ?? throw new NullReferenceException(), routeValues);
         }
