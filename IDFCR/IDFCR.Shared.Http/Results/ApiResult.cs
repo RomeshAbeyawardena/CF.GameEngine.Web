@@ -1,6 +1,5 @@
 ﻿using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Http.Abstractions;
-using IDFCR.Shared.Http.Extensions;
 using IDFCR.Shared.Http.Links;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -9,99 +8,79 @@ using Microsoft.Extensions.Primitives;
 
 namespace IDFCR.Shared.Http.Results;
 
-public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode) : ApiResult<IHypermedia<T>>(new Hypermedia<T>(RawData), StatusCode), IApiResult<IHypermedia<T>>
+public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode) 
+    : ApiResult<IHypermediaCollection<T>>(new HypermediaCollection<T>(RawData), StatusCode)
 {
-    //protected override void OnExecuteAsync(HttpContext httpContext)
-    //{
-    //    base.OnExecuteAsync(httpContext);
-    //    //var services = httpContext.RequestServices;
-    //    //var linkBuilders = services.GetServices<ILinkBuilder<T>>();
-    //    //var firstBuilder = linkBuilders.FirstOrDefault();
+    protected override void OnExecuteAsync(HttpContext httpContext)
+    {
+        base.OnExecuteAsync(httpContext);
+        var services = httpContext.RequestServices;
+        var linkBuilders = services.GetServices<ILinkBuilder<T>>();
+        var firstBuilder = linkBuilders.FirstOrDefault();
 
-    //    //if(firstBuilder is not null)
-    //    //{
-    //    //    if(linkBuilders.Count() > 1)
-    //    //    {
-    //    //        firstBuilder.Merge(linkBuilders.Skip(1));
-    //    //    }
+        if (firstBuilder is not null)
+        {
+            if (linkBuilders.Count() > 1)
+            {
+                firstBuilder.Merge(linkBuilders.Skip(1));
+            }
 
-    //    //    var links = firstBuilder.Build(
-    //    //        services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data);
+            
+            foreach (var entry in Data)
+            {
+                var wrapper = entry as Hypermedia<T> ?? throw new InvalidCastException("Not a wrapper of Hypermedia");
+                var links = firstBuilder.Build(
+                    services.GetRequiredService<LinkGenerator>()).GenerateLinks(entry.Data);
 
-    //    //    foreach (var (key, value) in links)
-    //    //    {
-    //    //        if (!Links.TryAdd(key, value))
-    //    //        {
-    //    //            Links[key] = value;
-    //    //        }
-    //    //    }
-    //    //}
-    //   //if there are no builders processing continues without links
-    //}
+                foreach (var (key, value) in links)
+                {
+                    if (!wrapper.Links.TryAdd(key, value))
+                    {
+                        wrapper.Links[key] = value;
+                    }
+                }
+            }
+        }
+        //if there are no builders processing continues without links
+    }
 }
 
 public record HypermediaApiResult<T>(T RawData, int StatusCode) : ApiResult<IHypermedia<T>>(new Hypermedia<T>(RawData), StatusCode), IApiResult<IHypermedia<T>>
 {
-    //protected override void OnExecuteAsync(HttpContext httpContext)
-    //{
-    //    base.OnExecuteAsync(httpContext);
-    //    //var services = httpContext.RequestServices;
-    //    //var linkBuilders = services.GetServices<ILinkBuilder<T>>();
-    //    //var firstBuilder = linkBuilders.FirstOrDefault();
+    protected override void OnExecuteAsync(HttpContext httpContext)
+    {
+        base.OnExecuteAsync(httpContext);
+        var services = httpContext.RequestServices;
+        var linkBuilders = services.GetServices<ILinkBuilder<T>>();
+        var firstBuilder = linkBuilders.FirstOrDefault();
 
-    //    //if(firstBuilder is not null)
-    //    //{
-    //    //    if(linkBuilders.Count() > 1)
-    //    //    {
-    //    //        firstBuilder.Merge(linkBuilders.Skip(1));
-    //    //    }
+        if (firstBuilder is not null)
+        {
+            if (linkBuilders.Count() > 1)
+            {
+                firstBuilder.Merge(linkBuilders.Skip(1));
+            }
 
-    //    //    var links = firstBuilder.Build(
-    //    //        services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data);
+            var links = firstBuilder.Build(
+                services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data.Data);
 
-    //    //    foreach (var (key, value) in links)
-    //    //    {
-    //    //        if (!Links.TryAdd(key, value))
-    //    //        {
-    //    //            Links[key] = value;
-    //    //        }
-    //    //    }
-    //    //}
-    //   //if there are no builders processing continues without links
-    //}
+            var wrapper = Data as Hypermedia<T> ?? throw new InvalidCastException("Not a wrapper of Hypermedia");
+
+            foreach (var (key, value) in links)
+            {
+                if (!wrapper.Links.TryAdd(key, value))
+                {
+                    wrapper.Links[key] = value;
+                }
+            }
+        }
+        //if there are no builders processing continues without links
+    }
 }
 
 
 public record ApiResult<T>(T Data, int StatusCode) : ApiResult(StatusCode), IApiResult<T>
 {
-    //protected override void OnExecuteAsync(HttpContext httpContext)
-    //{
-    //    base.OnExecuteAsync(httpContext);
-    //    //var services = httpContext.RequestServices;
-    //    //var linkBuilders = services.GetServices<ILinkBuilder<T>>();
-    //    //var firstBuilder = linkBuilders.FirstOrDefault();
-
-    //    //if(firstBuilder is not null)
-    //    //{
-    //    //    if(linkBuilders.Count() > 1)
-    //    //    {
-    //    //        firstBuilder.Merge(linkBuilders.Skip(1));
-    //    //    }
-            
-    //    //    var links = firstBuilder.Build(
-    //    //        services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data);
-
-    //    //    foreach (var (key, value) in links)
-    //    //    {
-    //    //        if (!Links.TryAdd(key, value))
-    //    //        {
-    //    //            Links[key] = value;
-    //    //        }
-    //    //    }
-    //    //}
-    //   //if there are no builders processing continues without links
-    //}
-
     public override async Task ExecuteAsync(HttpContext httpContext)
     {
         OnExecuteAsync(httpContext);
@@ -138,7 +117,6 @@ public record ApiResult(int StatusCode, Exception? Exception = null)
             ? new Error(exposableException)
             : new Error(Exception.Message, Exception.StackTrace);
 
-    IReadOnlyDictionary<string, object?>? IApiResult.Links => _links.Count > 0 ? _links : null;
     public IReadOnlyDictionary<string, object?>? Meta => _meta.Count > 0 ? _meta : null;
 
     public IApiResult AddHeader(string name, StringValues values)
