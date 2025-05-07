@@ -9,6 +9,37 @@ using Microsoft.Extensions.Primitives;
 
 namespace IDFCR.Shared.Http.Results;
 
+public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode) : ApiResult<IHypermedia<T>>(new Hypermedia<T>(RawData), StatusCode), IApiResult<IHypermedia<T>>
+{
+    //protected override void OnExecuteAsync(HttpContext httpContext)
+    //{
+    //    base.OnExecuteAsync(httpContext);
+    //    //var services = httpContext.RequestServices;
+    //    //var linkBuilders = services.GetServices<ILinkBuilder<T>>();
+    //    //var firstBuilder = linkBuilders.FirstOrDefault();
+
+    //    //if(firstBuilder is not null)
+    //    //{
+    //    //    if(linkBuilders.Count() > 1)
+    //    //    {
+    //    //        firstBuilder.Merge(linkBuilders.Skip(1));
+    //    //    }
+
+    //    //    var links = firstBuilder.Build(
+    //    //        services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data);
+
+    //    //    foreach (var (key, value) in links)
+    //    //    {
+    //    //        if (!Links.TryAdd(key, value))
+    //    //        {
+    //    //            Links[key] = value;
+    //    //        }
+    //    //    }
+    //    //}
+    //   //if there are no builders processing continues without links
+    //}
+}
+
 public record HypermediaApiResult<T>(T RawData, int StatusCode) : ApiResult<IHypermedia<T>>(new Hypermedia<T>(RawData), StatusCode), IApiResult<IHypermedia<T>>
 {
     //protected override void OnExecuteAsync(HttpContext httpContext)
