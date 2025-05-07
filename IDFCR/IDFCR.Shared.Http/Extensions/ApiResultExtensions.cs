@@ -55,6 +55,21 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
+    public static IApiResult NegotiateResult<T>(this IUnitResult<T> result, IHttpContextAccessor contextAccessor, string location = null)
+    {
+        var context = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
+
+        var acceptHeader = context.Request.Headers["Accept"].ToString();
+
+        if (acceptHeader.Contains("application/hal+json"))
+        {
+            return result.ToHypermediaResult(location);
+        }
+
+        //Defaults to JSON
+        return result.ToApiResult(location);
+    }
+
     public static IApiResult ToHypermediaResult<T>(this IUnitResult<T> result, string? location = null)
     {
         var statusCode = GetStatusCode(result.Action);
