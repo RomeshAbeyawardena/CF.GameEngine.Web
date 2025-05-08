@@ -12,7 +12,7 @@ public class Element : MappableBase<IElement>, IElement
     public string Name { get; set; } = null!;
     public int? SortOrder { get; set; }
     public Guid ElementTypeId { get; set; }
-    public Guid ParentElementId { get; set; }
+    public Guid? ParentElementId { get; set; }
     public Guid Id { get; set; }
 
     public override void Map(IElement source)

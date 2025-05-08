@@ -8,5 +8,5 @@ public interface IElementSummary : IMappable<IElement>, IIdentifer
     string Name { get; }
     int? SortOrder { get; }
     Guid ElementTypeId { get; }
-    Guid ParentElementId { get; }
+    Guid? ParentElementId { get; }
 }
