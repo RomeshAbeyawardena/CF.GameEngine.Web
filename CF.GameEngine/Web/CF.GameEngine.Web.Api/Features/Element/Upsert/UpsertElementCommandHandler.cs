@@ -15,9 +15,9 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
     {
         if(!request.Element.ElementTypeId.HasValue && string.IsNullOrWhiteSpace(request.Element.ElementType))
         {
-            return new UnitResult(new InvalidEntityStateException("Element", "ElementTypeId or ElementType must be provided.")).As<Guid>();
+            return new UnitResult(new InvalidEntityStateException(typeof(ElementDto), "ElementTypeId or ElementType must be provided.")).As<Guid>();
         }
-
+        
         if (request.Element.ElementTypeId.HasValue)
         {
             var foundElementType = await mediator.Send(new ElementTypeFindQuery(request.Element.ElementTypeId.Value), cancellationToken);
@@ -27,17 +27,19 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
                 return new UnitResult(new EntityNotFoundException(typeof(ElementTypeDto), request.Element.ElementTypeId.Value)).As<Guid>();
             }
         }
-
-        var elementTypes = await mediator.Send(new ElementTypeQuery(null, request.Element.ElementType!, null, 1, 0), cancellationToken);
-
-        var elementType = elementTypes.Result?.FirstOrDefault();
-
-        if (elementType is null)
+        else if (string.IsNullOrWhiteSpace(request.Element.ElementType))
         {
-            return new UnitResult(new EntityNotFoundException(typeof(ElementTypeDto), request.Element.ElementType!)).As<Guid>();
-        }
+            var elementTypes = await mediator.Send(new ElementTypeQuery(null, request.Element.ElementType!, null, 1, 0), cancellationToken);
 
-        request.Element.ElementTypeId = elementType.Id;
+            var elementType = elementTypes.Result?.FirstOrDefault();
+
+            if (elementType is null)
+            {
+                return new UnitResult(new EntityNotFoundException(typeof(ElementTypeDto), request.Element.ElementType!)).As<Guid>();
+            }
+
+            request.Element.ElementTypeId = elementType.Id;
+        }
 
         if (!string.IsNullOrWhiteSpace(request.Element.ParentElement))
         {
