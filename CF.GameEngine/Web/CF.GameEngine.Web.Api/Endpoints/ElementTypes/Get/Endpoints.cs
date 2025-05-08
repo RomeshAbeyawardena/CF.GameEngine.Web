@@ -1,5 +1,6 @@
 ﻿using CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 using IDFCR.Shared.Extensions;
+using IDFCR.Shared.Http;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -31,14 +32,14 @@ public static class Endpoints
         builder.MapGet(Route.BaseUrl, GetPagedElementTypesAsync)
             .WithName(nameof(GetPagedElementTypesAsync))
             .WithTags(Route.Tag)
-            .Produces<IEnumerable<Features.ElementTypes.ElementTypeResponse>>(StatusCodes.Status200OK)
+            .Produces<HypermediaCollection<Features.ElementTypes.ElementTypeResponse>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
 
         builder.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), FindElementTypeAsync)
             .WithName(nameof(FindElementTypeAsync))
             .WithTags(Route.Tag)
-            .Produces<Features.ElementTypes.ElementTypeResponseDetail>(StatusCodes.Status200OK)
+            .Produces<Hypermedia<Features.ElementTypes.ElementTypeResponseDetail>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
