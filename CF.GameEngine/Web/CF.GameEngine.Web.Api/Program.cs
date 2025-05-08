@@ -1,6 +1,7 @@
 using CF.GameEngine.Infrastructure.SqlServer.Extensions;
 using CF.GameEngine.Web.Api.Endpoints;
 using IDFCR.Shared.Http.Extensions;
+using IDFCR.Shared.Http.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ services.AddSwaggerGen(options =>
 var app = builder.Build();
 app.UseStaticFiles();
 app.AddApiEndpoints();
+app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
