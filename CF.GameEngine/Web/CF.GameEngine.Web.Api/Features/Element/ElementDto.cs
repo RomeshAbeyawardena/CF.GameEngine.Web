@@ -5,15 +5,17 @@ namespace CF.GameEngine.Web.Api.Features.Element;
 
 public record ElementDto : MappableBase<IElement>, IEditableElement, IElement
 {
+    Guid IElementSummary.ElementTypeId => ElementTypeId.GetValueOrDefault();
+
     public string? ExternalReference { get; set; }
     public string? Description { get; set; }
     public string Key { get; set; } = null!;
     public string Name { get; set; } = null!;
     public int? SortOrder { get; set; }
-    Guid IElementSummary.ElementTypeId => ElementTypeId.GetValueOrDefault();
     public Guid? ElementTypeId { get; set; }
     public string? ElementType { get; set; }
     public Guid? ParentElementId { get; set; }
+    public string? ParentElement { get; set; }
     public Guid Id { get; set; }
 
     protected override IElement Source => this;

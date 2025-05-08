@@ -1,4 +1,5 @@
 ﻿using CF.GameEngine.Infrastructure.Features.Elements;
+using CF.GameEngine.Web.Api.Features.Element.Get;
 using CF.GameEngine.Web.Api.Features.ElementTypes;
 using CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 using IDFCR.Shared.Abstractions.Results;
@@ -27,6 +28,18 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
         }
 
         request.Element.ElementTypeId = elementType.Id;
+
+        if (!string.IsNullOrWhiteSpace(request.Element.ParentElement))
+        {
+            var parentElements = await mediator.Send(new ElementQuery(Key: request.Element.ParentElement, PageSize: 1, PageIndex: 0), cancellationToken);
+            var parentElement = parentElements.Result?.FirstOrDefault();
+            if (parentElement is null)
+            {
+                return new UnitResult(new EntityNotFoundException(typeof(ElementDto), request.Element.ParentElement!)).As<Guid>();
+            }
+
+            request.Element.ParentElementId = parentElement.Id;
+        }
 
         var result = await elementRepository.UpsertAsync(request.Element.Map<Infrastructure.Features.Elements.ElementDto>(), cancellationToken);
 
