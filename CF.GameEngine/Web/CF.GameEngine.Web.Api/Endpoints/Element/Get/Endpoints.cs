@@ -29,14 +29,14 @@ public static class Endpoints
     {
         builder.MapGet(Route.BaseUrl, GetPagedElementsAsync)
             .WithName(nameof(GetPagedElementsAsync))
-            .Produces(200)
+            .Produces<IEnumerable<Features.Element.ElementResponse>>(200)
             .Produces(400)
             .Produces(500)
             .WithTags(Route.Tag);
 
         builder.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), FindElementAsync)
             .WithName(nameof(FindElementAsync))
-            .Produces(200)
+            .Produces<Features.Element.ElementResponseDetail>(200)
             .Produces(404)
             .Produces(500)
             .WithTags(Route.Tag);

@@ -28,4 +28,5 @@ public class Element : MappableBase<IElement>, IElement
     }
 
     public virtual ElementType ElementType { get; set; } = null!;
+    public virtual Element ParentElement { get; set; } = null!;
 }

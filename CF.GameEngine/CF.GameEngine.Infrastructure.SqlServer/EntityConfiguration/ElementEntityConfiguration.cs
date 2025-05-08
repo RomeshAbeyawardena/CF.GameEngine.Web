@@ -42,5 +42,10 @@ internal class ElementEntityConfiguration : IEntityTypeConfiguration<Element>
             .WithMany()
             .HasForeignKey(x => x.ElementTypeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.ParentElement)
+            .WithMany()
+            .HasForeignKey(x => x.ParentElementId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

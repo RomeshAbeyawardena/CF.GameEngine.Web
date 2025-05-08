@@ -31,14 +31,14 @@ public static class Endpoints
         builder.MapGet(Route.BaseUrl, GetPagedElementTypesAsync)
             .WithName(nameof(GetPagedElementTypesAsync))
             .WithTags(Route.Tag)
-            .Produces(StatusCodes.Status200OK)
+            .Produces<IEnumerable<Features.ElementTypes.ElementTypeResponse>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
 
         builder.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), FindElementTypeAsync)
             .WithName(nameof(FindElementTypeAsync))
             .WithTags(Route.Tag)
-            .Produces(StatusCodes.Status200OK)
+            .Produces<Features.ElementTypes.ElementTypeResponseDetail>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
