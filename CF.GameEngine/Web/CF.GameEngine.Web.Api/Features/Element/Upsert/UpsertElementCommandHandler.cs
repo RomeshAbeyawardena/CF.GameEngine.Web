@@ -13,9 +13,19 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
 {
     public async Task<IUnitResult<Guid>> Handle(UpsertElementCommand request, CancellationToken cancellationToken)
     {
-        if(request.Element.ElementTypeId == default && string.IsNullOrWhiteSpace(request.Element.ElementType))
+        if(!request.Element.ElementTypeId.HasValue && string.IsNullOrWhiteSpace(request.Element.ElementType))
         {
             return new UnitResult(new InvalidEntityStateException("Element", "ElementTypeId or ElementType must be provided.")).As<Guid>();
+        }
+
+        if (request.Element.ElementTypeId.HasValue)
+        {
+            var foundElementType = await mediator.Send(new ElementTypeFindQuery(request.Element.ElementTypeId.Value), cancellationToken);
+            
+            if(foundElementType.Result is null)
+            {
+                return new UnitResult(new EntityNotFoundException(typeof(ElementTypeDto), request.Element.ElementTypeId.Value)).As<Guid>();
+            }
         }
 
         var elementTypes = await mediator.Send(new ElementTypeQuery(null, request.Element.ElementType!, null, 1, 0), cancellationToken);
@@ -33,6 +43,7 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
         {
             var parentElements = await mediator.Send(new ElementQuery(Key: request.Element.ParentElement, PageSize: 1, PageIndex: 0), cancellationToken);
             var parentElement = parentElements.Result?.FirstOrDefault();
+            
             if (parentElement is null)
             {
                 return new UnitResult(new EntityNotFoundException(typeof(ElementDto), request.Element.ParentElement!)).As<Guid>();
