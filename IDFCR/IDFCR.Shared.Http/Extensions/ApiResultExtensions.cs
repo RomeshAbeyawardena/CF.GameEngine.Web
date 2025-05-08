@@ -55,7 +55,7 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
-    public static IApiResult NegotiateResult<T>(this IUnitResult<T> result, IHttpContextAccessor contextAccessor, string? location = null)
+    public static IApiResult NegotiateResult<T, TSingle>(this IUnitResult<T> result, IHttpContextAccessor contextAccessor, string? location = null)
     {
         var context = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
 
@@ -63,7 +63,7 @@ public static class ApiResultExtensions
 
         if (acceptHeader.Contains("application/hal+json"))
         {
-            return result.ToHypermediaResult(location);
+            return result.ToHypermediaResult<T, TSingle>(location);
         }
 
         //Defaults to JSON
@@ -78,27 +78,35 @@ public static class ApiResultExtensions
     public static IApiResult ToHypermediaResult<T>(this IUnitResult<T> result, string? location = null)
     {
         var statusCode = GetStatusCode(result.Action);
+        var singleResult = new HypermediaApiResult<T>(result.Result, statusCode);
+        singleResult.AppendMeta(result.ToDictionary());
+
+        if (location is not null && result.Action == UnitAction.Add)
+        {
+            singleResult.AddHeader("Location", $"{location}/{result.Result}");
+        }
+
+        return singleResult;
+    }
+
+    public static IApiResult ToHypermediaResult<T, TSingle>(this IUnitResult<T> result, string? location = null)
+    {
+        var statusCode = GetStatusCode(result.Action);
 
         if (result.IsSuccess && result.Result is not null)
         {
             // Handle collection
-            if (result.Result is IEnumerable<T> enumerable && typeof(T) != typeof(string))
+            if (result.Result.GetType().IsCollection(out var t))
             {
-                var listResult = new HypermediaApiListResult<T>(enumerable, statusCode);
+                var s = typeof(HypermediaApiListResult<>).MakeGenericType(t);
+                var l = Activator.CreateInstance(s, [result.Result, statusCode]) ?? throw new InvalidOperationException("Failed to create instance of HypermediaApiListResult");
+                var listResult = (HypermediaApiListResult<TSingle>)l;
+                //var listResult = new HypermediaApiListResult<T>((), statusCode);
                 listResult.AppendMeta(result.ToDictionary());
                 return listResult;
             }
 
-            // Handle single
-            var singleResult = new HypermediaApiResult<T>(result.Result, statusCode);
-            singleResult.AppendMeta(result.ToDictionary());
-
-            if (location is not null && result.Action == UnitAction.Add)
-            {
-                singleResult.AddHeader("Location", $"{location}/{result.Result}");
-            }
-
-            return singleResult;
+            return ToHypermediaResult<T>(result, location);
         }
 
         // Failure fallback

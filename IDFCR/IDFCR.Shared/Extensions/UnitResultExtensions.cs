@@ -29,7 +29,7 @@ public static class UnitResultExtensions
 
     public static IUnitPagedResult<TDestination> Convert<T, TDestination>(this IUnitPagedResult<T> unitResult, Func<T, TDestination> converter)
     {
-        var convertedResults = unitResult.Result?.Select(converter) ?? [];
+        var convertedResults = unitResult.Result?.Select(converter).ToList() ?? [];
         var results = new UnitPagedResult<TDestination>(convertedResults, unitResult.TotalRows, unitResult.PagedQuery, unitResult.Action, unitResult.IsSuccess, unitResult.Exception);
         CloneMeta(unitResult, results);
         return results;

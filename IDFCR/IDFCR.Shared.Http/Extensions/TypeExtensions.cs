@@ -4,8 +4,9 @@ namespace IDFCR.Shared.Http.Extensions;
 
 public static class TypeExtensions
 {
-    public static bool IsCollection(this Type value)
+    public static bool IsCollection(this Type value, out Type? genericType)
     {
+        genericType = null;
         if (value.IsArray)
         {
             return true;
@@ -13,6 +14,7 @@ public static class TypeExtensions
 
         if (value.IsGenericType)
         {
+            genericType = value.GetGenericArguments().FirstOrDefault();
             var interfaces = value.GetInterfaces();
             return interfaces.Any(i =>
                 i.IsGenericType &&

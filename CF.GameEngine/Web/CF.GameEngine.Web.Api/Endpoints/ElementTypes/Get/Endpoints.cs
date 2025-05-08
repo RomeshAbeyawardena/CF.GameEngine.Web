@@ -14,7 +14,8 @@ public static class Endpoints
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new ElementTypeQuery(externalReference, key, nameContains, pageSize, pageIndex), cancellationToken);
-        return result.ToApiResult(Route.BaseUrl);
+        return result.ToHypermediaResult<IEnumerable<Features.ElementTypes.ElementTypeResponse>, 
+            Features.ElementTypes.ElementTypeResponse>(Route.BaseUrl);
     }
 
     public static async Task<IResult> FindElementTypeAsync([FromRoute] Guid id,

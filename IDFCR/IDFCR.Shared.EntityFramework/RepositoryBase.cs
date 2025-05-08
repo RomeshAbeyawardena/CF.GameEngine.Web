@@ -83,7 +83,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         }
 
         var result = await query.ToListAsync(cancellationToken);
-        return new UnitPagedResult<T>(result.Select(MapDto), await source.CountAsync(cancellationToken), pagedQuery, UnitAction.Get);
+        return new UnitPagedResult<T>([.. result.Select(MapDto)], await source.CountAsync(cancellationToken), pagedQuery, UnitAction.Get);
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
