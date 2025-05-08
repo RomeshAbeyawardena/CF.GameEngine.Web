@@ -37,7 +37,7 @@ internal class LinkGenerator<T>(LinkGenerator linkGenerator, ILinkKeyDirective l
                     relKey = memberName;
                 }
 
-                var link = new Link<T>(value.Href, value.Method, value.Type, value.ValueExpressions, value.RouteName);
+                var link = new Link<T>(value.Href, value.Method, value.Type, value.ValueExpressions, value.RouteName, value.ExpressionResolver);
 
                 dictionary.Add(relKey, link);
             }
@@ -49,6 +49,11 @@ internal class LinkGenerator<T>(LinkGenerator linkGenerator, ILinkKeyDirective l
     private ILink ProduceLink(ILink<T> link, T value)
     {
         var definitions = link.ValueExpressions.ToDictionary(x => GetMemberName(x) ?? throw new NullReferenceException(),  x => x.Compile()(value));
+        
+        Dictionary<string, string> resolvedExpressions = 
+            link.ExpressionResolver != null 
+            ? link.ExpressionResolver.ToDictionary(x => GetMemberName(x.Key) ?? throw new NullReferenceException(), x => x.Value) 
+            : [];
 
         var href = link.Href;
         
@@ -62,16 +67,18 @@ internal class LinkGenerator<T>(LinkGenerator linkGenerator, ILinkKeyDirective l
         else
         {
             var routeValues = new RouteValueDictionary();
-            if (link.ExpressionResolver != null)
-            {
-
-            }
-
+            
             foreach (var (k, v) in definitions)
             {
+                var key = k;
+                if (resolvedExpressions.TryGetValue(k, out var i))
+                {
+                    key = i;
+                }
+
                 if (link.ExpressionResolver != null)
                 {
-                    routeValues.Add(k, v);
+                    routeValues.Add(key, v);
                 }
             }
             href = linkGenerator.GetPathByName(link.RouteName ?? throw new NullReferenceException(), routeValues);
