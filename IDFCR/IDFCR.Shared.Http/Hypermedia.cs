@@ -6,7 +6,8 @@ namespace IDFCR.Shared.Http;
 
 public interface IHypermedia<T>
 {
-    T Data { get; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault)]
+    T? Data { get; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault)]
     IReadOnlyDictionary<string, ILink?>? Links { get; }
 
@@ -18,14 +19,14 @@ public interface IHypermediaCollection<T> : IEnumerable<IHypermedia<T>>
 {
     IHypermedia<T> Add(T item);
     bool Remove(IHypermedia<T> items);
-    IEnumerable<T> AsRawEnumerable();
+    IEnumerable<T>? AsRawEnumerable();
 }
 
 public class HypermediaCollection<T> : IHypermediaCollection<T>
 {
     private readonly List<IHypermedia<T>> _items = [];
 
-    public IEnumerable<T> AsRawEnumerable() => _items.Select(s => s.Data);
+    public IEnumerable<T>? AsRawEnumerable() => _items.Where(s => s.Data is not null).Select(s => s.Data!);
 
     public HypermediaCollection(IEnumerable<T> values)
     {
@@ -55,7 +56,7 @@ public class HypermediaCollection<T> : IHypermediaCollection<T>
     }
 }
 
-public record Hypermedia<T>(T Data) : IHypermedia<T>
+public record Hypermedia<T>(T? Data) : IHypermedia<T>
 {
     IReadOnlyDictionary<string, ILink?>? IHypermedia<T>.Links => _links.Count > 0 ? _links : null;
     IReadOnlyDictionary<string, object?>? IHypermedia<T>.Meta => _meta.Count > 0 ? _meta : null;

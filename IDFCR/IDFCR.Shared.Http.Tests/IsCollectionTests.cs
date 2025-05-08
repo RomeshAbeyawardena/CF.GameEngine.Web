@@ -14,9 +14,9 @@ internal class IsCollectionTests
         var anotherList = new Collection<string>();
         var anotherHashList = new HashSet<string>();
 
-        Assert.That(myList.GetType().IsCollection(), Is.True);
-        Assert.That(myOtherList.GetType().IsCollection(), Is.True);
-        Assert.That(anotherList.GetType().IsCollection(), Is.True);
-        Assert.That(anotherHashList.GetType().IsCollection(), Is.True);
+        Assert.That(myList.GetType().IsCollection(out var g), Is.True);
+        Assert.That(myOtherList.GetType().IsCollection(out g), Is.True);
+        Assert.That(anotherList.GetType().IsCollection(out g), Is.True);
+        Assert.That(anotherHashList.GetType().IsCollection(out g), Is.True);
     }
 }

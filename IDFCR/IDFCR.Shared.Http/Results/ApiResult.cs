@@ -8,7 +8,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace IDFCR.Shared.Http.Results;
 
-public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode) 
+public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode)
     : ApiResult<IHypermediaCollection<T>>(new HypermediaCollection<T>(RawData), StatusCode)
 {
     protected override void OnExecuteAsync(HttpContext httpContext)
@@ -18,25 +18,28 @@ public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode)
         var linkBuilders = services.GetServices<ILinkBuilder<T>>();
         var firstBuilder = linkBuilders.FirstOrDefault();
 
-        if (firstBuilder is not null)
+        if (firstBuilder is not null && Data is not null)
         {
             if (linkBuilders.Count() > 1)
             {
                 firstBuilder.Merge(linkBuilders.Skip(1));
             }
 
-            
             foreach (var entry in Data)
             {
                 var wrapper = entry as Hypermedia<T> ?? throw new InvalidCastException("Not a wrapper of Hypermedia");
-                var links = firstBuilder.Build(
-                    services.GetRequiredService<LinkGenerator>()).GenerateLinks(entry.Data);
 
-                foreach (var (key, value) in links)
+                if (entry.Data is not null)
                 {
-                    if (!wrapper.Links.TryAdd(key, value))
+                    var links = firstBuilder.Build(
+                        services.GetRequiredService<LinkGenerator>()).GenerateLinks(entry.Data);
+
+                    foreach (var (key, value) in links)
                     {
-                        wrapper.Links[key] = value;
+                        if (!wrapper.Links.TryAdd(key, value))
+                        {
+                            wrapper.Links[key] = value;
+                        }
                     }
                 }
             }
@@ -45,7 +48,7 @@ public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode)
     }
 }
 
-public record HypermediaApiResult<T>(T RawData, int StatusCode) : ApiResult<IHypermedia<T>>(new Hypermedia<T>(RawData), StatusCode), IApiResult<IHypermedia<T>>
+public record HypermediaApiResult<T>(T? RawData, int StatusCode) : ApiResult<IHypermedia<T>>(new Hypermedia<T>(RawData), StatusCode), IApiResult<IHypermedia<T>>
 {
     protected override void OnExecuteAsync(HttpContext httpContext)
     {
@@ -61,16 +64,19 @@ public record HypermediaApiResult<T>(T RawData, int StatusCode) : ApiResult<IHyp
                 firstBuilder.Merge(linkBuilders.Skip(1));
             }
 
-            var links = firstBuilder.Build(
-                services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data.Data);
-
-            var wrapper = Data as Hypermedia<T> ?? throw new InvalidCastException("Not a wrapper of Hypermedia");
-
-            foreach (var (key, value) in links)
+            if (Data.Data is not null)
             {
-                if (!wrapper.Links.TryAdd(key, value))
+                var links = firstBuilder.Build(
+                    services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data.Data);
+
+                var wrapper = Data as Hypermedia<T> ?? throw new InvalidCastException("Not a wrapper of Hypermedia");
+
+                foreach (var (key, value) in links)
                 {
-                    wrapper.Links[key] = value;
+                    if (!wrapper.Links.TryAdd(key, value))
+                    {
+                        wrapper.Links[key] = value;
+                    }
                 }
             }
         }
@@ -113,7 +119,7 @@ public record ApiResult(int StatusCode, Exception? Exception = null)
 
     public IError? Error => Exception == null
         ? null
-        : Exception is IExposableException exposableException 
+        : Exception is IExposableException exposableException
             ? new Error(exposableException)
             : new Error(Exception.Message, Exception.StackTrace);
 
