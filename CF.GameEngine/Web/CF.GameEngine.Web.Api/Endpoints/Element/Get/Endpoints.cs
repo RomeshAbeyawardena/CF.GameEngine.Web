@@ -1,5 +1,6 @@
 ﻿using CF.GameEngine.Web.Api.Features.Element.Get;
 using IDFCR.Shared.Extensions;
+using IDFCR.Shared.Http;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 
@@ -29,14 +30,14 @@ public static class Endpoints
     {
         builder.MapGet(Route.BaseUrl, GetPagedElementsAsync)
             .WithName(nameof(GetPagedElementsAsync))
-            .Produces<IEnumerable<Features.Element.ElementResponse>>(200)
+            .Produces<HypermediaCollection<Features.Element.ElementResponse>>(200)
             .Produces(400)
             .Produces(500)
             .WithTags(Route.Tag);
 
         builder.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), FindElementAsync)
             .WithName(nameof(FindElementAsync))
-            .Produces<Features.Element.ElementResponseDetail>(200)
+            .Produces<Hypermedia<Features.Element.ElementResponseDetail>>(200)
             .Produces(404)
             .Produces(500)
             .WithTags(Route.Tag);
