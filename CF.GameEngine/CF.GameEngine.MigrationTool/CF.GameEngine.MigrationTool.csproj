@@ -8,6 +8,12 @@
     <UserSecretsId>9315e900-337b-4d8c-9599-6b6a66b9af5e</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\IDFCR\IDFCR.Utility.Shared\IDFCR.Utility.Shared.csproj" />
     <ProjectReference Include="..\CF.GameEngine.Infrastructure.SqlServer\CF.GameEngine.Infrastructure.SqlServer.csproj" />
   </ItemGroup>
