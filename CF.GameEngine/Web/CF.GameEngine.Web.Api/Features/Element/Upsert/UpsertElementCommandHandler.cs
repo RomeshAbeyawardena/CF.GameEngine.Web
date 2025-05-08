@@ -17,7 +17,7 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
             return new UnitResult(new InvalidEntityStateException("Element", "ElementTypeId or ElementType must be provided.")).As<Guid>();
         }
 
-        var elementTypes = await mediator.Send(new ElementTypeQuery(null, request.Element.ElementType!, null, 1, 1), cancellationToken);
+        var elementTypes = await mediator.Send(new ElementTypeQuery(null, request.Element.ElementType!, null, 1, 0), cancellationToken);
 
         var elementType = elementTypes.Result?.FirstOrDefault();
 

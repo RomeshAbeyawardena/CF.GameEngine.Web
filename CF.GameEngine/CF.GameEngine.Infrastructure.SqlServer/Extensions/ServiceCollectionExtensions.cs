@@ -14,7 +14,9 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<CFGameEngineDbContext>((s, opt) =>
         {
             var connectionString = s.GetRequiredService<IConfiguration>().GetConnectionString(connectionName);
-            opt.UseSqlServer(connectionString);
+            opt
+                .UseSqlServer(connectionString)
+                .EnableSensitiveDataLogging();
         });
 
         return services

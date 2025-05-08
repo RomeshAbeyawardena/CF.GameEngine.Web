@@ -15,6 +15,9 @@ internal class ElementEntityConfiguration : IEntityTypeConfiguration<Element>
             .HasColumnName($"{entityName}Id")
             .ValueGeneratedOnAdd();
 
+        builder.Property(x => x.ElementTypeId)
+            .IsRequired();
+
         builder.Property(x => x.ExternalReference)
             .HasMaxLength(120);
 
@@ -30,6 +33,9 @@ internal class ElementEntityConfiguration : IEntityTypeConfiguration<Element>
             .HasMaxLength(250);
 
         builder.Property(x => x.SortOrder)
+            .IsRequired(false);
+
+        builder.Property(x => x.ParentElementId)
             .IsRequired(false);
 
         builder.HasOne(x => x.ElementType)

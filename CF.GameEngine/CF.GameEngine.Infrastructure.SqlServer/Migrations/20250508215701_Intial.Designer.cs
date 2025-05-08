@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CF.GameEngine.Infrastructure.SqlServer.Migrations
 {
     [DbContext(typeof(CFGameEngineDbContext))]
-    [Migration("20250504114324_AddedElementEntity")]
-    partial class AddedElementEntity
+    [Migration("20250508215701_Intial")]
+    partial class Intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,13 +53,15 @@ namespace CF.GameEngine.Infrastructure.SqlServer.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
-                    b.Property<Guid>("ParentElementId")
+                    b.Property<Guid?>("ParentElementId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("SortOrder")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ElementTypeId");
 
                     b.ToTable("Element", (string)null);
                 });
@@ -95,6 +97,17 @@ namespace CF.GameEngine.Infrastructure.SqlServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ElementType", (string)null);
+                });
+
+            modelBuilder.Entity("CF.GameEngine.Infrastructure.SqlServer.Models.Element", b =>
+                {
+                    b.HasOne("CF.GameEngine.Infrastructure.SqlServer.Models.ElementType", "ElementType")
+                        .WithMany()
+                        .HasForeignKey("ElementTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ElementType");
                 });
 #pragma warning restore 612, 618
         }
