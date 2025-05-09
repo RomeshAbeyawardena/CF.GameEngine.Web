@@ -21,6 +21,11 @@ public class UpsertElementValidator : AbstractValidator<UpsertElementCommand>
             .NotEmpty()
             .WithMessage("Element name cannot be empty.");
 
+        RuleFor(x => x.Element.Key)
+            .NotEmpty()
+            .MustAsync(MustBeUnique)
+            .WithMessage("Element key must be unique.");
+
         RuleFor(x => x)
             .MustAsync(HasValidElementType)
             .WithMessage("ElementTypeId or ElementType must refer to a valid element type.");
@@ -28,6 +33,13 @@ public class UpsertElementValidator : AbstractValidator<UpsertElementCommand>
         RuleFor(x => x)
             .MustAsync(HasValidParentElement)
             .WithMessage("ParentElementId or ParentElement must refer to a valid parent element.");
+    }
+
+    private async Task<bool> MustBeUnique(string key, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new ElementFindQuery(Key: key), cancellationToken);
+
+        return !result.HasValue;
     }
 
     private async Task<bool> HasValidElementType(UpsertElementCommand command, CancellationToken cancellationToken)
