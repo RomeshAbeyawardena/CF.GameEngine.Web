@@ -6,7 +6,7 @@ using MediatR.Pipeline;
 namespace IDFC.Shared.FluentValidation;
 
 public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExceptionHandler<TRequest, TResponse, TException>
-    where TRequest : notnull, IRequest<TResponse>
+    where TRequest : notnull
     where TException : Exception
 {
     public static Type? UnitResultLookup(Type type)

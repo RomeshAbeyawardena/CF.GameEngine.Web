@@ -7,7 +7,7 @@ namespace IDFC.Shared.FluentValidation;
 
 internal class FluentValidationRequestPreProcessor<TRequest>(IEnumerable<IValidator<TRequest>> validators) 
     : IRequestPreProcessor<TRequest>
-    where TRequest : notnull, IRequest
+    where TRequest : notnull
 {
     public async Task Process(TRequest request, CancellationToken cancellationToken)
     {

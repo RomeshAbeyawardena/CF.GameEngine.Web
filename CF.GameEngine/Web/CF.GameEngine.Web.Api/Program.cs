@@ -11,6 +11,7 @@ var services = builder.Services
     .AddSingleton(TimeProvider.System)
     .AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>()
         .AddFluentValidationRequestPreProcessor())
+    .AddGenericExceptionHandler()
     .AddValidatorsFromAssemblyContaining<Program>()
     .AddLinkDependencies<Program>()
     .AddBackendDependencies("GameEngineDb")
