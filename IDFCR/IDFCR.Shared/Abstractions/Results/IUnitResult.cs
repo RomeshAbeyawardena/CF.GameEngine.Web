@@ -12,6 +12,7 @@ public interface IUnitResult : IReadOnlyDictionary<string, object?>
 public interface IUnitResult<TResult> : IUnitResult
 {
     TResult? Result { get; }
+    bool HasValue { get; }
 }
 
 public interface IUnitResultCollection<TResult> : IUnitResult<IEnumerable<TResult>?>

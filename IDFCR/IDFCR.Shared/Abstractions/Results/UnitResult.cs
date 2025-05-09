@@ -54,7 +54,10 @@ public record UnitResult(Exception? Exception = null, UnitAction Action = UnitAc
 
 public record UnitResult<TResult>(TResult? Result = default, UnitAction Action = UnitAction.None,
     bool IsSuccess = true, Exception? Exception = null)
-    : UnitResult(Exception, Action, IsSuccess), IUnitResult<TResult>;
+    : UnitResult(Exception, Action, IsSuccess), IUnitResult<TResult>
+{
+    public bool HasValue => IsSuccess && Result is not null;
+}
 
 public interface IUnitPagedResult<TResult> : IUnitResult<IEnumerable<TResult>>
 {
