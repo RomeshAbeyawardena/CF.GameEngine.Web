@@ -7,11 +7,13 @@
     <UserSecretsId>9315e900-337b-4d8c-9599-6b6a66b9af5e</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.1.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\IDFCR\IDFC.Shared.FluentValidation\IDFC.Shared.FluentValidation.csproj" />
     <ProjectReference Include="..\..\..\IDFCR\IDFCR.Shared.Http\IDFCR.Shared.Http.csproj" />
     <ProjectReference Include="..\..\CF.GameEngine.Infrastructure.SqlServer\CF.GameEngine.Infrastructure.SqlServer.csproj" />
   </ItemGroup>
