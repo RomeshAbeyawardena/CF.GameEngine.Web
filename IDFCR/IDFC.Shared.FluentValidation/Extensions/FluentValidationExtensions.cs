@@ -6,6 +6,6 @@ public static class FluentValidationExtensions
 {
     public static void AddFluentValidationRequestPreProcessor(this MediatRServiceConfiguration services)
     {
-        services.AddOpenRequestPostProcessor(typeof(FluentValidationRequestPreProcessor<,>));
+        services.AddOpenRequestPreProcessor(typeof(FluentValidationRequestPreProcessor<>));
     }
 }

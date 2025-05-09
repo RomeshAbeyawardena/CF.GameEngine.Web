@@ -5,9 +5,9 @@ using MediatR.Pipeline;
 
 namespace IDFC.Shared.FluentValidation;
 
-internal class FluentValidationRequestPreProcessor<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) 
+internal class FluentValidationRequestPreProcessor<TRequest>(IEnumerable<IValidator<TRequest>> validators) 
     : IRequestPreProcessor<TRequest>
-    where TRequest : notnull, IRequest<TResponse>
+    where TRequest : notnull, IRequest
 {
     public async Task Process(TRequest request, CancellationToken cancellationToken)
     {
