@@ -61,7 +61,7 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
-    public static IApiResult NegotiateResult<T, TSingle>(this IUnitResult<T> result, IHttpContextAccessor contextAccessor, string? location = null)
+    public static IApiResult NegotiateResult<T>(this IUnitResult<T> result, IHttpContextAccessor contextAccessor, string? location = null)
     {
         var context = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
 
@@ -69,7 +69,7 @@ public static class ApiResultExtensions
 
         if (acceptHeader.Contains("application/hal+json"))
         {
-            return result.ToHypermediaResult<T, TSingle>(location);
+            return result.ToHypermediaResult(location);
         }
 
         //Defaults to JSON
@@ -81,7 +81,7 @@ public static class ApiResultExtensions
         return result.ToApiResult(location);
     }
 
-    public static IApiResult ToHypermediaResult<T>(this IUnitResult<T> result, string? location = null)
+    internal static IApiResult ToHypermediaResultSingleton<T>(this IUnitResult<T> result, string? location = null)
     {
         var statusCode = GetStatusCode(result.Action, result.Exception);
         var singleResult = new HypermediaApiResult<T>(result.Result, statusCode);
@@ -95,7 +95,7 @@ public static class ApiResultExtensions
         return singleResult;
     }
 
-    public static IApiResult ToHypermediaResult<T, TSingle>(this IUnitResult<T> result, string? location = null)
+    public static IApiResult ToHypermediaResult<T>(this IUnitResult<T> result, string? location = null)
     {
         var statusCode = GetStatusCode(result.Action, result.Exception);
 
@@ -106,13 +106,12 @@ public static class ApiResultExtensions
             {
                 var genericHyperMediaType = typeof(HypermediaApiListResult<>).MakeGenericType(t ?? throw new NullReferenceException("No generic type found"));
                 var instance = Activator.CreateInstance(genericHyperMediaType, [result.Result, statusCode]) ?? throw new InvalidOperationException("Failed to create instance of HypermediaApiListResult");
-                var listResult = (HypermediaApiListResult<TSingle>)instance;
-                //var listResult = new HypermediaApiListResult<T>((), statusCode);
+                var listResult = (ApiResult)instance;
                 listResult.AppendMeta(result.ToDictionary());
                 return listResult;
             }
 
-            return ToHypermediaResult<T>(result, location);
+            return ToHypermediaResultSingleton(result, location);
         }
 
         // Failure fallback

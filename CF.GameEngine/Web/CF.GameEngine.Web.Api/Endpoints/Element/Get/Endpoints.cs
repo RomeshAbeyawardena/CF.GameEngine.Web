@@ -14,8 +14,7 @@ public static class Endpoints
     {
         var result = await mediator.Send(query, cancellationToken);
 
-        return result.ToHypermediaResult<IEnumerable<Features.Element.ElementResponse>, 
-            Features.Element.ElementResponse>(Route.BaseUrl);
+        return result.ToHypermediaResult(Route.BaseUrl);
     }
 
     public static async Task<IResult> FindElementAsync(Guid id, IHttpContextAccessor contextAccessor,

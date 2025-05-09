@@ -73,14 +73,15 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     protected async Task<IUnitPagedResult<T>> GetPagedAsync(IPagedQuery pagedQuery, IEntityOrder entityOrder, IQueryable<TDb> source, CancellationToken cancellationToken)
     {
         var conventional = pagedQuery.ToConventional();
-        var query = source.Take(conventional.Take ?? 10)
-            .Skip(conventional.Skip ?? 0);
-
+        var query = source;
         var order = entityOrder.ToString();
         if (!string.IsNullOrWhiteSpace(order))
         {
             query = query.OrderBy(order);
         }
+
+        query = query.Take(conventional.Take ?? 10)
+            .Skip(conventional.Skip ?? 0);
 
         var result = await query.ToListAsync(cancellationToken);
         return new UnitPagedResult<T>([.. result.Select(MapDto)], await source.CountAsync(cancellationToken), pagedQuery, UnitAction.Get);
