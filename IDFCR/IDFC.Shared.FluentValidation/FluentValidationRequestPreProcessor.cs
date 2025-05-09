@@ -34,12 +34,16 @@ public class ExceptionHandler<TRequest, TResponse, TException> : IRequestExcepti
 {
     public Task Handle(TRequest request, TException exception, RequestExceptionHandlerState<TResponse> state, CancellationToken cancellationToken)
     {
-        if(exception is ValidationException validationException && typeof(TResponse).IsAssignableFrom(typeof(IApiResult)))
+        if(exception is ValidationException validationException && typeof(TResponse).IsAssignableTo(typeof(IUnitResult)))
         {
             var errors = validationException.Errors
                 .ToDictionary(x => x.PropertyName, x => (object?)x.ErrorMessage);
 
-            var response = Activator.CreateInstance(typeof(UnitResult), exception, UnitAction.None, false) as IApiResult;
+            var lz = typeof(TResponse).GetGenericTypeDefinition();
+
+            var tz = typeof(TResponse).GetGenericArguments();
+
+            var response = Activator.CreateInstance(lz.MakeGenericType(tz), null, exception, UnitAction.None, false) as IApiResult;
             if(response == null)
             {
                 return Task.CompletedTask;
