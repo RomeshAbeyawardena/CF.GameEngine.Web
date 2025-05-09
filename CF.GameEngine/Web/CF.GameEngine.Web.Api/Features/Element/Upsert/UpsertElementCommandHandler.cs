@@ -43,7 +43,7 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
 
         if (!string.IsNullOrWhiteSpace(request.Element.ParentElement))
         {
-            var parentElements = await mediator.Send(new ElementQuery(Key: request.Element.ParentElement, PageSize: 1, PageIndex: 0), cancellationToken);
+            var parentElements = await mediator.Send(new ElementFindQuery(Key: request.Element.ParentElement), cancellationToken);
             var parentElement = parentElements.Result?.FirstOrDefault();
             
             if (parentElement is null)

@@ -3,12 +3,23 @@ using CF.GameEngine.Infrastructure.SqlServer.Filters;
 using CF.GameEngine.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
+using Microsoft.EntityFrameworkCore;
 
 namespace CF.GameEngine.Infrastructure.SqlServer.Repositories;
 
 internal class ElementRepository(TimeProvider timeProvider, CFGameEngineDbContext context)
     : RepositoryBase<IElement, Element, ElementDto>(timeProvider, context), IElementRepository
 {
+    public async Task<IUnitResultCollection<ElementDto>> FindElementsAsync(IElementFilter filter, CancellationToken cancellationToken)
+    {
+        var elementFilter = new ElementFilter(filter);
+        var elements = await base.Set<Element>(filter)
+            .Where(elementFilter.ApplyFilter(Builder, filter))
+            .ToListAsync(cancellationToken);
+
+        return new UnitResultCollection<ElementDto>(elements.Select(x => x.Map<ElementDto>()), UnitAction.Get);
+    }
+
     public async Task<IUnitResult<ElementDto>> GetElementById(Guid elementId, CancellationToken cancellationToken)
     {
         var element = await FindAsync(cancellationToken, [elementId]);
