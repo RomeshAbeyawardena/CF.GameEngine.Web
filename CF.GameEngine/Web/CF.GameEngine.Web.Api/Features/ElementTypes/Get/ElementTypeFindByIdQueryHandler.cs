@@ -5,9 +5,9 @@ using IDFCR.Shared.Mediatr;
 
 namespace CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 
-public class ElementTypeFindQueryHandler(IElementTypeRepository elementTypeRepository) : IUnitRequestHandler<ElementTypeFindQuery, ElementTypeResponseDetail>
+public class ElementTypeFindByIdQueryHandler(IElementTypeRepository elementTypeRepository) : IUnitRequestHandler<ElementTypeFindByIdQuery, ElementTypeResponseDetail>
 {
-    public async Task<IUnitResult<ElementTypeResponseDetail>> Handle(ElementTypeFindQuery request, CancellationToken cancellationToken)
+    public async Task<IUnitResult<ElementTypeResponseDetail>> Handle(ElementTypeFindByIdQuery request, CancellationToken cancellationToken)
     {
         var result = await elementTypeRepository.GetElementTypeById(request.ElementTypeId, cancellationToken);
             

@@ -20,7 +20,7 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
         
         if (request.Element.ElementTypeId.HasValue)
         {
-            var foundElementType = await mediator.Send(new ElementTypeFindQuery(request.Element.ElementTypeId.Value), cancellationToken);
+            var foundElementType = await mediator.Send(new ElementTypeFindByIdQuery(request.Element.ElementTypeId.Value), cancellationToken);
             
             if(foundElementType.Result is null)
             {

@@ -13,6 +13,21 @@ public static class UnitResultExtensions
         }
     }
 
+    public static IUnitResultCollection<TDestination> Convert<T, TDestination>(this IUnitResultCollection<T> unitResultCollection, Func<T, TDestination> converter)
+    {
+        if (unitResultCollection.Result is null)
+        {
+            var res = new UnitResult(unitResultCollection.Exception, unitResultCollection.Action, unitResultCollection.IsSuccess).AsCollection<TDestination>();
+            CloneMeta(unitResultCollection, res);
+            return res;
+        }
+
+        var mapped = unitResultCollection.Result.Select(x => converter(x));
+        var result = new UnitResultCollection<TDestination>(mapped, unitResultCollection.Action, unitResultCollection.IsSuccess, unitResultCollection.Exception);
+        CloneMeta(unitResultCollection, result);
+        return result;
+    }
+
     public static IUnitResult<TDestination> Convert<T, TDestination>(this IUnitResult<T> unitResult, Func<T, TDestination> converter)
     {
         if(unitResult.Result is null)

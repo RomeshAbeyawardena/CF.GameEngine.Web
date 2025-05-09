@@ -29,6 +29,8 @@ public record UnitResult(Exception? Exception = null, UnitAction Action = UnitAc
 
     public IUnitResult<T> As<T>() => new UnitResult<T>(default, Action, IsSuccess, Exception);
 
+    public IUnitResultCollection<T> AsCollection<T>() => new UnitResultCollection<T>(default, Action, IsSuccess, Exception);
+
     public bool ContainsKey(string key)
     {
         return _metaProperties.ContainsKey(key);

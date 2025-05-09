@@ -18,7 +18,20 @@ public interface IUnitRequest<T> : IRequest<IUnitResult<T>>
 {
 }
 
+
+public interface IUnitRequestCollection<T> : IRequest<IUnitResultCollection<T>>
+{
+
+}
+
+
 public interface IUnitPagedRequest<T> : IRequest<IUnitPagedResult<T>>
+{
+
+}
+
+public interface IUnitRequestCollectionHandler<TRequest, T> : IRequestHandler<TRequest, IUnitResultCollection<T>>
+    where TRequest : IUnitRequestCollection<T>
 {
 
 }
