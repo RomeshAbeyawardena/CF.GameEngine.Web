@@ -9,9 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services
     .AddSingleton(TimeProvider.System)
+    .AddGenericExceptionHandler()
     .AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>()
         .AddFluentValidationRequestPreProcessor())
-    .AddGenericExceptionHandler()
     .AddValidatorsFromAssemblyContaining<Program>()
     .AddLinkDependencies<Program>()
     .AddBackendDependencies("GameEngineDb")

@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using IDFCR.Shared.Abstractions.Results;
-using MediatR;
 using MediatR.Pipeline;
 
 namespace IDFC.Shared.FluentValidation;

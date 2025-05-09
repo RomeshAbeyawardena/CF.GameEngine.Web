@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace IDFCR.Shared.Http.Extensions;
+﻿namespace IDFCR.Shared.Http.Extensions;
 
 public static class TypeExtensions
 {

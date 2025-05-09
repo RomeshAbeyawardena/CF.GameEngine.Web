@@ -1,4 +1,5 @@
-﻿using IDFCR.Shared.Abstractions.Results;
+﻿using FluentValidation;
+using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Http.Results;
 using Microsoft.AspNetCore.Http;
 
@@ -6,8 +7,13 @@ namespace IDFCR.Shared.Http.Extensions;
 
 public static class ApiResultExtensions
 {
-    private static int GetStatusCode(this UnitAction action)
+    private static int GetStatusCode(this UnitAction action, Exception? exception)
     {
+        if(exception is ValidationException)
+        {
+            return StatusCodes.Status400BadRequest;
+        }
+
         return action switch
         {
             UnitAction.Add => StatusCodes.Status201Created,
@@ -20,7 +26,7 @@ public static class ApiResultExtensions
 
     public static IApiResult ToApiResult(this IUnitResult result)
     {
-        var statusCode = GetStatusCode(result.Action);
+        var statusCode = GetStatusCode(result.Action, result.Exception);
 
         ApiResult? apiResult = null;
         if (result.IsSuccess)
@@ -34,7 +40,7 @@ public static class ApiResultExtensions
 
     public static IApiResult ToApiResult<T>(this IUnitResult<T> result, string location)
     {
-        var statusCode = GetStatusCode(result.Action);
+        var statusCode = GetStatusCode(result.Action, result.Exception);
 
         ApiResult? apiResult = null;
 
@@ -77,7 +83,7 @@ public static class ApiResultExtensions
 
     public static IApiResult ToHypermediaResult<T>(this IUnitResult<T> result, string? location = null)
     {
-        var statusCode = GetStatusCode(result.Action);
+        var statusCode = GetStatusCode(result.Action, result.Exception);
         var singleResult = new HypermediaApiResult<T>(result.Result, statusCode);
         singleResult.AppendMeta(result.ToDictionary());
 
@@ -91,7 +97,7 @@ public static class ApiResultExtensions
 
     public static IApiResult ToHypermediaResult<T, TSingle>(this IUnitResult<T> result, string? location = null)
     {
-        var statusCode = GetStatusCode(result.Action);
+        var statusCode = GetStatusCode(result.Action, result.Exception);
 
         if (result.IsSuccess && result.Result is not null)
         {

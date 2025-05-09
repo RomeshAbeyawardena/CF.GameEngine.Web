@@ -3,7 +3,6 @@ using FluentValidation.Results;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
 using MediatR.Pipeline;
-using NSubstitute;
 
 namespace IDFC.Shared.FluentValidation.Tests;
 
