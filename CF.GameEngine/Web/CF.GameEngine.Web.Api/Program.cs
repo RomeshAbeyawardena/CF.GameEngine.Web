@@ -1,6 +1,7 @@
 using CF.GameEngine.Infrastructure.SqlServer.Extensions;
 using CF.GameEngine.Web.Api.Endpoints;
 using FluentValidation;
+using IDFC.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using IDFCR.Shared.Http.Middleware;
 
@@ -8,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services
     .AddSingleton(TimeProvider.System)
-    .AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>())
+    .AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>()
+        .AddFluentValidationRequestPreProcessor())
     .AddValidatorsFromAssemblyContaining<Program>()
     .AddLinkDependencies<Program>()
     .AddBackendDependencies("GameEngineDb")
