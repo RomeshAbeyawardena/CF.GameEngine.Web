@@ -28,13 +28,13 @@ public class FluentValidationRequestPreProcessor<TRequest, TResponse>(IEnumerabl
     }
 }
 
-public class ExceptionHandler<TRequest, TResponse, TException> : IRequestExceptionHandler<TRequest, TResponse, TException>
+public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExceptionHandler<TRequest, TResponse, TException>
     where TRequest : notnull, IRequest<TResponse>
     where TException : Exception
 {
-    public static Type? UnitResultLookup(Type type, out bool isGeneric)
+    public static Type? UnitResultLookup(Type type)
     {
-        isGeneric = type.IsGenericType;
+        var isGeneric = type.IsGenericType;
 
         if (type.Name.StartsWith("IUnitResultCollection"))
         {
@@ -60,16 +60,21 @@ public class ExceptionHandler<TRequest, TResponse, TException> : IRequestExcepti
         {
             var errors = validationException.Errors
                 .ToDictionary(x => x.PropertyName, x => (object?)x.ErrorMessage);
-
-            var lz = typeof(TResponse).GetGenericTypeDefinition();
+            var baseResponseType = typeof(TResponse);
             
-            var implementationType = UnitResultLookup(lz, out var isGeneric) ?? throw new NotSupportedException();
+            var mayBeGenericResponseType = baseResponseType.IsGenericType ? baseResponseType.GetGenericTypeDefinition() : baseResponseType;
+            
+            var implementationType = UnitResultLookup(mayBeGenericResponseType) ?? throw new NotSupportedException();
 
-            var tz = typeof(TResponse).GetGenericArguments();
+            var genericArguments = baseResponseType.IsGenericType 
+                ? typeof(TResponse).GetGenericArguments()
+                : [];
 
-            var response = (isGeneric
-                ? Activator.CreateInstance(implementationType.MakeGenericType(tz), null, UnitAction.None, false, exception)
-                : Activator.CreateInstance(implementationType.MakeGenericType(tz), exception, UnitAction.None, false)) as IUnitResult;
+            var response = (baseResponseType.IsGenericType
+                ? Activator.CreateInstance(implementationType.MakeGenericType(genericArguments), 
+                null, UnitAction.None, false, exception)
+                : Activator.CreateInstance(implementationType, exception, UnitAction.None, false)) as IUnitResult;
+
             if(response == null)
             {
                 return Task.CompletedTask;
