@@ -22,7 +22,7 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
         {
             var foundElementType = await mediator.Send(new ElementTypeFindByIdQuery(request.Element.ElementTypeId.Value), cancellationToken);
             
-            if(foundElementType.Result is null)
+            if(!foundElementType.HasValue)
             {
                 return new UnitResult(new EntityNotFoundException(typeof(ElementTypeDto), request.Element.ElementTypeId.Value)).As<Guid>();
             }
@@ -41,7 +41,15 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
             request.Element.ElementTypeId = elementType.Id;
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Element.ParentElement))
+        if (request.Element.ParentElementId.HasValue)
+        {
+            var parentElement = await mediator.Send(new ElementFindByIdQuery(request.Element.ParentElementId.Value), cancellationToken);
+            if(!parentElement.HasValue)
+            {
+                return new UnitResult(new EntityNotFoundException(typeof(ElementDto), request.Element.ParentElementId.Value)).As<Guid>();
+            }
+        }
+        else if (!string.IsNullOrWhiteSpace(request.Element.ParentElement))
         {
             var parentElements = await mediator.Send(new ElementFindQuery(Key: request.Element.ParentElement), cancellationToken);
             var parentElement = parentElements.Result?.FirstOrDefault();
