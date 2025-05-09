@@ -13,7 +13,7 @@ public class ElementTypeFindQueryHandler(IElementTypeRepository elementTypeRepos
 {
     public async Task<IUnitResultCollection<ElementTypeDto>> Handle(ElementTypeFindQuery request, CancellationToken cancellationToken)
     {
-        var results = await elementTypeRepository.GetElementTypes(request, cancellationToken);
+        var results = await elementTypeRepository.FindElementTypesAsync(request, cancellationToken);
 
         return results.Convert(x => x.Map<ElementTypeDto>());
     }

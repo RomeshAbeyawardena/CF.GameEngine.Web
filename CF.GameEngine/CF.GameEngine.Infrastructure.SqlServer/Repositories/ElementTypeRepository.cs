@@ -30,7 +30,7 @@ internal class ElementTypeRepository(TimeProvider timeProvider, CFGameEngineDbCo
             .Where(query.ApplyFilter(Builder, filter))
             .ToListAsync(cancellationToken);
 
-        return new UnitResultCollection<ElementTypeDto>(elementTypes.Select(x => x.Map<ElementTypeDto>()), UnitAction.Get);
+        return new UnitResultCollection<ElementTypeDto>(elementTypes.Select(x => x.Map<ElementTypeDto>()).ToList(), UnitAction.Get);
     }
 
     public Task<IUnitPagedResult<ElementTypeDto>> GetPagedAsync(IElementTypePagedFilter pagedQuery, CancellationToken cancellationToken)

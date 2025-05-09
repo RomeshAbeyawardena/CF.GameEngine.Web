@@ -17,7 +17,7 @@ internal class ElementRepository(TimeProvider timeProvider, CFGameEngineDbContex
             .Where(elementFilter.ApplyFilter(Builder, filter))
             .ToListAsync(cancellationToken);
 
-        return new UnitResultCollection<ElementDto>(elements.Select(x => x.Map<ElementDto>()), UnitAction.Get);
+        return new UnitResultCollection<ElementDto>(elements.Select(x => x.Map<ElementDto>()).ToList(), UnitAction.Get);
     }
 
     public async Task<IUnitResult<ElementDto>> GetElementById(Guid elementId, CancellationToken cancellationToken)
