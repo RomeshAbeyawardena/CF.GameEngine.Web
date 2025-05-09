@@ -5,6 +5,7 @@ namespace CF.GameEngine.Infrastructure.Features.Elements;
 
 public interface IElementRepository : IRepository<ElementDto>
 {
+    Task<IUnitResultCollection<ElementDto>> FindElementAsync(IElementFilter elementFilter, CancellationToken cancellationToken);
     Task<IUnitResult<ElementDto>> GetElementById(Guid elementId, CancellationToken cancellationToken);
     Task<IUnitPagedResult<ElementDto>> GetPagedAsync(IElementPagedFilter elementFilter, CancellationToken cancellationToken = default);
 }

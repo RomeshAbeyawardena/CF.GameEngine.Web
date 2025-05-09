@@ -5,10 +5,10 @@ using IDFCR.Shared.Mediatr;
 
 namespace CF.GameEngine.Web.Api.Features.Element.Get;
 
-public class ElementFindQueryHandler(IElementRepository elementRepository) 
-    : IUnitRequestHandler<ElementFindQuery, ElementResponseDetail>
+public class ElementFindByIdQueryHandler(IElementRepository elementRepository) 
+    : IUnitRequestHandler<ElementFindByIdQuery, ElementResponseDetail>
 {
-    public async Task<IUnitResult<ElementResponseDetail>> Handle(ElementFindQuery request, CancellationToken cancellationToken)
+    public async Task<IUnitResult<ElementResponseDetail>> Handle(ElementFindByIdQuery request, CancellationToken cancellationToken)
     {
         var result = await elementRepository.GetElementById(request.ElementId, cancellationToken);
         return result.Convert(x => x.Map<ElementResponseDetail>());

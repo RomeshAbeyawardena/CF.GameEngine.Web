@@ -3,6 +3,7 @@ using CF.GameEngine.Infrastructure.SqlServer.Filters;
 using CF.GameEngine.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
+using Microsoft.EntityFrameworkCore;
 
 namespace CF.GameEngine.Infrastructure.SqlServer.Repositories;
 
@@ -20,6 +21,16 @@ internal class ElementTypeRepository(TimeProvider timeProvider, CFGameEngineDbCo
         }
 
         return new UnitResult<ElementTypeDto>(elementType, UnitAction.Get);
+    }
+
+    public async Task<IUnitResultCollection<ElementTypeDto>> FindElementTypesAsync(IElementTypeFilter filter, CancellationToken cancellationToken)
+    {
+        var query = new ElementTypeFilter(filter);
+        var elementTypes = await base.Set<ElementType>(filter)
+            .Where(query.ApplyFilter(Builder, filter))
+            .ToListAsync(cancellationToken);
+
+        return new UnitResultCollection<ElementTypeDto>(elementTypes.Select(x => x.Map<ElementTypeDto>()), UnitAction.Get);
     }
 
     public Task<IUnitPagedResult<ElementTypeDto>> GetPagedAsync(IElementTypePagedFilter pagedQuery, CancellationToken cancellationToken)

@@ -18,9 +18,3 @@ public interface IUnitResultCollection<TResult> : IUnitResult<IEnumerable<TResul
 {
 
 }
-
-public record UnitResultCollection<TResult>(IEnumerable<TResult>? Result = null, UnitAction Action = UnitAction.None,
-    bool IsSuccess = true, Exception? Exception = null) : UnitResult<IEnumerable<TResult>>(Result, Action, IsSuccess, Exception), IUnitResultCollection<TResult>
-{
-    
-}

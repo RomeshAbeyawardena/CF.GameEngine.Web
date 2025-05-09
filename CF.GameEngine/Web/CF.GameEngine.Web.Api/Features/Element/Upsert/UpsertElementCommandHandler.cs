@@ -27,9 +27,9 @@ public class UpsertElementCommandHandler(IElementRepository elementRepository, I
                 return new UnitResult(new EntityNotFoundException(typeof(ElementTypeDto), request.Element.ElementTypeId.Value)).As<Guid>();
             }
         }
-        else if (string.IsNullOrWhiteSpace(request.Element.ElementType))
+        else if (!string.IsNullOrWhiteSpace(request.Element.ElementType))
         {
-            var elementTypes = await mediator.Send(new ElementTypeQuery(null, request.Element.ElementType!, null, 1, 0), cancellationToken);
+            var elementTypes = await mediator.Send(new ElementTypeFindQuery(Key: request.Element.ElementType), cancellationToken);
 
             var elementType = elementTypes.Result?.FirstOrDefault();
 

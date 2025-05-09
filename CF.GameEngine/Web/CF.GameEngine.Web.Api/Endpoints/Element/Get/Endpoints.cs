@@ -21,7 +21,7 @@ public static class Endpoints
     public static async Task<IResult> FindElementAsync(Guid id, IHttpContextAccessor contextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new ElementFindQuery(id), cancellationToken);
+        var result = await mediator.Send(new ElementFindByIdQuery(id), cancellationToken);
         return result
             .ToHypermediaResult(Route.BaseUrl);
     }
