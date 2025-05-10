@@ -1,4 +1,4 @@
-﻿using CF.Identity.Api.Features.Client.Get;
+﻿using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure.Features.Clients;
 using MediatR;
 using System.Text;
@@ -27,7 +27,7 @@ public static class BasicAuthHelper
     {
         var context = contextAccessor.HttpContext ?? throw new NullReferenceException("HttpContext not available in this context");
 
-        var header = context.Request.Headers["Authorization"].FirstOrDefault();
+        var header = context.Request.Headers.Authorization.FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(header) || !header.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
             return (false, null);

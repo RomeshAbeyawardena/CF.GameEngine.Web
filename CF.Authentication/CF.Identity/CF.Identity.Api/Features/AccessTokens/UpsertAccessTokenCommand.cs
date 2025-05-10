@@ -2,7 +2,7 @@
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
 
-namespace CF.Identity.Api.Features.AccessToken;
+namespace CF.Identity.Api.Features.AccessTokens;
 
 public record UpsertAccessTokenCommand(AccessTokenDto AccessToken) : IUnitRequest<Guid>;
 

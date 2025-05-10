@@ -1,7 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Shared.Abstractions;
 
-namespace CF.Identity.Api.Features.Scope;
+namespace CF.Identity.Api.Features.Scopes;
 
 public class ScopeDto : MappableBase<IScope>, IScope
 {

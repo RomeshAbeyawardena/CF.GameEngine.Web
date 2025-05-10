@@ -3,7 +3,7 @@ using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
 
-namespace CF.Identity.Api.Features.Scope.Get;
+namespace CF.Identity.Api.Features.Scopes.Get;
 
 public class FindScopeQueryHandler(IScopeRepository repository)
     : IUnitRequestCollectionHandler<FindScopeQuery, ScopeDto>

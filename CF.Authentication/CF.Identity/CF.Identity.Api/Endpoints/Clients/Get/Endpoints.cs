@@ -1,5 +1,5 @@
-﻿using CF.Identity.Api.Features.Client;
-using CF.Identity.Api.Features.Client.Get;
+﻿using CF.Identity.Api.Features.Clients;
+using CF.Identity.Api.Features.Clients.Get;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;

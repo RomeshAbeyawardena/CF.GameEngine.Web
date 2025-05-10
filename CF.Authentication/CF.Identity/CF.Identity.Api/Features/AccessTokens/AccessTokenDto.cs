@@ -1,7 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.AccessToken;
 using IDFCR.Shared.Abstractions;
 
-namespace CF.Identity.Api.Features.AccessToken;
+namespace CF.Identity.Api.Features.AccessTokens;
 
 public class AccessTokenDto : MappableBase<IAccessToken>, IEditableAccessToken, IAccessToken
 {

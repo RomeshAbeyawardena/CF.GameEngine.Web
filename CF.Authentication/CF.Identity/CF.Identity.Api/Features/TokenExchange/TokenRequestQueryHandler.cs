@@ -1,7 +1,7 @@
-﻿using CF.Identity.Api.Features.AccessToken;
-using CF.Identity.Api.Features.Client;
-using CF.Identity.Api.Features.Client.Get;
-using CF.Identity.Api.Features.Scope.Get;
+﻿using CF.Identity.Api.Features.AccessTokens;
+using CF.Identity.Api.Features.Clients;
+using CF.Identity.Api.Features.Clients.Get;
+using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;

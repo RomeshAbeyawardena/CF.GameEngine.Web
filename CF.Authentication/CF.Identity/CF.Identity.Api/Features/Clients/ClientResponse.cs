@@ -1,7 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions.Records;
 
-namespace CF.Identity.Api.Features.Client;
+namespace CF.Identity.Api.Features.Clients;
 
 public record ClientResponse : MappableBase<IClient>, IClientSummary
 {

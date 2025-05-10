@@ -1,4 +1,4 @@
-﻿using CF.Identity.Api.Features.AccessToken.Get;
+﻿using CF.Identity.Api.Features.AccessTokens.Get;
 using CF.Identity.Api.Features.TokenExchange;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions.Results;

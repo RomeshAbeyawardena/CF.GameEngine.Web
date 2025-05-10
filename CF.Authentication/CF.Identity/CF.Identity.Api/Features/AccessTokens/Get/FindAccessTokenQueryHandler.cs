@@ -2,7 +2,7 @@
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
 using IDFCR.Shared.Extensions;
-namespace CF.Identity.Api.Features.AccessToken.Get;
+namespace CF.Identity.Api.Features.AccessTokens.Get;
 
 public class FindAccessTokenQueryHandler(IAccessTokenRepository accessTokenRepository) : IUnitRequestCollectionHandler<FindAccessTokenQuery, AccessTokenDto>
 {

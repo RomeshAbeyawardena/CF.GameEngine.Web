@@ -1,5 +1,5 @@
 ﻿using IDFCR.Shared.Mediatr;
 
-namespace CF.Identity.Api.Features.Client.Get;
+namespace CF.Identity.Api.Features.Clients.Get;
 
 public record FindClientQueryById(Guid Id) : IUnitRequest<ClientDetailResponse>;

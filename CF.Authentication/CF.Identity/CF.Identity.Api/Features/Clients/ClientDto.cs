@@ -1,7 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
 
-namespace CF.Identity.Api.Features.Client;
+namespace CF.Identity.Api.Features.Clients;
 
 public class ClientDto : MappableBase<IClient>, IEditableClient, IClient
 {
