@@ -21,4 +21,7 @@
       <HintPath>..\..\..\IDFCR\IDFCR.Shared.Http\bin\Debug\net9.0\IDFCR.Shared.Http.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Endpoints\Authenticate\" />
+  </ItemGroup>
 </Project>
