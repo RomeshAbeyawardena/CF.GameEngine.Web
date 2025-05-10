@@ -3,7 +3,7 @@
 namespace IDFCR.Shared.Abstractions.Filters;
 
 public abstract class InjectableFilterBase<TFilter, TDb> : FilterBase<TFilter, TDb>, IInjectableFilter<TFilter, TDb>
-    where TFilter : IFilter<TFilter>
+    where TFilter : IFilter<TFilter>, IInjectableFilter
 {
     public virtual bool ShouldApply(TFilter filter)
     {

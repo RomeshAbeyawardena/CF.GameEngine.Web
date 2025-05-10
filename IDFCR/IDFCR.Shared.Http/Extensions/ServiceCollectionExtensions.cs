@@ -1,6 +1,8 @@
-﻿using IDFCR.Shared.Http.Links;
+﻿using IDFCR.Shared.Abstractions.Filters;
+using IDFCR.Shared.Http.Links;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Diagnostics;
 
 namespace IDFCR.Shared.Http.Extensions;
 
@@ -10,11 +12,20 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<ILinkKeyDirective, DefaultLinkKeyDirective>();
         services.AddSingleton<ILinkKeyDirectiveOptions>(LinkKeyDirectiveOptions.Default);
-        return services.Scan(c => c
+        services.Scan(c => c
             .FromAssemblyOf< TTargetAssemblyClass>()
             .AddClasses(i => i.AssignableTo<ILinkBuilder>())
             .AsImplementedInterfaces()
         );
+
+#if DEBUG
+        foreach (var service in services.Where(s => s.ServiceType == typeof(IInjectableFilter)))
+        {
+            Debug.WriteLine($"{service.ImplementationType}");
+        }
+#endif
+
+        return services;
     }
 
     public static IServiceCollection ReplaceLinkKeyOptions<T>(this IServiceCollection services)
