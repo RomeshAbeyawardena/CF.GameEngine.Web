@@ -1,6 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features.Scope;
 using CF.Identity.Infrastructure.SqlServer.Models;
-using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Filters;
 using LinqKit;
 
 namespace CF.Identity.Infrastructure.SqlServer.Filters;
