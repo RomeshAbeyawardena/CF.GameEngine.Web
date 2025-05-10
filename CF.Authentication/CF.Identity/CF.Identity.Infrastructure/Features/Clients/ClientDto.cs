@@ -13,6 +13,7 @@ public class ClientDto : MappableBase<IClient>, IClient
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
     public DateTimeOffset? SuspendedTimestampUtc { get; set; }
+    public string? SecretHash { get; }
 
     public override void Map(IClient source)
     {

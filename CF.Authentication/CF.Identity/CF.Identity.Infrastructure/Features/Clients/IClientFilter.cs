@@ -6,4 +6,5 @@ namespace CF.Identity.Infrastructure.Features.Clients;
 public interface IPagedClientFilter : IClientFilter, IPagedQuery;
 public interface IClientFilter : IFilter<IClient>
 {
+    string? Key { get; }
 }

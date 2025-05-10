@@ -13,6 +13,7 @@ public record ClientDetailResponse : MappableBase<IClient>, IClientDetails, ICli
     public Guid Id { get; set; }
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
+    public string? SecretHash { get; }
 
     public override void Map(IClient source)
     {

@@ -21,5 +21,9 @@ public interface IClientSummary : IMappable<IClient>, IIdentifer
 
 public interface IClientDetails : IClientSummary, IValidity
 {
+    /// <summary>
+    /// When returned from the server this will be hashed and meaningless
+    /// </summary>
+    string? SecretHash { get; }
     DateTimeOffset? SuspendedTimestampUtc { get; }
 }

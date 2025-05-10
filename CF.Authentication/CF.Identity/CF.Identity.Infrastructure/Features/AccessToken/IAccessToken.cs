@@ -1,0 +1,20 @@
+﻿using IDFCR.Shared.Abstractions;
+
+namespace CF.Identity.Infrastructure.Features.AccessToken;
+
+public interface IAccessToken : IEditableAccessToken, IIdentifer
+{
+}
+
+public interface IEditableAccessToken : IAccessTokenSummary
+{
+    string ReferenceToken { get; }
+    string AccessToken { get; }
+    string? RefreshToken { get; }
+}
+
+public interface IAccessTokenSummary : IValidity
+{
+    Guid ClientId { get; }
+    string Type { get; }
+}

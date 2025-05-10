@@ -13,6 +13,7 @@ internal class Client : MappableBase<IClient>, IClient
     public Guid Id { get; set; }
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
+    public string? SecretHash { get; }
 
     public override void Map(IClient source)
     {

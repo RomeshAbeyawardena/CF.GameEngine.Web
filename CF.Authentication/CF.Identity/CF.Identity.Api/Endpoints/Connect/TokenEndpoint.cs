@@ -1,0 +1,26 @@
+﻿using CF.Identity.Api.Features.TokenExchange;
+using MediatR;
+
+namespace CF.Identity.Api.Endpoints.Connect;
+
+public static class TokenEndpoint
+{
+    private static async Task<IResult> RequestTokenAsync([AsParameters]TokenRequest tokenRequest, 
+        IMediator mediator, CancellationToken cancellationToken)
+    {
+        var response = await mediator.Send(new TokenRequestQuery(tokenRequest), cancellationToken);
+
+        if(response.HasValue)
+        {
+            return Results.Ok(response.Result);
+        }
+
+        return Results.Unauthorized();
+    }
+
+    public static IEndpointRouteBuilder AddTokenRequestEndpoint(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPost("/connect/token", RequestTokenAsync);
+        return builder;
+    }
+}
