@@ -84,8 +84,8 @@ public class TokenRequestQueryHandler(IMediator mediator, IClientCredentialHashe
 
         var utcNow = timeProvider.GetUtcNow();
         if (!clientCredentialHasher.Verify(request.TokenRequest.ClientSecret, clientDetail)
-            || clientDetail.ValidFrom < utcNow 
-            || clientDetail.ValidTo > utcNow
+            || utcNow < clientDetail.ValidFrom  
+            || utcNow > clientDetail.ValidTo
             || clientDetail.SuspendedTimestampUtc.HasValue)
         {
             return new UnitResult(new UnauthorizedAccessException("Invalid client secret")).As<TokenResponse>();
@@ -96,10 +96,14 @@ public class TokenRequestQueryHandler(IMediator mediator, IClientCredentialHashe
         var referenceToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         referenceToken = clientCredentialHasher.Hash(referenceToken, clientDetail);
 
+        var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
+        var hashedRefreshToken = clientCredentialHasher.Hash(refreshToken, clientDetail);
+
         await mediator.Send(new UpsertAccessTokenCommand(new AccessTokenDto
         {
             Type = request.TokenRequest.GrantType,
             ReferenceToken = referenceToken,
+            RefreshToken = hashedRefreshToken,
             AccessToken = accessToken,
             ClientId = clientDetail.Id,
             ValidFrom = utcNow,
@@ -110,7 +114,7 @@ public class TokenRequestQueryHandler(IMediator mediator, IClientCredentialHashe
         var result = new UnitResult<TokenResponse>(new TokenResponse(referenceToken,
                 "Bearer",
                 "3600",
-                "refresh_token",
+                refreshToken,
                 request.TokenRequest.Scope
             ));
 
