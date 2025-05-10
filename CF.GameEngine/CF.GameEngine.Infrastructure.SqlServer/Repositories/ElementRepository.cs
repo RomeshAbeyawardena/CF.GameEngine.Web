@@ -14,10 +14,10 @@ internal class ElementRepository(TimeProvider timeProvider, CFGameEngineDbContex
     {
         var elementFilter = new ElementFilter(filter);
         var elements = await base.Set<Element>(filter)
-            .Where(elementFilter.ApplyFilter(Builder, filter))
+            .Where(elementFilter.ApplyFilter(Builder))
             .ToListAsync(cancellationToken);
 
-        return new UnitResultCollection<ElementDto>(elements.Select(x => x.Map<ElementDto>()).ToList(), UnitAction.Get);
+        return UnitResultCollection.FromResult(elements.Select(x => x.Map<ElementDto>()).ToList(), UnitAction.Get);
     }
 
     public async Task<IUnitResult<ElementDto>> GetElementById(Guid elementId, CancellationToken cancellationToken)
@@ -28,14 +28,14 @@ internal class ElementRepository(TimeProvider timeProvider, CFGameEngineDbContex
             return UnitResult.NotFound<ElementDto>(elementId);
         }
 
-        return new UnitResult<ElementDto>(element, UnitAction.Get);
+        return UnitResult.FromResult(element, UnitAction.Get);
     }
 
     public Task<IUnitPagedResult<ElementDto>> GetPagedAsync(IElementPagedFilter pagedQuery, CancellationToken cancellationToken = default)
     {
         var query = new ElementFilter(pagedQuery);
         return base.GetPagedAsync(pagedQuery, new EntityOrder(pagedQuery, "SortOrder"),
-            base.Set<Element>(pagedQuery).Where(query.ApplyFilter(Builder, pagedQuery)),
+            base.Set<Element>(pagedQuery).Where(query.ApplyFilter(Builder)),
             cancellationToken);
     }
 }

@@ -1,6 +1,15 @@
 ﻿namespace IDFCR.Shared.Abstractions.Results;
 
-public record UnitResultCollection<TResult>(IEnumerable<TResult>? Result = null, UnitAction Action = UnitAction.None,
+public static class UnitResultCollection
+{
+    public static IUnitResultCollection<T> FromResult<T>(IEnumerable<T>? result, UnitAction action = UnitAction.Get)
+    {
+        return new UnitResultCollection<T>(result, action);
+    }
+}
+
+
+public record UnitResultCollection<TResult>(IEnumerable<TResult>? Result = null, UnitAction Action = UnitAction.Get,
     bool IsSuccess = true, Exception? Exception = null) : UnitResult<IEnumerable<TResult>>(Result, Action, IsSuccess, Exception), IUnitResultCollection<TResult>
 {
     

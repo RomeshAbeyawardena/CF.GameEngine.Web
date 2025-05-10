@@ -12,6 +12,12 @@ public record UnitResult(Exception? Exception = null, UnitAction Action = UnitAc
     public static IUnitResult<T> NotFound<T>(object id, Exception? innerException = null) 
         => new UnitResult(new EntityNotFoundException(typeof(T), id, innerException), UnitAction.None).As<T>();
 
+    public static IUnitResult<T> FromResult<T>(T? result, UnitAction action = UnitAction.None,
+        bool isSuccess = true, Exception? exception = null)
+    {
+        return new UnitResult<T>(result, action, isSuccess, exception);
+    }
+
     internal readonly ConcurrentDictionary<string, object?> _metaProperties = [];
     public object? this[string key] { get => _metaProperties[key]; }
 

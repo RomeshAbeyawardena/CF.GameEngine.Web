@@ -5,6 +5,7 @@ namespace IDFCR.Shared.Abstractions;
 public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<TFilter, TDb>
     where TFilter : IFilter<TFilter>
 {
+    private readonly TFilter? _filter;
     /// <summary>
     /// Gets an instance of a NotSupportedException with a message indicating that mapping is not supported, 
     /// if this is intended to be the lowest level filter available to your application.
@@ -19,6 +20,11 @@ public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<
     }
 
     public bool NoTracking { get; set; }
+
+    public ExpressionStarter<TDb> ApplyFilter(ExpressionStarter<TDb> query)
+    {
+        return ApplyFilter(query, _filter ?? throw new NullReferenceException("Filter not supplied"));
+    }
 
     public virtual ExpressionStarter<TDb> ApplyFilter(ExpressionStarter<TDb> query, TFilter filter)
     {

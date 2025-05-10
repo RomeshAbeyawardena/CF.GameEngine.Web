@@ -20,24 +20,24 @@ internal class ElementTypeRepository(TimeProvider timeProvider, CFGameEngineDbCo
             return UnitResult.NotFound<ElementTypeDto>(elementTypeId);
         }
 
-        return new UnitResult<ElementTypeDto>(elementType, UnitAction.Get);
+        return UnitResult.FromResult(elementType, UnitAction.Get);
     }
 
     public async Task<IUnitResultCollection<ElementTypeDto>> FindElementTypesAsync(IElementTypeFilter filter, CancellationToken cancellationToken)
     {
         var query = new ElementTypeFilter(filter);
         var elementTypes = await base.Set<ElementType>(filter)
-            .Where(query.ApplyFilter(Builder, filter))
+            .Where(query.ApplyFilter(Builder))
             .ToListAsync(cancellationToken);
 
-        return new UnitResultCollection<ElementTypeDto>(elementTypes.Select(x => x.Map<ElementTypeDto>()).ToList(), UnitAction.Get);
+        return UnitResultCollection.FromResult(elementTypes.Select(x => x.Map<ElementTypeDto>()).ToList(), UnitAction.Get);
     }
 
     public Task<IUnitPagedResult<ElementTypeDto>> GetPagedAsync(IElementTypePagedFilter pagedQuery, CancellationToken cancellationToken)
     {
         var query = new ElementTypeFilter(pagedQuery);
         return base.GetPagedAsync(pagedQuery, new EntityOrder(pagedQuery, "SortOrder"),
-            base.Set<ElementType>(pagedQuery).Where(query.ApplyFilter(Builder, pagedQuery)), 
+            base.Set<ElementType>(pagedQuery).Where(query.ApplyFilter(Builder)), 
             cancellationToken);
     }
 }
