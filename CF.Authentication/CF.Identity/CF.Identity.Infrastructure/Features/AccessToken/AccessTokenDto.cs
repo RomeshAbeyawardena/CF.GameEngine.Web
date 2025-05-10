@@ -1,18 +1,17 @@
-﻿using CF.Identity.Infrastructure.Features.AccessToken;
-using IDFCR.Shared.Abstractions;
+﻿using IDFCR.Shared.Abstractions;
 
-namespace CF.Identity.Api.Features.AccessToken;
+namespace CF.Identity.Infrastructure.Features.AccessToken;
 
-public class AccessTokenDto : MappableBase<IAccessToken>, IEditableAccessToken, IAccessToken
+public class AccessTokenDto : MappableBase<IAccessToken>, IAccessToken
 {
     protected override IAccessToken Source => this;
+    public string ReferenceToken { get; set; } = null!;
     public string AccessToken { get; set; } = null!;
+    public string? RefreshToken { get; set; }
     public Guid ClientId { get; set; }
+    public string Type { get; set; } = null!;
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
-    public string ReferenceToken { get; set; } = null!;
-    public string? RefreshToken { get; set; }
-    public string Type { get; set; } = null!;
     public Guid Id { get; set; }
 
     public override void Map(IAccessToken source)

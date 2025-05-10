@@ -2,11 +2,11 @@
 
 namespace CF.Identity.Infrastructure.Features.AccessToken;
 
-public interface IAccessToken : IEditableAccessToken, IIdentifer
+public interface IAccessToken : IEditableAccessToken
 {
 }
 
-public interface IEditableAccessToken : IAccessTokenSummary
+public interface IEditableAccessToken : IMappable<IAccessToken>, IAccessTokenSummary, IIdentifer
 {
     string ReferenceToken { get; }
     string AccessToken { get; }
