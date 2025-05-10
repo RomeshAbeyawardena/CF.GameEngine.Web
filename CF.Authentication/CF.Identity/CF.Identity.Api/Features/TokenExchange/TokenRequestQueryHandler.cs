@@ -13,13 +13,12 @@ using System.Text;
 
 namespace CF.Identity.Api.Features.TokenExchange;
 
-public class TokenRequestQueryHandler(IMediator mediator, IClientCredentialHasher clientCredentialHasher, 
+public class TokenRequestQueryHandler(JwtSettings jwtSettings, IMediator mediator, IClientCredentialHasher clientCredentialHasher, 
     TimeProvider timeProvider, RandomNumberGenerator randomNumberGenerator) : IUnitRequestHandler<TokenRequestQuery, TokenResponse>
 {
-    private static string GenerateJwt(ClientDetailResponse client, string scope)
+    private string GenerateJwt(ClientDetailResponse client, string scope)
     {
         //TODO come from configuration shared with consumer. /jwks.json
-        var _jwtSettings = new JwtSettings("", "", "");
         var claims = new[]
         {
         new Claim("sub", client.Reference),
@@ -27,12 +26,12 @@ public class TokenRequestQueryHandler(IMediator mediator, IClientCredentialHashe
         new Claim("client_id", client.Reference)
     };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SigningKey));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey ?? throw new ArgumentException(nameof(jwtSettings))));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _jwtSettings.Issuer,
-            audience: _jwtSettings.Audience,
+            issuer: jwtSettings.Issuer,
+            audience: jwtSettings.Audience,
             claims: claims,
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: creds

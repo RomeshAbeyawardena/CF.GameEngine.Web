@@ -1,17 +1,23 @@
 ﻿using CF.Identity.Api.Features.TokenExchange;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.Connect;
 
 public static class TokenEndpoint
 {
-    private static async Task<IResult> RequestTokenAsync([AsParameters]TokenRequest tokenRequest, 
+    private static async Task<IResult> RequestTokenAsync([FromForm]TokenRequest tokenRequest, 
         IMediator mediator, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new TokenRequestQuery(tokenRequest), cancellationToken);
 
         if(response.HasValue)
         {
+            if(response.TryGetValue("redirectUri", out var redirectUri) && redirectUri is not null)
+            {
+                return Results.Redirect(redirectUri.ToString()!);
+            }
+
             return Results.Ok(response.Result);
         }
 
@@ -20,7 +26,11 @@ public static class TokenEndpoint
 
     public static IEndpointRouteBuilder AddTokenRequestEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapPost("/connect/token", RequestTokenAsync);
+        builder.MapPost("/connect/token", RequestTokenAsync)
+            .Accepts<TokenRequest>("application/x-www-form-urlencoded")
+            .Produces<TokenResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .RequireRateLimiting("authentication-rate-limits");
         return builder;
     }
 }
