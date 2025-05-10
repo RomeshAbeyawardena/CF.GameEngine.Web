@@ -58,13 +58,19 @@ public class IntrospectQueryHandler(IMediator mediator, IClientCredentialHasher 
             return new UnitResult(new UnauthorizedAccessException("Token is not valid")).As<IntrospectResponse>();
         }
 
-        return new IntrospectResponse(
+        string scope = string.Empty;
+        if (result.Claims.TryGetValue("scope", out var scopeClaim))
+        {
+            scope = scopeClaim?.ToString() ?? throw new NullReferenceException("scope is invalid");
+        }
+
+        return new UnitResult<IntrospectResponse>(new(
             Active: true,
             ClientId: latestToken.ClientId.ToString(),
-            Scope: latestToken.Scope ?? string.Empty,
+            Scope: scope,
             Exp: latestToken.ValidTo?.ToString("o") ?? string.Empty,
             Aud: jwtSettings.Audience ?? string.Empty,
             Iss: jwtSettings.Issuer ?? string.Empty
-        );
+        ));
     }
 }

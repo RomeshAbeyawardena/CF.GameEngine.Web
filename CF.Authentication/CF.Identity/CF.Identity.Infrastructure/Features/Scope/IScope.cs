@@ -1,0 +1,21 @@
+﻿using IDFCR.Shared.Abstractions;
+
+namespace CF.Identity.Infrastructure.Features.Scope;
+
+public interface IScope : IEditableScope
+{
+    
+}
+
+public interface IEditableScope : IMappable<IScope>, IScopeSummary, IIdentifer
+{
+    string Key { get; }
+    
+}
+
+public interface  IScopeSummary
+{
+    Guid ClientId { get; }
+    string Name { get; }
+    string? Description { get; }
+}
