@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CF.Identity.Infrastructure"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CF.Identity.Infrastructure.SqlServer", "CF.Identity.Infrastructure.SqlServer\CF.Identity.Infrastructure.SqlServer.csproj", "{6CBADE45-6727-438A-BD79-380EF55005EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CF.Identity.MigrationUtility", "CF.Identity.MigrationUtility\CF.Identity.MigrationUtility.csproj", "{75B8829C-3AA2-4999-B0E5-CAFC9124E927}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{6CBADE45-6727-438A-BD79-380EF55005EC}.Release|x64.Build.0 = Release|Any CPU
 		{6CBADE45-6727-438A-BD79-380EF55005EC}.Release|x86.ActiveCfg = Release|Any CPU
 		{6CBADE45-6727-438A-BD79-380EF55005EC}.Release|x86.Build.0 = Release|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Debug|x64.Build.0 = Debug|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Debug|x86.Build.0 = Debug|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Release|x64.ActiveCfg = Release|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Release|x64.Build.0 = Release|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Release|x86.ActiveCfg = Release|Any CPU
+		{75B8829C-3AA2-4999-B0E5-CAFC9124E927}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
