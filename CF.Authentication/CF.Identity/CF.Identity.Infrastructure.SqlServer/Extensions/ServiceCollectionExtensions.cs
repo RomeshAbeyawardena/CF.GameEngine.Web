@@ -4,6 +4,7 @@ using CF.Identity.Infrastructure.SqlServer.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using CF.Identity.Infrastructure.Features.Scope;
 
 namespace CF.Identity.Infrastructure.SqlServer.Extensions;
 
@@ -21,6 +22,7 @@ public static class ServiceCollectionExtensions
         return services
             .AddSingleton<IClientCredentialHasher, ClientCredentialHasher>()
             .AddScoped<IAccessTokenRepository, AccessTokenRepository>()
-            .AddScoped<IClientRepository, ClientRepository>();
+            .AddScoped<IClientRepository, ClientRepository>()
+            .AddScoped<IScopeRepository, ScopeRepository>();
     }
 }

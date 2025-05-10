@@ -12,8 +12,8 @@ internal class AccessTokenRepository(TimeProvider timeProvider, CFIdentityDbCont
     public async Task<IUnitResultCollection<AccessTokenDto>> GetAccessTokensAsync(IAccessTokenFilter filter, CancellationToken cancellationToken)
     {
         var result = await Set<DbAccessToken>(filter).Where(new AccessTokenFilter(filter)
-            .ApplyFilter(base.Builder, filter)).ToListAsync(cancellationToken);
+            .ApplyFilter(Builder)).ToListAsync(cancellationToken);
 
-        return new UnitResultCollection<AccessTokenDto>(result.Select(x => x.Map<AccessTokenDto>()));
+        return UnitResultCollection.FromResult(result.Select(x => x.Map<AccessTokenDto>()).ToList());
     }
 }

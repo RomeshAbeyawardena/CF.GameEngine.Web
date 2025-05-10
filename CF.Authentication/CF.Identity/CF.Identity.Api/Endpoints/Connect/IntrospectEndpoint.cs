@@ -10,10 +10,10 @@ public static class IntrospectEndpoint
         IHttpContextAccessor contextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
-        var authenticationResult = await contextAccessor.TryAuthenticateAsync(cancellationToken);
-        if (authenticationResult.success && authenticationResult.client is not null)
+        var (success, client) = await contextAccessor.TryAuthenticateAsync(cancellationToken);
+        if (success && client is not null)
         {
-            var result = await mediator.Send(new IntrospectQuery(token, authenticationResult.client), cancellationToken);
+            var result = await mediator.Send(new IntrospectQuery(token, client), cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -24,5 +24,15 @@ public static class IntrospectEndpoint
         }
 
         return Results.Unauthorized();
+    }
+
+    public static IEndpointRouteBuilder AddIntrospectTokenEndpoint(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPost("/connect/introspect", IntrospectTokenAsync)
+            .Accepts<IntrospectQuery>("application/x-www-form-urlencoded")
+            .Produces<IntrospectResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .RequireRateLimiting("authentication-rate-limits");
+        return builder;
     }
 }

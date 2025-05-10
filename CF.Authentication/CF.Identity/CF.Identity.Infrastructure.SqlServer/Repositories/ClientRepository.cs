@@ -16,7 +16,7 @@ internal class ClientRepository(TimeProvider timeProvider, CFIdentityDbContext c
             return UnitResult.NotFound<ClientDto>(clientId);
         }
 
-        return new UnitResult<ClientDto>(client, UnitAction.Get);
+        return UnitResult.FromResult(client, UnitAction.Get);
     }
 
     public async Task<IUnitResultCollection<ClientDto>> GetClients(IClientFilter filter, CancellationToken cancellationToken)
@@ -27,6 +27,6 @@ internal class ClientRepository(TimeProvider timeProvider, CFIdentityDbContext c
             .Where(clientFilter.ApplyFilter(Builder, filter))
             .ToListAsync(cancellationToken);
 
-        return new UnitResultCollection<ClientDto>([.. result.Select(x => x.Map<ClientDto>())], UnitAction.Get);
+        return UnitResultCollection.FromResult([.. result.Select(x => x.Map<ClientDto>())], UnitAction.Get);
     }
 }
