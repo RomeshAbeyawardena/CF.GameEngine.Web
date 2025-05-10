@@ -10,12 +10,6 @@ using System.Text;
 
 namespace CF.Identity.Api.Features.Introspect;
 
-public record IntrospectQuery(string Token, IClient Client) : IUnitRequest<IntrospectResponse>;
-
-public record IntrospectResponse(bool Active, string ClientId, string Scope, string Exp, string Aud, string Iss) : IntrospectBaseResponse(Active);
-
-public record IntrospectBaseResponse(bool Active);
-
 public class IntrospectQueryHandler(IMediator mediator, IClientCredentialHasher clientCredentialHasher, TimeProvider timeProvider, JwtSettings jwtSettings) 
     : IUnitRequestHandler<IntrospectQuery, IntrospectResponse>
 {
