@@ -62,6 +62,12 @@ public class TokenRequestQueryHandler(IMediator mediator, IClientCredentialHashe
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    private static string GenerateSecureRandomBase64(RandomNumberGenerator rng, int sizeInBytes)
+    {
+        var buffer = new byte[sizeInBytes];
+        rng.GetNonZeroBytes(buffer);
+        return Convert.ToBase64String(buffer);
+    }
 
     public async Task<IUnitResult<TokenResponse>> Handle(TokenRequestQuery request, CancellationToken cancellationToken)
     {
@@ -93,10 +99,10 @@ public class TokenRequestQueryHandler(IMediator mediator, IClientCredentialHashe
 
         var accessToken = GenerateJwt(clientDetail, request.TokenRequest.Scope);
 
-        var referenceToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        var referenceToken = GenerateSecureRandomBase64(randomNumberGenerator, 32);
         referenceToken = clientCredentialHasher.Hash(referenceToken, clientDetail);
 
-        var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
+        var refreshToken = GenerateSecureRandomBase64(randomNumberGenerator, 16);
         var hashedRefreshToken = clientCredentialHasher.Hash(refreshToken, clientDetail);
 
         await mediator.Send(new UpsertAccessTokenCommand(new AccessTokenDto
