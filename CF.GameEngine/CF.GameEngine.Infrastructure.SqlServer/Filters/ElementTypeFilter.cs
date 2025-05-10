@@ -1,6 +1,6 @@
 ﻿using CF.GameEngine.Infrastructure.Features.ElementTypes;
 using CF.GameEngine.Infrastructure.SqlServer.Models;
-using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Filters;
 using LinqKit;
 
 namespace CF.GameEngine.Infrastructure.SqlServer.Filters;

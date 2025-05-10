@@ -1,6 +1,6 @@
 ﻿using LinqKit;
 
-namespace IDFCR.Shared.Abstractions;
+namespace IDFCR.Shared.Abstractions.Filters;
 
 public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<TFilter, TDb>
     where TFilter : IFilter<TFilter>
@@ -21,7 +21,7 @@ public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<
 
     public bool NoTracking { get; set; }
 
-    public ExpressionStarter<TDb> ApplyFilter(ExpressionStarter<TDb> query)
+    public virtual ExpressionStarter<TDb> ApplyFilter(ExpressionStarter<TDb> query)
     {
         return ApplyFilter(query, _filter ?? throw new NullReferenceException("Filter not supplied"));
     }
