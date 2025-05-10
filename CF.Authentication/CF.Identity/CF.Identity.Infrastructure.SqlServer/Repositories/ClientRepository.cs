@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class ClientRepository(TimeProvider timeProvider, CFIdentityDbContext context) : RepositoryBase<IClient, Client, ClientDto>(timeProvider, context), IClientRepository
+internal class ClientRepository(TimeProvider timeProvider, CFIdentityDbContext context) : RepositoryBase<IClient, DbClient, ClientDto>(timeProvider, context), IClientRepository
 {
     public async Task<IUnitResult<ClientDto>> GetByClientId(Guid clientId, CancellationToken cancellationToken)
     {
@@ -23,7 +23,7 @@ internal class ClientRepository(TimeProvider timeProvider, CFIdentityDbContext c
     {
         var clientFilter = new ClientFilter(filter);
 
-        var result = await Set<Client>(filter)
+        var result = await Set<DbClient>(filter)
             .Where(clientFilter.ApplyFilter(Builder, filter))
             .ToListAsync(cancellationToken);
 

@@ -3,7 +3,7 @@ using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Infrastructure.SqlServer.Models;
 
-internal class Client : MappableBase<IClient>, IClient
+internal class DbClient : MappableBase<IClient>, IClient
 {
     protected override IClient Source => this;
     public DateTimeOffset? SuspendedTimestampUtc { get; set; }
