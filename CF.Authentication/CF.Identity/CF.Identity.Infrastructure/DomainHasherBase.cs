@@ -1,19 +1,7 @@
-﻿using CF.Identity.Infrastructure.Features.Clients;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 namespace CF.Identity.Infrastructure;
-
-public interface IClientCredentialHasher : IDomainHasher<IClient>
-{
-    
-}
-
-public interface IDomainHasher<T>
-{
-    string Hash(string secret, T value);
-    bool Verify(string secret, T value);
-}
 
 public abstract class DomainHasherBase<T>(Encoding? encoding) : IDomainHasher<T>
 {
@@ -44,15 +32,5 @@ public abstract class DomainHasherBase<T>(Encoding? encoding) : IDomainHasher<T>
         }
 
         return CryptographicOperations.FixedTimeEquals(Encoding.GetBytes(storedHash), Encoding.GetBytes(hashedSecret));
-    }
-}
-
-public class ClientCredentialHasher(Encoding? encoding) : DomainHasherBase<IClient>(encoding), IClientCredentialHasher
-{
-    protected override Func<IClient, string?> SecretProperty => x => x.SecretHash;
-    protected override string GenerateSalt(IClient client)
-    {
-        //Uses two things that can't be changed to create a persistent salt
-        return $"{client.Reference}-{client.Id}";
     }
 }
