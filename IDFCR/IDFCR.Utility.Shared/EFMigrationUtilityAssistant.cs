@@ -7,6 +7,8 @@ internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilit
         ITimeOfDayProvider timeOfDayProvider, TDbContext context) : IEFMigrationUtilityAssistant<TDbContext>
     where TDbContext : DbContext
 {
+    internal EFMigrationUtility<TDbContext>? Instance { get; set; }
+
     public async Task RunAsync(EFMigrationUtilityName utilityName, IEnumerable<string> args, CancellationToken cancellationToken)
     {
         try

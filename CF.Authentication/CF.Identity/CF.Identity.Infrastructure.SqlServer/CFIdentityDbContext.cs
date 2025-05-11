@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer;
 
-internal class CFIdentityDbContext(DbContextOptions<CFIdentityDbContext> options) : DbContext(options)
+public class CFIdentityDbContext(DbContextOptions<CFIdentityDbContext> options) : DbContext(options)
 {
     public DbSet<DbAccessToken> AccessTokens { get; set; } = null!;
     public DbSet<DbClient> Clients { get; set; } = null!;

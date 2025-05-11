@@ -20,13 +20,23 @@ internal class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName
     string userSecretId, Action<HostBuilderContext, IServiceCollection> configureServices) : IEFMigrationUtility<TDbContext>
     where TDbContext : DbContext
 {
+    private readonly Dictionary<string, Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task>> _extensions = [];
+
+    internal IReadOnlyDictionary<string, Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task>> Extensions => _extensions;
+
     public IHost? Host { get; private set; }
 
     public Task RunMigrationAssistant(IHost host, CancellationToken cancellationToken)
     {
-        var migrationAssitant = host.Services.GetRequiredService<IEFMigrationUtilityAssistant<TDbContext>>();
+        var migrationAssitant = host.Services.GetRequiredService<IEFMigrationUtilityAssistant<TDbContext>>() as EFMigrationUtilityAssistant<TDbContext>;
 
-        return migrationAssitant.RunAsync(utilityName, args, cancellationToken);
+        if (migrationAssitant is not null)
+        {
+            migrationAssitant.Instance = this;
+            return migrationAssitant.RunAsync(utilityName, args, cancellationToken);
+        }
+
+        throw new InvalidCastException();
     }
 
     public async Task InitialiseAsync(bool runMigrationAssistance = true, CancellationToken cancellationToken = default)
@@ -64,5 +74,15 @@ internal class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName
     {
         Dispose();
         return ValueTask.CompletedTask;
+    }
+
+    public IEFMigrationUtility<TDbContext> Extend(string name, 
+        Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task> extension)
+    {
+        if (!_extensions.TryAdd(name, extension))
+        {
+            throw new InvalidOperationException($"An extension with the name '{name}' is already registered.");
+        }
+        return this;
     }
 }
