@@ -62,7 +62,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         var accessToken = GenerateJwt(clientDetail, request.TokenRequest.Scope);
 
         var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
-        referenceToken = clientCredentialHasher.Hash(referenceToken, clientDetail);
+        var hashedReferenceToken = clientCredentialHasher.Hash(referenceToken, clientDetail);
 
         var refreshToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 16);
         var hashedRefreshToken = clientCredentialHasher.Hash(refreshToken, clientDetail);
@@ -70,7 +70,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         await mediator.Send(new UpsertAccessTokenCommand(new AccessTokenDto
         {
             Type = request.TokenRequest.GrantType,
-            ReferenceToken = referenceToken,
+            ReferenceToken = hashedReferenceToken,
             RefreshToken = hashedRefreshToken,
             AccessToken = accessToken,
             ClientId = clientDetail.Id,

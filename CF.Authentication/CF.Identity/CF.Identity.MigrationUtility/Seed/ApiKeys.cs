@@ -1,4 +1,5 @@
 ﻿using CF.Identity.Infrastructure;
+using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +26,14 @@ public partial class Seed
         {
             var randomNumberGenerator = serviceProvider.GetRequiredService<RandomNumberGenerator>();
             var jwtSettings = serviceProvider.GetRequiredService<IJwtSettings>();
-            var referenceToken = JwtHelper.GenerateSecureRandomBase64( randomNumberGenerator, 32);
+            var clientCredentialHasher = serviceProvider.GetRequiredService<IClientCredentialHasher>();
+
+            var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
+            var hashedReferenceToken = clientCredentialHasher.Hash(referenceToken, client);
+
             var refreshToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 16);
+            var hashedRefreshToken = clientCredentialHasher.Hash(refreshToken, client);
+
             var newApiKey = new DbAccessToken
             {
                 Id = Guid.NewGuid(),
@@ -38,6 +45,9 @@ public partial class Seed
                 ValidFrom = DateTimeOffset.UtcNow,
                 ValidTo = DateTimeOffset.UtcNow.AddYears(1)
             };
+
+            logger.LogDebug("Referece API Token: {referenceToken}", referenceToken);
+            logger.LogDebug("Refresh API Token: {refreshToken}", refreshToken);
 
             if (isSystemClientInFlight)
             {
