@@ -14,6 +14,9 @@ public class DbAccessToken : MappableBase<IAccessToken>, IAccessToken
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
     public Guid Id { get; set; }
+
+    public virtual DbClient Client { get; set; } = null!;
+
     public override void Map(IAccessToken source)
     {
         ReferenceToken = source.ReferenceToken;

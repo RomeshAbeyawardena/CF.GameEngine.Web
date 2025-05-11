@@ -21,7 +21,7 @@ public partial class Seed
             ?? throw new NullReferenceException("Seeding can not continue ");
 
         
-        if (!isSystemClientInFlight && !(await context.AccessTokens.AnyAsync(x => x.ClientId == client.Id, cancellationToken)))
+        if (await context.AccessTokens.AnyAsync(x => x.ClientId == client.Id, cancellationToken))
         {
             var randomNumberGenerator = serviceProvider.GetRequiredService<RandomNumberGenerator>();
             var jwtSettings = serviceProvider.GetRequiredService<IJwtSettings>();
@@ -30,7 +30,6 @@ public partial class Seed
             var newApiKey = new DbAccessToken
             {
                 Id = Guid.NewGuid(),
-                ClientId = client.Id,
                 ReferenceToken = referenceToken,
                 RefreshToken = refreshToken,
                 AccessToken = JwtHelper.GenerateJwt(client, string.Join(' ', DefaultScopes)
@@ -39,6 +38,16 @@ public partial class Seed
                 ValidFrom = DateTimeOffset.UtcNow,
                 ValidTo = DateTimeOffset.UtcNow.AddYears(1)
             };
+
+            if (isSystemClientInFlight)
+            {
+                newApiKey.Client = client;
+            }
+            else
+            {
+                newApiKey.ClientId = client.Id;
+            }
+
             context.AccessTokens.Add(newApiKey);
         }
         else
