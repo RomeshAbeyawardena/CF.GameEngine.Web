@@ -60,7 +60,6 @@ internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilit
                 else
                 {
                     logger.LogInformation("No pending migrations.");
-                    return;
                 }
             }
 
@@ -74,7 +73,12 @@ internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilit
             {
                 foreach(var (key, extension) in Instance.Extensions)
                 {
-                    await extension(logger, context, args, cancellationToken);
+                    if (args.Any(a => a.Equals($"--{key.Name}", StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        logger.LogInformation("Running extension: {Name}", key.Name);
+
+                        await extension(logger, context, args, cancellationToken);
+                    }
                 }
             }
         }

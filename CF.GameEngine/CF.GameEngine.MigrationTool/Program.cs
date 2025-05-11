@@ -1,6 +1,7 @@
 ﻿using CF.GameEngine.Infrastructure.SqlServer;
 using CF.GameEngine.Infrastructure.SqlServer.Extensions;
 using IDFCR.Utility.Shared;
+using Microsoft.Extensions.Logging;
 
 using var utility = EFMigrationUtility.MigrationUtility<CFGameEngineDbContext>(
     new EFMigrationUtilityName("CF.GameEngine", "1.0.0"), args,
@@ -9,5 +10,5 @@ using var utility = EFMigrationUtility.MigrationUtility<CFGameEngineDbContext>(
     {
         services.AddBackendDependencies("GameEngineDb");
     });
-    
- await utility.InitialiseAsync();
+
+await utility.InitialiseAsync();
