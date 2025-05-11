@@ -8,7 +8,7 @@ public interface IEFMigrationUtility<TDbContext> : IDisposable, IAsyncDisposable
     where TDbContext : DbContext
 {
     IHost? Host { get; }
-    IEFMigrationUtility<TDbContext> Extend(string name, 
+    IEFMigrationUtility<TDbContext> Extend(string name, string? description,
         Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>,CancellationToken,Task> extension);
     Task RunMigrationAssistant(IHost host, CancellationToken cancellationToken);
     Task InitialiseAsync(bool runMigrationAssistance = true, CancellationToken cancellationToken = default);

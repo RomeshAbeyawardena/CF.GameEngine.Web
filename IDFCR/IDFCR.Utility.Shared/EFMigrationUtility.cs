@@ -20,9 +20,11 @@ internal class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName
     string userSecretId, Action<HostBuilderContext, IServiceCollection> configureServices) : IEFMigrationUtility<TDbContext>
     where TDbContext : DbContext
 {
-    private readonly Dictionary<string, Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task>> _extensions = [];
+    private readonly Dictionary<EFMigrationUtilityExtensionName, 
+        Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task>> _extensions = [];
 
-    internal IReadOnlyDictionary<string, Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task>> Extensions => _extensions;
+    internal IReadOnlyDictionary<EFMigrationUtilityExtensionName, 
+        Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task>> Extensions => _extensions;
 
     public IHost? Host { get; private set; }
 
@@ -76,10 +78,10 @@ internal class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName
         return ValueTask.CompletedTask;
     }
 
-    public IEFMigrationUtility<TDbContext> Extend(string name, 
+    public IEFMigrationUtility<TDbContext> Extend(string name, string? description,
         Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task> extension)
     {
-        if (!_extensions.TryAdd(name, extension))
+        if (!_extensions.TryAdd(new(name, description), extension))
         {
             throw new InvalidOperationException($"An extension with the name '{name}' is already registered.");
         }

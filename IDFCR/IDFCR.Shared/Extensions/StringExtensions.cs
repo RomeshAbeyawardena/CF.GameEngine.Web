@@ -5,6 +5,27 @@ namespace IDFCR.Shared.Extensions;
 
 public static class StringExtensions
 {
+    public static string FixedLength(this string value, int length)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return new string(' ', length);
+        }
+
+        if (value.Length > length && length - 3 > 0)
+        {
+            return string.Concat(value.AsSpan(0, length - 3).Trim(), "...");
+        }
+
+        if (value.Length < length)
+        {
+            var spacesToAdd = length - value.Length;
+            return string.Concat(value, new string(' ', spacesToAdd));
+        }
+
+        return value;
+    }
+
     public static string ToKebabCase(this string value)
     {
         if (string.IsNullOrWhiteSpace(value))

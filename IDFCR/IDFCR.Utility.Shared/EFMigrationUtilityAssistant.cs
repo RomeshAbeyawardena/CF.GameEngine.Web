@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using IDFCR.Shared.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace IDFCR.Utility.Shared;
@@ -17,6 +18,23 @@ internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilit
 
             var timeOfDay = timeOfDayProvider.GetTimeOfDay();
             logger.LogInformation("{timeOfDay}", timeOfDay);
+
+            if (args.Any(a => a.Equals("--help", StringComparison.OrdinalIgnoreCase)))
+            {
+                logger.LogInformation("Available options:");
+                var builtinKey = "verify-connection".FixedLength(20);
+                logger.LogInformation("\t--{key}\tCheck if DB is reachable", builtinKey);
+                builtinKey = "list".FixedLength(20);
+                logger.LogInformation("\t--{key}\tList pending migrations", builtinKey);
+                builtinKey = "migrate".FixedLength(20);
+                logger.LogInformation("\t--{key}\tApply migrations", builtinKey);
+
+                foreach (var key in Instance?.Extensions.Keys ?? [])
+                {
+                    logger.LogInformation("\t--{Key}\tRun extension: {Description}", key.Name.FixedLength(20), key.Description);
+                }
+                return;
+            }
 
             if (args.Any(a => a.Equals("--verify-connection")))
             {
