@@ -28,10 +28,13 @@ internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilit
                 logger.LogInformation("\t--{key}\tList pending migrations", builtinKey);
                 builtinKey = "migrate".FixedLength(20);
                 logger.LogInformation("\t--{key}\tApply migrations", builtinKey);
+                builtinKey = "suppress-duplicate-directive-warning".FixedLength(20);
+                logger.LogInformation("\t--{key}\tSuppress warnings about duplicate directives exisiting in both primary and extension contexts", builtinKey);
 
                 foreach (var key in Instance?.Extensions.Keys ?? [])
                 {
-                    if (EFMigrationUtility.Operations.Contains(key.Name))
+                    if (!args.Any(a => a.Equals("--suppress-duplicate-directive-warning", StringComparison.InvariantCultureIgnoreCase)) 
+                        && EFMigrationUtility.Operations.Contains(key.Name))
                     {
                         logger.LogWarning("This directive will be run twice, once as a primary directive and again as an extended directive, be wary of side effects!");
                     }
