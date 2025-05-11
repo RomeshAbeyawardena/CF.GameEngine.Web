@@ -51,6 +51,14 @@ internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilit
                 logger.LogInformation("Applying migrations...");
                 await context.Database.MigrateAsync(cancellationToken);
             }
+
+            if (Instance is not null)
+            {
+                foreach(var (key, extension) in Instance.Extensions)
+                {
+                    await extension(logger, context, args, cancellationToken);
+                }
+            }
         }
         catch (Exception exception)
         {
