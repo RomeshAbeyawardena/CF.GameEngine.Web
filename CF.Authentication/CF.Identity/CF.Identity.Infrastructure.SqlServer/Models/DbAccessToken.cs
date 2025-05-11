@@ -3,7 +3,7 @@ using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Infrastructure.SqlServer.Models;
 
-internal class DbAccessToken : MappableBase<IAccessToken>, IAccessToken
+public class DbAccessToken : MappableBase<IAccessToken>, IAccessToken
 {
     protected override IAccessToken Source => this;
     public string ReferenceToken { get; set; } = null!;

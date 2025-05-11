@@ -10,7 +10,7 @@ public class ScopeDto : MappableBase<IScope>, IScope
     public string Name { get; set; } = null!;
     public string? Description { get; set; }
     public Guid Id { get; set; }
-    public Guid ClientId { get; set; }
+    public Guid? ClientId { get; set; }
 
     public override void Map(IScope source)
     {
