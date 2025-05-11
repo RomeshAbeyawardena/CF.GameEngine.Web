@@ -21,7 +21,7 @@ public partial class Seed
             ?? throw new NullReferenceException("Seeding can not continue ");
 
         
-        if (await context.AccessTokens.AnyAsync(x => x.ClientId == client.Id, cancellationToken))
+        if (!await context.AccessTokens.AnyAsync(x => x.ClientId == client.Id, cancellationToken))
         {
             var randomNumberGenerator = serviceProvider.GetRequiredService<RandomNumberGenerator>();
             var jwtSettings = serviceProvider.GetRequiredService<IJwtSettings>();
