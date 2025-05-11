@@ -5,6 +5,8 @@ using CF.Identity.Infrastructure.SqlServer.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using CF.Identity.Infrastructure.SqlServer.Models;
+using Microsoft.Extensions.DependencyInjection;
+using CF.Identity.Infrastructure.Features.Clients;
 
 using var migrationUtility = EFMigrationUtility
     .MigrationUtility<CFIdentityDbContext>(new EFMigrationUtilityName("CF.Identity", "1.0"), args, "123dacb9-a24c-4c4d-b2c5-bf465343f8d8",
@@ -37,7 +39,7 @@ static async Task TrySeedScopesAsync(ILogger logger, CFIdentityDbContext context
     }
 }
 
-static async Task TrySeedSystemClient(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToken)
+static async Task TrySeedSystemClient(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
 {
     if (await context.Clients.Where(c => c.IsSystem).AnyAsync(cancellationToken))
     {
@@ -54,16 +56,21 @@ static async Task TrySeedSystemClient(ILogger logger, CFIdentityDbContext contex
         IsSystem = true,
     };
 
-    //systemClient.SecretHash = ;
+    var s = serviceProvider.GetRequiredService<IClientCredentialHasher>();
+    systemClient.SecretHash = s.Hash("userSecret", systemClient);
+
+    await context.Clients.AddAsync(systemClient, cancellationToken);
 }
 
-static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, CancellationToken cancellationToken)
+static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, IServiceProvider serviceProvider, CancellationToken cancellationToken)
 {
     logger.LogInformation("Seeding data...");
 
     await TrySeedScopesAsync(logger, context, cancellationToken);
     // Add your seeding logic here
+    await TrySeedSystemClient(logger, context, serviceProvider, cancellationToken);
 
+    await context.SaveChangesAsync(cancellationToken);
 }
 
 await migrationUtility.InitialiseAsync();
