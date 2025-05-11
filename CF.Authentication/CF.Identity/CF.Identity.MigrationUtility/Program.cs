@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using Microsoft.Extensions.DependencyInjection;
 using CF.Identity.Infrastructure.Features.Clients;
+using Microsoft.Extensions.Configuration;
 
 using var migrationUtility = EFMigrationUtility
     .MigrationUtility<CFIdentityDbContext>(new EFMigrationUtilityName("CF.Identity", "1.0"), args, "123dacb9-a24c-4c4d-b2c5-bf465343f8d8",
@@ -56,8 +57,10 @@ static async Task TrySeedSystemClient(ILogger logger, CFIdentityDbContext contex
         IsSystem = true,
     };
 
-    var s = serviceProvider.GetRequiredService<IClientCredentialHasher>();
-    systemClient.SecretHash = s.Hash("userSecret", systemClient);
+    var clientCredentialHasher = serviceProvider.GetRequiredService<IClientCredentialHasher>();
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    systemClient.SecretHash = clientCredentialHasher.Hash(configuration["Seed:SystemClientSecret"] 
+        ?? throw new NullReferenceException("System client secret not configured"), systemClient);
 
     await context.Clients.AddAsync(systemClient, cancellationToken);
 }
