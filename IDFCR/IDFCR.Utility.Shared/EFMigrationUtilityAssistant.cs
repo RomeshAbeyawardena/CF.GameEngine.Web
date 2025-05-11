@@ -1,6 +1,7 @@
 ﻿using IDFCR.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace IDFCR.Utility.Shared;
 
@@ -19,28 +20,44 @@ internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilit
             var timeOfDay = timeOfDayProvider.GetTimeOfDay();
             logger.LogInformation("{timeOfDay}", timeOfDay);
 
+            const int FixedLength = 40;
             if (args.Any(a => a.Equals("--help", StringComparison.OrdinalIgnoreCase)))
             {
-                logger.LogInformation("Available options:");
-                var builtinKey = "verify-connection".FixedLength(20);
-                logger.LogInformation("\t--{key}\tCheck if DB is reachable", builtinKey);
-                builtinKey = "list".FixedLength(20);
-                logger.LogInformation("\t--{key}\tList pending migrations", builtinKey);
-                builtinKey = "migrate".FixedLength(20);
-                logger.LogInformation("\t--{key}\tApply migrations", builtinKey);
-                builtinKey = "suppress-duplicate-directive-warning".FixedLength(20);
-                logger.LogInformation("\t--{key}\tSuppress warnings about duplicate directives exisiting in both primary and extension contexts", builtinKey);
+                var stringBuilder = new StringBuilder();
+                stringBuilder.AppendLine("Available options:");
 
+                var builtinKey = "verify-connection".FixedLength(FixedLength);
+                stringBuilder.AppendLine($"\t--{builtinKey}\tCheck if DB is reachable");
+                builtinKey = "list".FixedLength(FixedLength);
+                stringBuilder.AppendLine($"\t--{builtinKey}\tList pending migrations");
+                builtinKey = "migrate".FixedLength(FixedLength);
+                stringBuilder.AppendLine($"\t--{builtinKey}\tApply migrations");
+                builtinKey = "suppress-duplicate-directive-warning".FixedLength(FixedLength);
+                stringBuilder.AppendLine($"\t--{builtinKey}\tSuppress warnings about duplicate directives exisiting in both primary and extension contexts");
+
+                logger.LogInformation("{stringBuilder}", stringBuilder.ToString());
+                stringBuilder.Clear();
+
+                if(Instance?.Extensions.Count == 0)
+                {
+                    logger.LogInformation("No extensions available.");
+                    return;
+                }
+
+                stringBuilder.AppendLine("Available extensions:");
                 foreach (var key in Instance?.Extensions.Keys ?? [])
                 {
                     if (!args.Any(a => a.Equals("--suppress-duplicate-directive-warning", StringComparison.InvariantCultureIgnoreCase)) 
                         && EFMigrationUtility.Operations.Contains(key.Name))
                     {
-                        logger.LogWarning("This directive will be run twice, once as a primary directive and again as an extended directive, be wary of side effects!");
+                        logger.LogWarning("The directive {key} will be run twice, once as a primary directive and again as an extended directive, be wary of side effects!", key);
                     }
 
-                    logger.LogInformation("\t--{Key}\tRun extension: {Description}", key.Name.FixedLength(20), key.Description);
+                    builtinKey = key.Name.FixedLength(FixedLength);
+                    stringBuilder.AppendLine($"\t--{builtinKey}\tRun extension: {key.Description}");
                 }
+
+                logger.LogInformation("{stringBuilder}", stringBuilder.ToString());
                 return;
             }
 

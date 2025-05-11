@@ -2,7 +2,7 @@
   "profiles": {
     "CF.GameEngine.MigrationTool": {
       "commandName": "Project",
-      "commandLineArgs": "--helloworld"
+      "commandLineArgs": "--migrate --verify-connection"
     }
   }
 }
