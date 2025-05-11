@@ -4,6 +4,8 @@ using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
 using Microsoft.Extensions.Logging;
 using CF.Identity.MigrationUtility.Seed;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 using var migrationUtility = EFMigrationUtility
     .MigrationUtility<CFIdentityDbContext>(new EFMigrationUtilityName("CF.Identity", "1.0"), args, "123dacb9-a24c-4c4d-b2c5-bf465343f8d8",
@@ -17,6 +19,15 @@ static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumera
     await Seed.TrySeedScopesAsync(logger, context, cancellationToken);
     
     await Seed.TrySeedSystemClient(logger, context, serviceProvider, cancellationToken);
+
+    if (args.Any(x => x.StartsWith("seed:", StringComparison.InvariantCultureIgnoreCase)))
+    {
+        IHostEnvironment hostEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
+        if (!hostEnvironment.IsDevelopment())
+        {
+            logger.LogWarning("Seeding is not recommended in development environment.");
+        }
+    }
 
     if(args.Any(x => x.Equals("seed:api_key", StringComparison.InvariantCultureIgnoreCase)))
     {

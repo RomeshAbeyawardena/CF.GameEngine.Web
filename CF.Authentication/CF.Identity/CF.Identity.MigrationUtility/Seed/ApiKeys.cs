@@ -46,9 +46,6 @@ public partial class Seed
                 ValidTo = DateTimeOffset.UtcNow.AddYears(1)
             };
 
-            logger.LogDebug("Referece API Token: {referenceToken}", referenceToken);
-            logger.LogDebug("Refresh API Token: {refreshToken}", refreshToken);
-
             if (isSystemClientInFlight)
             {
                 newApiKey.Client = client;
@@ -59,6 +56,12 @@ public partial class Seed
             }
 
             context.AccessTokens.Add(newApiKey);
+
+            logger.LogInformation("✅ API key successfully seeded for system client.");
+            logger.LogInformation("🔑 Reference Token: {referenceToken}", referenceToken);
+            logger.LogInformation("♻️ Refresh Token: {refreshToken}", refreshToken);
+            logger.LogInformation("👉 Use the Reference Token in Postman or curl as the `Authorization: Bearer <token>` header.");
+
         }
         else
         {
