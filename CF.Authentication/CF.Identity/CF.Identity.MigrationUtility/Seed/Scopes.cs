@@ -7,7 +7,7 @@ namespace CF.Identity.MigrationUtility.Seed;
 
 public static partial class Seed
 {
-    public static string[] DefaultScopes = ["api:read", "api:write"];
+    public static IEnumerable<string> DefaultScopes => ["api:read", "api:write"];
     internal static async Task TrySeedScopesAsync(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToken)
     {
         var scopes = await context.Scopes.Where(x => !x.ClientId.HasValue && DefaultScopes.Contains(x.Key)).ToListAsync(cancellationToken);
