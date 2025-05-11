@@ -31,6 +31,11 @@ internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilit
 
                 foreach (var key in Instance?.Extensions.Keys ?? [])
                 {
+                    if (EFMigrationUtility.Operations.Contains(key.Name))
+                    {
+                        logger.LogWarning("This directive will be run twice, once as a primary directive and again as an extended directive, be wary of side effects!");
+                    }
+
                     logger.LogInformation("\t--{Key}\tRun extension: {Description}", key.Name.FixedLength(20), key.Description);
                 }
                 return;

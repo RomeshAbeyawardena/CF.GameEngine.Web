@@ -8,6 +8,7 @@ namespace IDFCR.Utility.Shared;
 
 public static class EFMigrationUtility
 {
+    public static IEnumerable<string> Operations => ["list", "migrate", "verify-connection"];
     public static IEFMigrationUtility<TDbContext> MigrationUtility<TDbContext>(EFMigrationUtilityName utilityName, IEnumerable<string> args,
     string userSecretId, Action<HostBuilderContext, IServiceCollection> configureServices)
         where TDbContext : DbContext
