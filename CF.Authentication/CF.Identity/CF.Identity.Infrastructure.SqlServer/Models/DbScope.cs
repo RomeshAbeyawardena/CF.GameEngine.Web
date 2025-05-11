@@ -10,7 +10,7 @@ public class DbScope : MappableBase<IScope>, IScope
     public string? Description { get; set; }
     public Guid Id { get; set; }
     public string Key { get; set; } = null!;
-    public Guid ClientId { get; set; }
+    public Guid? ClientId { get; set; }
 
     public override void Map(IScope source)
     {

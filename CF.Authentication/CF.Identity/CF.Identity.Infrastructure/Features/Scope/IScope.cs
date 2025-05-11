@@ -15,7 +15,7 @@ public interface IEditableScope : IMappable<IScope>, IScopeSummary, IIdentifer
 
 public interface  IScopeSummary
 {
-    Guid ClientId { get; }
+    Guid? ClientId { get; }
     string Name { get; }
     string? Description { get; }
 }
