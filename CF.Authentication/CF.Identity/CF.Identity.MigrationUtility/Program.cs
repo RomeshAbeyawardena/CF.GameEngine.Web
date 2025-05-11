@@ -11,7 +11,7 @@ using var migrationUtility = EFMigrationUtility
     (h, s) => s.AddBackendDependencies("IdentityDb"))
     .Extend("seed", "Seed basic data required for the database to operate correctly", SeedData);
 
-static async Task TrySeedScopes(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToke)
+static async Task TrySeedScopesAsync(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToke)
 {
     string[] defaultScopes = ["api:read", "api:write"];
 
@@ -37,11 +37,31 @@ static async Task TrySeedScopes(ILogger logger, CFIdentityDbContext context, Can
     }
 }
 
+static async Task TrySeedSystemClient(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToken)
+{
+    if (await context.Clients.Where(c => c.IsSystem).AnyAsync(cancellationToken))
+    {
+        logger.LogInformation("No clients to seed, skipping seeding.");
+        return;
+    }
+
+    var systemClient = new DbClient
+    {
+        Reference = "system",
+        Name = "System Client",
+        ValidFrom = DateTimeOffset.UtcNow,
+        ValidTo = DateTimeOffset.UtcNow.AddYears(100),
+        IsSystem = true,
+    };
+
+    //systemClient.SecretHash = ;
+}
+
 static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, CancellationToken cancellationToken)
 {
     logger.LogInformation("Seeding data...");
 
-    await TrySeedScopes(logger, context, cancellationToken);
+    await TrySeedScopesAsync(logger, context, cancellationToken);
     // Add your seeding logic here
 
 }

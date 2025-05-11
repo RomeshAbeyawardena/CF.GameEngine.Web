@@ -13,7 +13,8 @@ public class DbClient : MappableBase<IClient>, IClient
     public Guid Id { get; set; }
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
-    public string? SecretHash { get; }
+    public string? SecretHash { get; set; }
+    public bool IsSystem { get; set; }
 
     public override void Map(IClient source)
     {
@@ -24,5 +25,7 @@ public class DbClient : MappableBase<IClient>, IClient
         ValidFrom = source.ValidFrom;
         ValidTo = source.ValidTo;
         SuspendedTimestampUtc = source.SuspendedTimestampUtc;
+        SecretHash = source.SecretHash;
+        IsSystem = source.IsSystem;
     }
 }

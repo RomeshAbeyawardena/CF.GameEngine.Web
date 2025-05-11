@@ -22,10 +22,10 @@ internal class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName
     where TDbContext : DbContext
 {
     private readonly Dictionary<EFMigrationUtilityExtensionName, 
-        Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task>> _extensions = [];
+        Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, IServiceProvider, CancellationToken, Task>> _extensions = [];
 
     internal IReadOnlyDictionary<EFMigrationUtilityExtensionName, 
-        Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task>> Extensions => _extensions;
+        Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, IServiceProvider, CancellationToken, Task>> Extensions => _extensions;
 
     public IHost? Host { get; private set; }
 
@@ -81,6 +81,13 @@ internal class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName
 
     public IEFMigrationUtility<TDbContext> Extend(string name, string? description,
         Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, CancellationToken, Task> extension)
+    {
+        return Extend(name, description, (l, ct, s, a, c) => extension(l, ct, s, c));
+        
+    }
+
+    public IEFMigrationUtility<TDbContext> Extend(string name, string? description, 
+        Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>, IServiceProvider, CancellationToken, Task> extension)
     {
         if (!_extensions.TryAdd(new(name, description), extension))
         {

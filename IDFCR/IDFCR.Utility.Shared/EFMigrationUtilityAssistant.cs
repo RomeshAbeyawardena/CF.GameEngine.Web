@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IDFCR.Utility.Shared;
 
-internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilityAssistant<TDbContext>> logger,
+internal class EFMigrationUtilityAssistant<TDbContext>(IServiceProvider serviceProvider, ILogger<EFMigrationUtilityAssistant<TDbContext>> logger,
         ITimeOfDayProvider timeOfDayProvider, TDbContext context) : IEFMigrationUtilityAssistant<TDbContext>
     where TDbContext : DbContext
 {
@@ -102,7 +102,7 @@ internal class EFMigrationUtilityAssistant<TDbContext>(ILogger<EFMigrationUtilit
                     {
                         logger.LogInformation("Running extension: {Name}", key.Name);
 
-                        await extension(logger, context, args, cancellationToken);
+                        await extension(logger, context, args, serviceProvider, cancellationToken);
                     }
                 }
             }
