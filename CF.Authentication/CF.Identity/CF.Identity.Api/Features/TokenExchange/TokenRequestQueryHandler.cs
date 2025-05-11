@@ -2,50 +2,22 @@
 using CF.Identity.Api.Features.Clients;
 using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.Scopes.Get;
+using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
 using MediatR;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
+
 
 namespace CF.Identity.Api.Features.TokenExchange;
 
-public class TokenRequestQueryHandler(JwtSettings jwtSettings, IMediator mediator, IClientCredentialHasher clientCredentialHasher,
+public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediator, IClientCredentialHasher clientCredentialHasher,
     TimeProvider timeProvider, RandomNumberGenerator randomNumberGenerator) : IUnitRequestHandler<TokenRequestQuery, TokenResponse>
 {
     private string GenerateJwt(ClientDetailResponse client, string scope)
     {
-        //TODO come from configuration shared with consumer. /jwks.json
-        var claims = new[]
-        {
-            new Claim("sub", client.Reference),
-            new Claim("scope", scope),
-            new Claim("client_id", client.Reference)
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey ?? throw new ArgumentException(nameof(jwtSettings))));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: jwtSettings.Issuer,
-            audience: jwtSettings.Audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: creds
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    private static string GenerateSecureRandomBase64(RandomNumberGenerator rng, int sizeInBytes)
-    {
-        var buffer = new byte[sizeInBytes];
-        rng.GetNonZeroBytes(buffer);
-        return Convert.ToBase64String(buffer);
+        return JwtHelper.GenerateJwt(client, scope, jwtSettings);
     }
 
     public async Task<IUnitResult<TokenResponse>> Handle(TokenRequestQuery request, CancellationToken cancellationToken)
@@ -89,10 +61,10 @@ public class TokenRequestQueryHandler(JwtSettings jwtSettings, IMediator mediato
 
         var accessToken = GenerateJwt(clientDetail, request.TokenRequest.Scope);
 
-        var referenceToken = GenerateSecureRandomBase64(randomNumberGenerator, 32);
+        var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
         referenceToken = clientCredentialHasher.Hash(referenceToken, clientDetail);
 
-        var refreshToken = GenerateSecureRandomBase64(randomNumberGenerator, 16);
+        var refreshToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 16);
         var hashedRefreshToken = clientCredentialHasher.Hash(refreshToken, clientDetail);
 
         await mediator.Send(new UpsertAccessTokenCommand(new AccessTokenDto

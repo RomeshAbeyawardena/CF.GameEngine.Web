@@ -15,8 +15,13 @@ static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumera
     logger.LogInformation("Seeding data...");
 
     await Seed.TrySeedScopesAsync(logger, context, cancellationToken);
-    // Add your seeding logic here
+    
     await Seed.TrySeedSystemClient(logger, context, serviceProvider, cancellationToken);
+
+    if(args.Any(x => x.Equals("seed:api_key", StringComparison.InvariantCultureIgnoreCase)))
+    {
+        await Seed.TrySeedApiKeyAsync(logger, context, serviceProvider, cancellationToken);
+    }
 
     await context.SaveChangesAsync(cancellationToken);
 }

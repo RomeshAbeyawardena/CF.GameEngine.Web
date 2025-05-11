@@ -7,19 +7,18 @@ namespace CF.Identity.MigrationUtility.Seed;
 
 public static partial class Seed
 {
-    internal static async Task TrySeedScopesAsync(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToke)
+    public static string[] DefaultScopes = ["api:read", "api:write"];
+    internal static async Task TrySeedScopesAsync(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToken)
     {
-        string[] defaultScopes = ["api:read", "api:write"];
+        var scopes = await context.Scopes.Where(x => !x.ClientId.HasValue && DefaultScopes.Contains(x.Key)).ToListAsync(cancellationToken);
 
-        var scopes = await context.Scopes.Where(x => !x.ClientId.HasValue && defaultScopes.Contains(x.Key)).ToListAsync(cancellationToke);
-
-        if (scopes.All(x => defaultScopes.Contains(x.Key)))
+        if (scopes.All(x => DefaultScopes.Contains(x.Key)))
         {
             logger.LogInformation("No scopes to seed, skipping seeding.");
             return;
         }
 
-        var scopesToSeed = defaultScopes.Where(s => !scopes.Any(x => s == x.Key));
+        var scopesToSeed = DefaultScopes.Where(s => !scopes.Any(x => s == x.Key));
         foreach (var scope in scopesToSeed)
         {
             var newScope = new DbScope
