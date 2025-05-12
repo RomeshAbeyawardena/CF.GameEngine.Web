@@ -21,14 +21,20 @@ internal class ScopeFilter(IScopeFilter filter) : FilterBase<IScopeFilter, DbSco
 
     public override ExpressionStarter<DbScope> ApplyFilter(ExpressionStarter<DbScope> query, IScopeFilter filter)
     {
-        if(!string.IsNullOrWhiteSpace(filter.Key))
+        if (!string.IsNullOrWhiteSpace(filter.Key) && filter.Keys?.Any() == true)
+        {
+            throw new InvalidOperationException("Cannot filter by both Key and Keys simultaneously.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Key))
         {
             query = query.And(x => x.Key == filter.Key);
         }
 
         if (filter.ClientId.HasValue)
         {
-            query = query.And(x => x.ClientId == filter.ClientId.Value);
+            //gets all filters for the client including scopes that are global
+            query = query.And(x => !x.ClientId.HasValue || x.ClientId == filter.ClientId.Value);
         }
 
         if (filter.Keys != null && filter.Keys.Any())
