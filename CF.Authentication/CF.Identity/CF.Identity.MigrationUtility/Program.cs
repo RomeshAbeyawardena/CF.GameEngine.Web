@@ -25,7 +25,7 @@ static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumera
         IHostEnvironment hostEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
         if (!hostEnvironment.IsDevelopment())
         {
-            logger.LogWarning("Seeding is not recommended in development environment.");
+            logger.LogWarning("Test data seeding is not recommended out of development environments.");
         }
     }
 
