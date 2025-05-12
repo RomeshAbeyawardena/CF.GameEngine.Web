@@ -14,6 +14,7 @@ public class AccessTokenDto : MappableBase<IAccessToken>, IEditableAccessToken, 
     public string? RefreshToken { get; set; }
     public string Type { get; set; } = null!;
     public Guid Id { get; set; }
+    public Guid UserId { get; set; }
 
     public override void Map(IAccessToken source)
     {
@@ -25,5 +26,6 @@ public class AccessTokenDto : MappableBase<IAccessToken>, IEditableAccessToken, 
         ValidFrom = source.ValidFrom;
         ValidTo = source.ValidTo;
         Id = source.Id;
+        UserId = source.UserId;
     }
 }

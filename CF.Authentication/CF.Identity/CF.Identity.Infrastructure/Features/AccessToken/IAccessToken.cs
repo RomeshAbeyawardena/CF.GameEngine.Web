@@ -15,6 +15,7 @@ public interface IEditableAccessToken : IMappable<IAccessToken>, IAccessTokenSum
 
 public interface IAccessTokenSummary : IValidity
 {
+    Guid UserId { get; }
     Guid ClientId { get; }
     string Type { get; }
 }

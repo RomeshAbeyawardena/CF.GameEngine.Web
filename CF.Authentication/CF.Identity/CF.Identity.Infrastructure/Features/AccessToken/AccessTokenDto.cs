@@ -13,6 +13,7 @@ public class AccessTokenDto : MappableBase<IAccessToken>, IAccessToken
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
     public Guid Id { get; set; }
+    public Guid UserId { get; set; }
 
     public override void Map(IAccessToken source)
     {
@@ -24,5 +25,6 @@ public class AccessTokenDto : MappableBase<IAccessToken>, IAccessToken
         ValidFrom = source.ValidFrom;
         ValidTo = source.ValidTo;
         Id = source.Id;
+        UserId = source.UserId;
     }
 }
