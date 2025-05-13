@@ -1,6 +1,7 @@
 ﻿using CF.GameEngine.Web.Api.Features.Element.Get;
 using CF.GameEngine.Web.Api.Features.ElementTypes.Get;
 using FluentValidation;
+using IDFCR.Shared.Extensions;
 using MediatR;
 
 namespace CF.GameEngine.Web.Api.Features.Element.Upsert;
@@ -53,7 +54,7 @@ public class UpsertElementValidator : AbstractValidator<UpsertElementCommand>
         if (!string.IsNullOrWhiteSpace(command.Element.ElementType))
         {
             var result = await _mediator.Send(new ElementTypeFindQuery(Key: command.Element.ElementType), cancellationToken);
-            var type = result.Result?.FirstOrDefault();
+            var type = result.GetOneOrDefault();
             if (type is not null)
             {
                 command.Element.ElementTypeId = type.Id; // update context
@@ -75,7 +76,7 @@ public class UpsertElementValidator : AbstractValidator<UpsertElementCommand>
         if (!string.IsNullOrWhiteSpace(command.Element.ParentElement))
         {
             var result = await _mediator.Send(new ElementFindQuery(Key: command.Element.ParentElement), cancellationToken);
-            var element = result.Result?.FirstOrDefault();
+            var element = result.GetOneOrDefault();
             if (element is not null)
             {
                 command.Element.ParentElementId = element.Id; // update context
