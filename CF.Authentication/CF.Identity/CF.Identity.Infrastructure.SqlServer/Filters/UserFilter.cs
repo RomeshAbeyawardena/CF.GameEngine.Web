@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Filters;
+using IDFCR.Shared.Extensions;
 using LinqKit;
 
 namespace CF.Identity.Infrastructure.SqlServer.Filters;
@@ -20,10 +21,13 @@ public class UserFilter(IUserFilter filter) : FilterBase<IUserFilter, DbUser>(fi
 
         if (!string.IsNullOrWhiteSpace(filter.NameContains))
         {
-            query = query.And(x => x.Firstname.Contains(filter.NameContains) 
-                || x.LastName.Contains(filter.NameContains)
-                || x.Username.Contains(filter.NameContains)
-                || (x.MiddleName == null || x.MiddleName.Contains(filter.NameContains)));
+            var nameMatch = PredicateBuilder.New<DbUser>(true);
+            nameMatch = nameMatch.Or(x => x.Firstname.Contains(filter.NameContains))
+                .Or(x => x.LastName.Contains(filter.NameContains))
+                .Or(x => x.Username.Contains(filter.NameContains))
+                .Or(ExpressionExtensions.OrNullContains<DbUser>(u => u.MiddleName, NameContains));
+
+            query = query.And(nameMatch);
         }
 
         return query;
