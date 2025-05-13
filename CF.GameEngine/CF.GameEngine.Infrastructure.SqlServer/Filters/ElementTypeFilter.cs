@@ -30,7 +30,7 @@ internal class ElementTypeFilter(IElementTypeFilter filter) : FilterBase<IElemen
             query = query.And(x => x.Name.Contains(NameContains));
         }
 
-        return base.ApplyFilter(query, filter);
+        return query;
     }
 
     public override void Map(IElementTypeFilter source)
