@@ -53,4 +53,13 @@ public static class UserInfoEndpoint
 
         return Results.Ok(result.GetResultOrDefault());
     }
+
+    public static IEndpointRouteBuilder AddUserInfoEndpoint(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet("/connect/userinfo", GetUserInfoAsync)
+            .Produces<UserInfoResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .RequireRateLimiting("authentication-rate-limits");
+        return builder;
+    }
 }
