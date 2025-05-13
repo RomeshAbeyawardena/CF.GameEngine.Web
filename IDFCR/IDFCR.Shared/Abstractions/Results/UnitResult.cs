@@ -3,6 +3,7 @@ using IDFCR.Shared.Exceptions;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Policy;
 
 namespace IDFCR.Shared.Abstractions.Results;
 
@@ -62,6 +63,7 @@ public record UnitResult<TResult>(TResult? Result = default, UnitAction Action =
     bool IsSuccess = true, Exception? Exception = null)
     : UnitResult(Exception, Action, IsSuccess), IUnitResult<TResult>
 {
+    [MemberNotNullWhen(true, nameof(Result))]
     public bool HasValue => IsSuccess && Result is not null;
 }
 

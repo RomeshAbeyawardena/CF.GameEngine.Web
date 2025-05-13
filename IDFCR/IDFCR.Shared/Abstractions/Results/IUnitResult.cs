@@ -1,4 +1,6 @@
-﻿namespace IDFCR.Shared.Abstractions.Results;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace IDFCR.Shared.Abstractions.Results;
 
 public interface IUnitResult : IReadOnlyDictionary<string, object?>
 {
@@ -12,6 +14,7 @@ public interface IUnitResult : IReadOnlyDictionary<string, object?>
 public interface IUnitResult<TResult> : IUnitResult
 {
     TResult? Result { get; }
+    [MemberNotNullWhen(true, nameof(Result))]
     bool HasValue { get; }
 }
 

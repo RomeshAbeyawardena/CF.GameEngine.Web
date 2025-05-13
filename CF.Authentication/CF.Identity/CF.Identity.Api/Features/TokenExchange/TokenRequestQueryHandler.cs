@@ -5,6 +5,7 @@ using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions.Results;
+using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
 using MediatR;
 using System.Security.Cryptography;
@@ -30,9 +31,9 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
 
         var clientResult = await mediator.Send(new FindClientQuery(request.TokenRequest.ClientId), cancellationToken);
 
-        var clientDetail = clientResult.Result?.FirstOrDefault();
+        var clientDetail = clientResult.GetOneOrDefault();
 
-        if (!clientResult.IsSuccess || clientDetail is null)
+        if (clientDetail is null)
         {
             return new UnitResult(new UnauthorizedAccessException("Client not found")).As<TokenResponse>();
         }
@@ -52,9 +53,9 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         }
 
         var requestedScopes = request.TokenRequest.Scope.Split();
-        var scopes = await mediator.Send(new FindScopeQuery(clientDetail.Id, Keys: requestedScopes), cancellationToken);
-
-        if (!scopes.HasValue || !requestedScopes.All(y => scopes.Result!.Any(x => x.Key.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
+        var scopesResponse = await mediator.Send(new FindScopeQuery(clientDetail.Id, Keys: requestedScopes), cancellationToken);
+        var scopes = scopesResponse.AsList();
+        if (!requestedScopes.All(y => scopes.Any(x => x.Key.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
         {
             return new UnitResult(new Exception("Invalid scope requested")).As<TokenResponse>();
         }

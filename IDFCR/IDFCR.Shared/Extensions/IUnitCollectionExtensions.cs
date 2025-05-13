@@ -4,6 +4,16 @@ namespace IDFCR.Shared.Extensions;
 
 public static class UnitCollectionExtensions
 {
+    public static List<T> AsList<T>(this IUnitResultCollection<T> collection) where T : class
+    {
+        if (!collection.HasValue)
+        {
+            return [];
+        }
+
+        return collection.Result.ToList();
+    }
+
     public static IUnitResult<T> GetOne<T>(this IUnitResultCollection<T> collection,
         Func<T, bool>? predicate = null, int? elementIndex = null, object? id = null,
         Func<IEnumerable<T>, IOrderedEnumerable<T>>? orderedTranform = null) where T : class
@@ -22,7 +32,7 @@ public static class UnitCollectionExtensions
         Func<T, bool>? predicate = null, int? elementIndex = null,
         Func<IEnumerable<T>, IOrderedEnumerable<T>>? orderedTranform = null) where T : class
     {
-        if (!collection.IsSuccess || collection.Result is null)
+        if (!collection.HasValue)
         {
             return null;
         }
