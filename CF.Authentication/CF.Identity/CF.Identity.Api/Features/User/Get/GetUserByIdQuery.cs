@@ -16,7 +16,7 @@ public class FindUserQueryHandler(IUserRepository userRepository) : IUnitRequest
     }
 }
 
-public record FindUsersQuery(Guid? ClientId, string? NameContains) : IUnitRequestCollection<UserDto>, IUserFilter;
+public record FindUsersQuery(Guid? ClientId, string? NameContains, bool NoTracking = true) : IUnitRequestCollection<UserDto>, IUserFilter;
 
 public class FindUsersQueryHandler(IUserRepository userRepository) : IUnitRequestCollectionHandler<FindUsersQuery, UserDto>
 {

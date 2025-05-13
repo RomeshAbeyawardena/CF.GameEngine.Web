@@ -37,9 +37,10 @@ internal class ScopeFilter(IScopeFilter filter) : FilterBase<IScopeFilter, DbSco
             query = query.And(x => !x.ClientId.HasValue || x.ClientId == filter.ClientId.Value);
         }
 
-        if (filter.Keys != null && filter.Keys.Any())
+        List<string> scopeKeys;
+        if (filter.Keys != null && (scopeKeys = filter.Keys.Take(50).ToList()).Count > 0)
         {
-            query = query.And(x => filter.Keys.Contains(x.Key));
+            query = query.And(x => scopeKeys.Contains(x.Key));
         }
 
         return query;
