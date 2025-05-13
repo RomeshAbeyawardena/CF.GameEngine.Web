@@ -36,9 +36,13 @@ public static class UnitCollectionExtensions
                 results = orderedTranform(results);
             }
 
-            return results.FirstOrDefault(predicate);
+            return elementIndex.HasValue 
+                ? results.ElementAtOrDefault(elementIndex.Value) 
+                : results.FirstOrDefault(predicate);
         }
 
-        return results.FirstOrDefault();
+        return elementIndex.HasValue 
+            ? results.ElementAtOrDefault(elementIndex.Value) 
+            : results.FirstOrDefault();
     }
 }
