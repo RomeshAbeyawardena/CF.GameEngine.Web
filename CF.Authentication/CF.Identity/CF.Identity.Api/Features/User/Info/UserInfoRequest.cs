@@ -5,6 +5,7 @@ using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.User.Get;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions.Results;
+using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
 using MediatR;
 
@@ -17,18 +18,18 @@ public class UserInfoRequestHandler(IMediator mediator, IClientCredentialHasher 
     public async Task<IUnitResult<UserInfoResponse>> Handle(UserInfoRequest request, CancellationToken cancellationToken)
     {
         var clients = await mediator.Send(new FindClientQuery(request.ClientId), cancellationToken);
-        ClientDetailResponse? clientDto;
-        if (!clients.IsSuccess || (clientDto = clients.Result?.FirstOrDefault()) is null)
+        var client = clients.GetOneOrDefault();
+        if (client is null)
         {
             return UnitResult.NotFound<UserInfoResponse>(request.ClientId).As<UserInfoResponse>();
         }
 
-        var hash = clientCredentialHasher.Hash(request.AccessToken, clientDto);
+        var hash = clientCredentialHasher.Hash(request.AccessToken, client);
         var utcNow = timeProvider.GetUtcNow();
-        var accessTokens = await mediator.Send(new FindAccessTokenQuery(hash, clientDto.Id, ValidFrom: utcNow, ValidTo: utcNow), cancellationToken);
+        var accessTokens = await mediator.Send(new FindAccessTokenQuery(hash, client.Id, ValidFrom: utcNow, ValidTo: utcNow), cancellationToken);
 
-        AccessTokenDto? accessToken;
-        if (!accessTokens.IsSuccess || (accessToken = accessTokens.Result?.OrderByDescending(x => x.ValidFrom).FirstOrDefault()) is null)
+        var accessToken = accessTokens.GetOneOrDefault(orderedTranform : x => x.OrderByDescending(a => a.ValidFrom));
+        if (accessToken is null)
         {
             return new UnitResult(new UnauthorizedAccessException()).As<UserInfoResponse>();
         }
