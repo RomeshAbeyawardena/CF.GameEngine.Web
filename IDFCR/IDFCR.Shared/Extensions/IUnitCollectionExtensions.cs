@@ -4,6 +4,20 @@ namespace IDFCR.Shared.Extensions;
 
 public static class UnitCollectionExtensions
 {
+    public static IUnitResult<T> GetOne<T>(this IUnitResultCollection<T> collection,
+        Func<T, bool>? predicate = null, object? id = null,
+        Func<IEnumerable<T>, IOrderedEnumerable<T>>? orderedTranform = null) where T : class
+    {
+        var result = GetOneOrDefault(collection, predicate, orderedTranform);
+
+        if (result is null)
+        {
+            return UnitResult.NotFound<T>(id ?? "predicate");
+        }
+
+        return UnitResult.FromResult(result, collection.Action, collection.IsSuccess, collection.Exception);
+    }
+
     public static T? GetOneOrDefault<T>(this IUnitResultCollection<T> collection, 
         Func<T, bool>? predicate = null,
         Func<IEnumerable<T>, IOrderedEnumerable<T>>? orderedTranform = null) where T : class
