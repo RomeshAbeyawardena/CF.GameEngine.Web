@@ -1,6 +1,8 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
+using CF.Identity.Infrastructure.SqlServer.Filters;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Results;
+using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
@@ -17,8 +19,12 @@ internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext con
         return UnitResult.FromResult(user);
     }
 
-    public Task<IUnitResultCollection<UserDto>> FindUsersAsync(IUserFilter filter, CancellationToken cancellationToken)
+    public async Task<IUnitResultCollection<UserDto>> FindUsersAsync(IUserFilter filter, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var result = await Set<DbUser>(filter)
+            .Where(new UserFilter(filter).ApplyFilter(Builder))
+            .ToListAsync(cancellationToken);
+
+        return UnitResultCollection.FromResult(result.Select(x => x.Map<UserDto>()).ToList());
     }
 }

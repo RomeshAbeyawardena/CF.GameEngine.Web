@@ -13,11 +13,25 @@ public class UserFilter(IUserFilter filter) : FilterBase<IUserFilter, DbUser>(fi
 
     public override ExpressionStarter<DbUser> ApplyFilter(ExpressionStarter<DbUser> query, IUserFilter filter)
     {
+        if (filter.ClientId.HasValue)
+        {
+            query = query.And(x => x.ClientId == filter.ClientId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.NameContains))
+        {
+            query = query.And(x => x.Firstname.Contains(filter.NameContains) 
+                || x.LastName.Contains(filter.NameContains)
+                || x.Username.Contains(filter.NameContains)
+                || (x.MiddleName == null || x.MiddleName.Contains(filter.NameContains)));
+        }
+
         return query;
     }
 
     public override void Map(IUserFilter source)
     {
-        throw new NotImplementedException();
+        ClientId = source.ClientId;
+        NameContains = source.NameContains;
     }
 }
