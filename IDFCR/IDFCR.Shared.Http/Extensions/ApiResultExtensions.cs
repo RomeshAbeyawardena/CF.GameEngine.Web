@@ -105,7 +105,8 @@ public static class ApiResultExtensions
             if (result.Result.GetType().IsCollection(out var t))
             {
                 var genericHyperMediaType = typeof(HypermediaApiListResult<>).MakeGenericType(t ?? throw new NullReferenceException("No generic type found"));
-                var instance = Activator.CreateInstance(genericHyperMediaType, [result.Result, statusCode]) ?? throw new InvalidOperationException("Failed to create instance of HypermediaApiListResult");
+                var instance = Activator.CreateInstance(genericHyperMediaType, [result.Result, statusCode]) 
+                    ?? throw new InvalidOperationException($"Failed to create instance of {nameof(HypermediaApiListResult<T>)}");
                 var listResult = (ApiResult)instance;
                 listResult.AppendMeta(result.ToDictionary());
                 return listResult;
