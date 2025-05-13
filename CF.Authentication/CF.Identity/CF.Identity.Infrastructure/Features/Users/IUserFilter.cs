@@ -1,6 +1,8 @@
-﻿namespace CF.Identity.Infrastructure.Features.Users;
+﻿using IDFCR.Shared.Abstractions;
 
-public interface IUserFilter
+namespace CF.Identity.Infrastructure.Features.Users;
+
+public interface IUserFilter : IFilter<IUserFilter>
 {
     Guid? ClientId { get; }
     string? NameContains { get; }
