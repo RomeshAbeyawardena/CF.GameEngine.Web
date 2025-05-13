@@ -1,6 +1,5 @@
-﻿namespace CF.Identity.Api.Endpoints.Connect
+﻿namespace CF.Identity.Api.Endpoints.Connect;
+
+public static class UserInfoEndpoint
 {
-    public class UserInfoEndpoint
-    {
-    }
 }

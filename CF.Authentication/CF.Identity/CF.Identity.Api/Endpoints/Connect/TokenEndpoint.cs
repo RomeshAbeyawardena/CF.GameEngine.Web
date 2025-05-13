@@ -1,4 +1,5 @@
 ﻿using CF.Identity.Api.Features.TokenExchange;
+using IDFCR.Shared.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,16 +10,18 @@ public static class TokenEndpoint
     private static async Task<IResult> RequestTokenAsync([FromForm]TokenRequest tokenRequest, 
         IMediator mediator, CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(new TokenRequestQuery(tokenRequest), cancellationToken);
 
-        if(response.HasValue)
+        var response = await mediator.Send(new TokenRequestQuery(tokenRequest), cancellationToken);
+        var result = response.GetResultOrDefault();
+
+        if(result is not null)
         {
             if(response.TryGetValue("redirectUri", out var redirectUri) && redirectUri is not null)
             {
                 return Results.Redirect(redirectUri.ToString()!);
             }
 
-            return Results.Ok(response.Result);
+            return Results.Ok(result);
         }
 
         return Results.Unauthorized();

@@ -1,4 +1,5 @@
 ﻿using CF.Identity.Api.Features.Introspect;
+using IDFCR.Shared.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,14 +14,15 @@ public static class IntrospectEndpoint
         var (success, client) = await contextAccessor.TryAuthenticateAsync(cancellationToken);
         if (success && client is not null)
         {
-            var result = await mediator.Send(new IntrospectQuery(token, client), cancellationToken);
+            var result = (await mediator.Send(new IntrospectQuery(token, client), cancellationToken))
+                .GetResultOrDefault();
 
-            if (!result.IsSuccess)
+            if (result is null)
             {
                 return Results.Ok(new IntrospectBaseResponse(false));
             }
 
-            return Results.Ok(result.Result);
+            return Results.Ok(result);
         }
 
         return Results.Unauthorized();
