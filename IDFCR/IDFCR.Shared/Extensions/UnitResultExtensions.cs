@@ -13,6 +13,16 @@ public static class UnitResultExtensions
         }
     }
 
+    public static T? GetValueOrDefault<T>(this IUnitResult<T> value, T? @default = default)
+    {
+        if (value.HasValue)
+        {
+            return value.Result;
+        }
+
+        return @default;
+    }
+
     public static IUnitResultCollection<TDestination> Convert<T, TDestination>(this IUnitResultCollection<T> unitResultCollection, Func<T, TDestination> converter)
     {
         if (unitResultCollection.Result is null)
