@@ -13,7 +13,7 @@ public static class UnitResultExtensions
         }
     }
 
-    public static T? GetValueOrDefault<T>(this IUnitResult<T> value, T? @default = default)
+    public static T? GetResultOrDefault<T>(this IUnitResult<T> value, T? @default = default)
     {
         if (value.HasValue)
         {

@@ -5,7 +5,7 @@ namespace CF.Identity.Api.Features.User;
 
 public class UserDto : MappableBase<IUser>, IUser
 {
-    protected override IUser Source => throw new NotImplementedException();
+    protected override IUser Source => this;
 
     internal string FormatName()
     {

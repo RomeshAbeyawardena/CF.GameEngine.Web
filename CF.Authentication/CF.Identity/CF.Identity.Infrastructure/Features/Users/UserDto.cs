@@ -13,7 +13,7 @@ public record UserDto : MappableBase<IUser>, IUser
     public string? PreferredUsername { get; set; }
     public string Firstname { get; set; } = null!;
     public string? MiddleName { get; set; }
-    public string? LastName { get; set; }
+    public string LastName { get; set; } = null!;
     public Guid Id { get; set; }
 
     public override void Map(IUser source)

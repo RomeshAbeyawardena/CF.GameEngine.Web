@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Shared.Extensions;
 using MediatR;
 using System.Text;
 
@@ -50,7 +51,7 @@ public static class BasicAuthHelper
         var clientSecret = parts[1];
 
         var result = await mediator.Send(new FindClientQuery(clientId), cancellationToken);
-        var client = result.Result?.FirstOrDefault();
+        var client = result.GetOneOrDefault();
 
         if (client is null)
         {

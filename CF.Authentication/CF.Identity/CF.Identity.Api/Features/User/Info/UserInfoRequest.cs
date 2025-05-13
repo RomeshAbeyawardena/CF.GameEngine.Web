@@ -37,12 +37,14 @@ public class UserInfoRequestHandler(IMediator mediator, IClientCredentialHasher 
         //TODO get associated user and return response
         var usersResult = await mediator.Send(new GetUserByIdQuery(accessToken!.UserId), cancellationToken);
 
-        if (usersResult.HasValue)
+        var user = usersResult.GetResultOrDefault();
+        
+        if (user is not null)
         {
-            var user = usersResult.Result;
             return UnitResult.FromResult(new UserInfoResponse(user.Id.ToString(), user.FormatName(), 
                 user.PreferredUsername ?? user.Username, user.EmailAddress), UnitAction.Get);
         }
+
         return new UnitResult(new UnauthorizedAccessException()).As<UserInfoResponse>();
     }
 }
