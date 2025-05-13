@@ -31,14 +31,12 @@ public static class UnitCollectionExtensions
 
         if (predicate is not null)
         {
-            if(orderedTranform is not null)
-            {
-                results = orderedTranform(results);
-            }
+            results = results.Where(predicate);
+        }
 
-            return elementIndex.HasValue 
-                ? results.ElementAtOrDefault(elementIndex.Value) 
-                : results.FirstOrDefault(predicate);
+        if (orderedTranform is not null)
+        {
+            results = orderedTranform(results);
         }
 
         return elementIndex.HasValue 
