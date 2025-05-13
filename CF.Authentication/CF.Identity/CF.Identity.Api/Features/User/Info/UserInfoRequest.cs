@@ -35,7 +35,7 @@ public class UserInfoRequestHandler(IMediator mediator, IClientCredentialHasher 
         }
 
         //TODO get associated user and return response
-        var usersResult = await mediator.Send(new FindUserQuery(accessToken!.UserId), cancellationToken);
+        var usersResult = await mediator.Send(new GetUserByIdQuery(accessToken!.UserId), cancellationToken);
 
         if (usersResult.HasValue)
         {
