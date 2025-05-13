@@ -1,7 +1,8 @@
 ﻿using CF.Identity.Api.Features.AccessTokens.Get;
-using CF.Identity.Api.Features.TokenExchange;
+using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions.Results;
+using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +11,7 @@ using System.Text;
 
 namespace CF.Identity.Api.Features.Introspect;
 
-public class IntrospectQueryHandler(IMediator mediator, IClientCredentialHasher clientCredentialHasher, TimeProvider timeProvider, JwtSettings jwtSettings) 
+public class IntrospectQueryHandler(IMediator mediator, IClientCredentialHasher clientCredentialHasher, TimeProvider timeProvider, IJwtSettings jwtSettings) 
     : IUnitRequestHandler<IntrospectQuery, IntrospectResponse>
 {
     public async Task<IUnitResult<IntrospectResponse>> Handle(IntrospectQuery request, CancellationToken cancellationToken)
@@ -18,15 +19,12 @@ public class IntrospectQueryHandler(IMediator mediator, IClientCredentialHasher 
         var hashedToken = clientCredentialHasher.Hash(request.Token, request.Client);
 
         var utcNow = timeProvider.GetUtcNow();
-        var foundApiToken = await mediator.Send(new FindAccessTokenQuery(hashedToken, request.Client.Id, ValidFrom: utcNow, ValidTo: utcNow), cancellationToken);
+        var foundApiTokenResponse = await mediator.Send(new FindAccessTokenQuery(hashedToken, request.Client.Id, ValidFrom: utcNow, ValidTo: utcNow), cancellationToken);
 
-        if (!foundApiToken.HasValue || foundApiToken.Result is null)
-        {
-            return new UnitResult(new UnauthorizedAccessException("Token not found")).As<IntrospectResponse>();
-        }
+        var latestToken = foundApiTokenResponse.GetOneOrDefault(orderedTranform: x => x
+            .OrderByDescending(y => y.ValidFrom)
+            .ThenByDescending(y => y.ValidTo));
         
-        var latestToken = foundApiToken.Result.OrderByDescending(x => x.ValidFrom).ThenByDescending(x => x.ValidTo).FirstOrDefault();
-
         if (latestToken is null)
         {
             return new UnitResult(new UnauthorizedAccessException("Token not found")).As<IntrospectResponse>();

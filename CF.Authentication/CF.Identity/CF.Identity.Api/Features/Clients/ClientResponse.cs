@@ -17,6 +17,7 @@ public record ClientResponse : MappableBase<IClient>, IClientSummary
     public string Name { get; set; } = null!;
     public string? DisplayName { get; set; }
     public Guid Id { get; set; }
+    public bool IsSystem { get; set; }
 
     public override void Map(IClient source)
     {
@@ -24,5 +25,6 @@ public record ClientResponse : MappableBase<IClient>, IClientSummary
         Name = source.Name;
         DisplayName = source.DisplayName;
         Id = source.Id;
+        IsSystem = source.IsSystem;
     }
 }

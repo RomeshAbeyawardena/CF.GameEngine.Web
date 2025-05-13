@@ -19,5 +19,5 @@ public interface IUserSummary : IMappable<IUser>, IIdentifer
     string? PreferredUsername { get; }
     string Firstname { get; }
     string? MiddleName { get; }
-    string? LastName { get; }
+    string LastName { get; }
 }
