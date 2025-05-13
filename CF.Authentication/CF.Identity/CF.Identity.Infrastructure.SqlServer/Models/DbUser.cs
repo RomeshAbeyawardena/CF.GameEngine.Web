@@ -15,6 +15,7 @@ public class DbUser : MappableBase<IUser>, IUser
     public Guid ClientId { get; set; }
     public string? PreferredUsername { get; set; }
     public Guid Id { get; set; }
+    public bool IsSystem { get; set; }
 
     public override void Map(IUser source)
     {
@@ -27,5 +28,6 @@ public class DbUser : MappableBase<IUser>, IUser
         ClientId = source.ClientId;
         PreferredUsername = source.PreferredUsername;
         Id = source.Id;
+        IsSystem = source.IsSystem;
     }
 }

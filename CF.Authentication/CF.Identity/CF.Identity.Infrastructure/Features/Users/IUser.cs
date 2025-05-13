@@ -14,6 +14,7 @@ public interface IEditableUser : IUserDetail
 
 public interface IUserSummary : IMappable<IUser>, IIdentifer
 {
+    bool IsSystem { get; }
     Guid ClientId { get; }
     string? PreferredUsername { get; }
 }
