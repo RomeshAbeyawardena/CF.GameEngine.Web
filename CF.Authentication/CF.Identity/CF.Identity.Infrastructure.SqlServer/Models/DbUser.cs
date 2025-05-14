@@ -17,6 +17,8 @@ public class DbUser : MappableBase<IUser>, IUser
     public Guid Id { get; set; }
     public bool IsSystem { get; set; }
 
+    public virtual DbClient Client { get; set; } = null!;
+
     public override void Map(IUser source)
     {
         EmailAddress = source.EmailAddress;

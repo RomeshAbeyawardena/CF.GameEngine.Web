@@ -12,6 +12,8 @@ public class DbScope : MappableBase<IScope>, IScope
     public string Key { get; set; } = null!;
     public Guid? ClientId { get; set; }
 
+    public virtual DbClient? Client { get; set; }
+
     public override void Map(IScope source)
     {
         Name = source.Name;
