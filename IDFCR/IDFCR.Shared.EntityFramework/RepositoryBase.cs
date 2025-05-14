@@ -89,12 +89,12 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
 
     protected IEnumerable<T> MapTo(IEnumerable<TDb> db)
     {
-        return db.Select(MapDto);
+        return db.Select(MapDto).ToArray();
     }
 
     protected IEnumerable<TDb> MapTo(IEnumerable<T> source)
     {
-        return source.Select(Map);
+        return source.Select(Map).ToArray();
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)

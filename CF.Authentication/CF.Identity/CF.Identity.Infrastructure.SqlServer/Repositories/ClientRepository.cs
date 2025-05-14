@@ -27,6 +27,6 @@ internal class ClientRepository(TimeProvider timeProvider, CFIdentityDbContext c
             .Where(clientFilter.ApplyFilter(Builder, filter))
             .ToListAsync(cancellationToken);
 
-        return UnitResultCollection.FromResult([.. MapTo(result)], UnitAction.Get);
+        return UnitResultCollection.FromResult(MapTo(result).ToArray(), UnitAction.Get);
     }
 }
