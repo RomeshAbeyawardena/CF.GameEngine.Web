@@ -84,15 +84,15 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
             .Skip(conventional.Skip ?? 0);
 
         var result = await query.ToListAsync(cancellationToken);
-        return new UnitPagedResult<T>([.. result.Select(MapDto)], await source.CountAsync(cancellationToken), pagedQuery, UnitAction.Get);
+        return new UnitPagedResult<T>([.. MapTo(result)], await source.CountAsync(cancellationToken), pagedQuery, UnitAction.Get);
     }
 
-    protected IEnumerable<T?> MapTo(IEnumerable<TDb> db)
+    protected IEnumerable<T> MapTo(IEnumerable<TDb> db)
     {
         return db.Select(MapDto);
     }
 
-    protected IEnumerable<TDb?> MapTo(IEnumerable<T> source)
+    protected IEnumerable<TDb> MapTo(IEnumerable<T> source)
     {
         return source.Select(Map);
     }
