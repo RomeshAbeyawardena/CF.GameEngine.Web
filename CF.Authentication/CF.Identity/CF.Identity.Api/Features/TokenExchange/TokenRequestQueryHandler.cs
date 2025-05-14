@@ -2,6 +2,7 @@
 using CF.Identity.Api.Features.Clients;
 using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.Scopes.Get;
+using CF.Identity.Api.Features.User.Get;
 using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions.Results;
@@ -60,6 +61,15 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             return new UnitResult(new Exception("Invalid scope requested")).As<TokenResponse>();
         }
 
+        var userResult = await mediator.Send(new FindUsersQuery(clientDetail.Id, IsSystem: true), cancellationToken);
+
+        var systemUser = userResult.GetOneOrDefault();
+
+        if (systemUser is null)
+        {
+            return new UnitResult(new UnauthorizedAccessException("System user not found")).As<TokenResponse>();
+        }
+
         var accessToken = GenerateJwt(clientDetail, request.TokenRequest.Scope);
 
         var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
@@ -76,7 +86,8 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             AccessToken = accessToken,
             ClientId = clientDetail.Id,
             ValidFrom = utcNow,
-            ValidTo = utcNow.AddHours(1)
+            ValidTo = utcNow.AddHours(1),
+            UserId = systemUser.Id,
         }), cancellationToken);
 
         //TODO: Generate token

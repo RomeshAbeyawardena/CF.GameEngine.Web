@@ -11,6 +11,7 @@ public class UserFilter(IUserFilter filter) : FilterBase<IUserFilter, DbUser>(fi
     protected override IUserFilter Source => this;
     public Guid? ClientId { get; set; }
     public string? NameContains { get; set; }
+    public bool? IsSystem { get; set; }
 
     public override ExpressionStarter<DbUser> ApplyFilter(ExpressionStarter<DbUser> query, IUserFilter filter)
     {
@@ -28,6 +29,11 @@ public class UserFilter(IUserFilter filter) : FilterBase<IUserFilter, DbUser>(fi
                 .Or(ExpressionExtensions.OrNullContains<DbUser>(u => u.MiddleName, NameContains));
 
             query = query.And(nameMatch);
+        }
+
+        if (filter.IsSystem.HasValue)
+        {
+            query = query.And(x => x.IsSystem == filter.IsSystem);
         }
 
         return query;
