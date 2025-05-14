@@ -113,6 +113,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         {
             return default;
         }
+
         return Map(source);
     }
 
