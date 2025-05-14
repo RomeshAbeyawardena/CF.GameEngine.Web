@@ -101,7 +101,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     {
         if (db is null)
         {
-            return default!;
+            return default;
         }
 
         return MapDto(db);
@@ -111,7 +111,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     {
         if (source is null)
         {
-            return default!;
+            return default;
         }
         return Map(source);
     }
