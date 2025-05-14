@@ -15,6 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CF.Identity.MigrationUtilit
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{31E0E81D-7D1D-4857-B882-77FBD897DB98}"
 	ProjectSection(SolutionItems) = preProject
+		docker-file.yaml = docker-file.yaml
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
@@ -91,5 +92,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0DA9948-DCEC-49C8-BD4E-54CDADD470E8}
 	EndGlobalSection
 EndGlobal
