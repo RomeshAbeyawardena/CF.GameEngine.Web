@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using var migrationUtility = EFMigrationUtility
     .MigrationUtility<CFIdentityDbContext>(new EFMigrationUtilityName("CF.Identity", "1.0"), args, "123dacb9-a24c-4c4d-b2c5-bf465343f8d8",
-    (h, s) => s.AddBackendDependencies("IdentityDb"))
+    (h, s) => s.AddBackendDependencies("CFIdentity"))
     .Extend("seed", "Seed basic data required for the database to operate correctly", SeedData);
 
 static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, IServiceProvider serviceProvider, CancellationToken cancellationToken)
