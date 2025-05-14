@@ -89,32 +89,12 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
 
     protected IEnumerable<T?> Convert(IEnumerable<TDb> db)
     {
-        return db.Select(Convert);
+        return db.Select(MapDto);
     }
 
     protected IEnumerable<TDb?> Convert(IEnumerable<T> source)
     {
-        return source.Select(Convert);
-    }
-
-    protected T? Convert(TDb db)
-    {
-        if (db is null)
-        {
-            return default;
-        }
-
-        return MapDto(db);
-    }
-
-    protected TDb? Convert(T source)
-    {
-        if (source is null)
-        {
-            return default;
-        }
-
-        return Map(source);
+        return source.Select(Map);
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
