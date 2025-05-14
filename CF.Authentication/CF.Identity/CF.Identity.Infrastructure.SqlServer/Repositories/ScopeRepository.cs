@@ -15,6 +15,6 @@ internal class ScopeRepository(TimeProvider timeProvider, CFIdentityDbContext co
             .Where(new ScopeFilter(filter).ApplyFilter(Builder))
             .ToListAsync(cancellationToken);
 
-        return UnitResultCollection.FromResult(MapTo(result).ToList(), UnitAction.Get);
+        return UnitResultCollection.FromResult(MapTo(result), UnitAction.Get);
     }
 }

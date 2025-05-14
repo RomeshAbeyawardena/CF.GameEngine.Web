@@ -25,6 +25,6 @@ internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext con
             .Where(new UserFilter(filter).ApplyFilter(Builder))
             .ToListAsync(cancellationToken);
 
-        return UnitResultCollection.FromResult(result.Select(x => x.Map<UserDto>()).ToList());
+        return UnitResultCollection.FromResult(MapTo(result));
     }
 }

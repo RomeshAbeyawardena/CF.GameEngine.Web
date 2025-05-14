@@ -87,14 +87,24 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         return new UnitPagedResult<T>([.. MapTo(result)], await source.CountAsync(cancellationToken), pagedQuery, UnitAction.Get);
     }
 
+    /// <summary>
+    /// Using ToArray or ToList is not required here, as the result is already materialized.
+    /// </summary>
+    /// <param name="db"></param>
+    /// <returns></returns>
     protected IEnumerable<T> MapTo(IEnumerable<TDb> db)
     {
-        return db.Select(MapDto).ToArray();
+        return [.. db.Select(MapDto)];
     }
 
+    /// <summary>
+    /// Using ToArray or ToList is not required here, as the result is already materialized.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
     protected IEnumerable<TDb> MapTo(IEnumerable<T> source)
     {
-        return source.Select(Map).ToArray();
+        return [.. source.Select(Map)];
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
