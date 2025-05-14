@@ -39,7 +39,7 @@ public static class ExpressionExtensions
         var nullCheck = Expression.Equal(member, Expression.Constant(null, typeof(string)));
         var containsCall = Expression.Call(
             member,
-            typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) })!,
+            typeof(string).GetMethod(nameof(string.Contains), [typeof(string)])!,
             Expression.Constant(value, typeof(string))
         );
 

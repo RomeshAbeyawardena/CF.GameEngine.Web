@@ -87,6 +87,35 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         return new UnitPagedResult<T>([.. result.Select(MapDto)], await source.CountAsync(cancellationToken), pagedQuery, UnitAction.Get);
     }
 
+    protected IEnumerable<T?> Convert(IEnumerable<TDb> db)
+    {
+        return db.Select(Convert);
+    }
+
+    protected IEnumerable<TDb?> Convert(IEnumerable<T> source)
+    {
+        return source.Select(Convert);
+    }
+
+    protected T? Convert(TDb db)
+    {
+        if (db is null)
+        {
+            return default!;
+        }
+
+        return MapDto(db);
+    }
+
+    protected TDb? Convert(T source)
+    {
+        if (source is null)
+        {
+            return default!;
+        }
+        return Map(source);
+    }
+
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
         var affectedRows = await context.SaveChangesAsync(cancellationToken);
