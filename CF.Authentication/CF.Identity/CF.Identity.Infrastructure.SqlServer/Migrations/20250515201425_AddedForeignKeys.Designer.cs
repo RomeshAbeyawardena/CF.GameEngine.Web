@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CF.Identity.Infrastructure.SqlServer.Migrations
 {
     [DbContext(typeof(CFIdentityDbContext))]
-    [Migration("20250515200327_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20250515201425_AddedForeignKeys")]
+    partial class AddedForeignKeys
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,7 +30,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("UserId");
+                        .HasColumnName("AcessTokenId");
 
                     b.Property<string>("AccessToken")
                         .IsRequired()
@@ -67,11 +67,9 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("AccessToken", "dbo", t =>
-                        {
-                            t.Property("UserId")
-                                .HasColumnName("UserId1");
-                        });
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AccessToken", "dbo");
                 });
 
             modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbClient", b =>
@@ -211,10 +209,18 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbClient", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Client");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbScope", b =>

@@ -18,6 +18,8 @@ public class DbAccessToken : MappableBase<IAccessToken>, IAccessToken
 
     public virtual DbClient Client { get; set; } = null!;
 
+    public virtual DbUser User { get; set; } = null!;
+
     public override void Map(IAccessToken source)
     {
         ReferenceToken = source.ReferenceToken;

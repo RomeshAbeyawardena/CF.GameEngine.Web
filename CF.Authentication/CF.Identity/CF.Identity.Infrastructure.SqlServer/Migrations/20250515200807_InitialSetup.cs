@@ -39,7 +39,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AcessTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ReferenceToken = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
                     AccessToken = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
@@ -47,11 +47,11 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     Type = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
                     ValidFrom = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: false),
                     ValidTo = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: true),
-                    UserId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccessToken", x => x.UserId);
+                    table.PrimaryKey("PK_AccessToken", x => x.AcessTokenId);
                     table.ForeignKey(
                         name: "FK_AccessToken_Client_ClientId",
                         column: x => x.ClientId,

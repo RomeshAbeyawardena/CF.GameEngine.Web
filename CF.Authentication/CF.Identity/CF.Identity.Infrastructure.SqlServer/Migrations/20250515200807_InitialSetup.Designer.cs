@@ -4,6 +4,7 @@ using CF.Identity.Infrastructure.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CF.Identity.Infrastructure.SqlServer.Migrations
 {
     [DbContext(typeof(CFIdentityDbContext))]
-    partial class CFIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250515200807_InitialSetup")]
+    partial class InitialSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,8 +66,6 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("AccessToken", "dbo");
                 });
@@ -206,18 +207,10 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbClient", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbScope", b =>
