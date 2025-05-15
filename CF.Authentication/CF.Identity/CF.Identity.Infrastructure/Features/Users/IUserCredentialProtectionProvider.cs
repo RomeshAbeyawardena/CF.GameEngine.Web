@@ -9,8 +9,8 @@ public interface IUserCredentialProtectionProvider
 {
     string Hash(string secret, IUser user);
     bool Verify(string secret, string hash, IUser user);
-    void Protect(UserDto user, IClient client);
-    void Unprotect(UserDto user, IClient? client = null);
+    void Protect(UserDto user, IClient client, bool regenerativeIv = false);
+    void Unprotect(UserDto user, IClient client);
 }
 
 public class UserCredentialProtectionProvider(IConfiguration configuration) : IUserCredentialProtectionProvider
@@ -57,17 +57,31 @@ public class UserCredentialProtectionProvider(IConfiguration configuration) : IU
         return value;
     }
 
-    public string Hash(string secret, IUser user)
+    private static string? Decrypt(string? value, Aes aes)
     {
-        throw new NotImplementedException();
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            using var decryptor = aes.CreateDecryptor();
+            var encryptedBytes = Convert.FromBase64String(value);
+            var plainBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+            return Encoding.UTF8.GetString(plainBytes);
+        }
+        return value;
     }
 
-    public void Protect(UserDto user, IClient client)
+    public string Hash(string secret, IUser user)
+    {
+        var salt = Encoding.UTF8.GetBytes(user.Id.ToString());
+        var derived = new Rfc2898DeriveBytes(secret, salt, 100_000, HashAlgorithmName.SHA256);
+        return Convert.ToBase64String(derived.GetBytes(32));
+    }
+
+    public void Protect(UserDto user, IClient client, bool regenerativeIv = false)
     {
         using Aes? aes = Aes.Create();
 
         aes.Key = GetKey(client);
-        if (string.IsNullOrWhiteSpace(user.RowVersion))
+        if (regenerativeIv || string.IsNullOrWhiteSpace(user.RowVersion))
         {
             aes.GenerateIV();
             user.RowVersion = $"{Convert.ToBase64String(aes.IV)}";
@@ -79,16 +93,37 @@ public class UserCredentialProtectionProvider(IConfiguration configuration) : IU
 
         user.EmailAddress = Encrypt(user.EmailAddress, aes)!;
         user.Username = Encrypt(user.Username, aes)!;
-        user.PreferredUsername = Encrypt(user.PreferredUsername, aes);
+        if (!string.IsNullOrWhiteSpace(user.PreferredUsername))
+        {
+            user.PreferredUsername = Encrypt(user.PreferredUsername, aes);
+        }
     }
 
-    public void Unprotect(UserDto user, IClient? client = null)
+    public void Unprotect(UserDto user, IClient client)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(user.RowVersion))
+        {
+            throw new InvalidOperationException("Unable to decrypt");
+        }
+
+        using Aes? aes = Aes.Create();
+
+        aes.Key = GetKey(client);
+        aes.IV = Convert.FromBase64String(user.RowVersion);
+
+        user.EmailAddress = Decrypt(user.EmailAddress, aes)!;
+        user.Username = Decrypt(user.Username, aes)!;
+        if (!string.IsNullOrWhiteSpace(user.PreferredUsername))
+        {
+            user.PreferredUsername = Decrypt(user.PreferredUsername, aes);
+        }
     }
 
     public bool Verify(string secret, string hash, IUser user)
     {
-        throw new NotImplementedException();
+        var hashed = Hash(secret, user);
+        return CryptographicOperations.FixedTimeEquals(
+            Convert.FromBase64String(hashed),
+            Convert.FromBase64String(hash));
     }
 }
