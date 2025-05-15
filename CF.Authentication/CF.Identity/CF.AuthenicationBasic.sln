@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		add-migration.ps1 = add-migration.ps1
 		docker-file.yaml = docker-file.yaml
 		Readme.md = Readme.md
+		start-dev-sql.ps1 = start-dev-sql.ps1
 	EndProjectSection
 EndProject
 Global

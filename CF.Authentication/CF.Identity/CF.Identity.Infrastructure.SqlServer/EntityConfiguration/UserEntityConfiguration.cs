@@ -17,7 +17,7 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         builder.Property(x => x.Firstname).IsRequired().HasMaxLength(32);
         builder.Property(x => x.MiddleName).HasMaxLength(32);
         builder.Property(x => x.LastName).IsRequired().HasMaxLength(32);
-        builder.Property(x => x.ClientId).HasColumnName("ClientId").IsRequired(false);
+        builder.Property(x => x.ClientId).HasColumnName("ClientId");
         builder.Property(x => x.PreferredUsername).HasMaxLength(80);
         builder.Property(x => x.IsSystem).HasDefaultValue(false);
         builder.HasOne(x => x.Client)

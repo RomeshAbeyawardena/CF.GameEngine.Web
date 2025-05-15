@@ -1,0 +1,1 @@
+docker compose -p "cf_identity-basic" up -d
