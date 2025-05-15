@@ -1,4 +1,5 @@
 ﻿using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Shared.Abstractions;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using System.Text;
@@ -13,7 +14,7 @@ public interface IUserCredentialProtectionProvider
     void Unprotect(UserDto user, IClient client);
 }
 
-public class UserCredentialProtectionProvider(IConfiguration configuration) : IUserCredentialProtectionProvider
+public class UserCredentialProtectionProvider(IConfiguration configuration) : PIIProtectionProviderBase, IUserCredentialProtectionProvider
 {
     private byte[] GetKey(IClient client)
     {
@@ -42,31 +43,6 @@ public class UserCredentialProtectionProvider(IConfiguration configuration) : IU
 
         //%| to make it a bit more fuzzy
         return Encoding.UTF8.GetBytes(key);
-    }
-
-    private static string? Encrypt(string? value, Aes aes)
-    {
-        if (!string.IsNullOrWhiteSpace(value))
-        {
-            using var encryptor = aes.CreateEncryptor();
-            var plainBytes = Encoding.UTF8.GetBytes(value);
-            var encryptedBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
-            return Convert.ToBase64String(encryptedBytes);
-        }
-
-        return value;
-    }
-
-    private static string? Decrypt(string? value, Aes aes)
-    {
-        if (!string.IsNullOrWhiteSpace(value))
-        {
-            using var decryptor = aes.CreateDecryptor();
-            var encryptedBytes = Convert.FromBase64String(value);
-            var plainBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
-            return Encoding.UTF8.GetString(plainBytes);
-        }
-        return value;
     }
 
     public string Hash(string secret, IUser user)
