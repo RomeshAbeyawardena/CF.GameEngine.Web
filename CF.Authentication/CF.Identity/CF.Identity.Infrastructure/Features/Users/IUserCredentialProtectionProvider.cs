@@ -18,31 +18,8 @@ public class UserCredentialProtectionProvider(IConfiguration configuration) : PI
 {
     private byte[] GetKey(IClient client)
     {
-        //something we know
         var ourValue = configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
-        if (ourValue.Length > 15)
-        {
-            ourValue = ourValue.Substring(0, 15);
-        }
-
-        //something they know
-        string theirValue = client.Reference;
-        if (client.Reference.Length > 15)
-        {
-            theirValue = client.Reference.Substring(0, 15);
-        }
-
-        var key = $"%{ourValue}|{theirValue}";
-
-        if (key.Length < 32)
-        {
-            var additionalLengthNeeded = 32 - key.Length;
-            var id = Guid.NewGuid().ToString();
-            key += id.Substring(0, additionalLengthNeeded);
-        }
-
-        //%| to make it a bit more fuzzy
-        return Encoding.UTF8.GetBytes(key);
+        return GenerateKey(32, '|', Encoding.UTF8, client.Reference, ourValue);
     }
 
     public string Hash(string secret, IUser user)

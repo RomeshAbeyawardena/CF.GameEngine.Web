@@ -10,7 +10,7 @@ public interface IPIIRowVersion
 
 public abstract class PIIProtectionProviderBase
 {
-    protected internal static byte[] KeyBuilder(int length, char separator, Encoding encoding, params string[] values)
+    protected internal static byte[] GenerateKey(int length, char separator, Encoding encoding, params string[] values)
     {
         if(length < values.Length)
         {
