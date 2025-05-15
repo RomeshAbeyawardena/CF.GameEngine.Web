@@ -16,6 +16,7 @@ public class DbUser : MappableBase<IUser>, IUser
     public string? PreferredUsername { get; set; }
     public Guid Id { get; set; }
     public bool IsSystem { get; set; }
+    public string RowVersion { get; set; } = null!;
 
     public virtual DbClient Client { get; set; } = null!;
 
@@ -31,5 +32,6 @@ public class DbUser : MappableBase<IUser>, IUser
         PreferredUsername = source.PreferredUsername;
         Id = source.Id;
         IsSystem = source.IsSystem;
+        RowVersion = source.RowVersion;
     }
 }

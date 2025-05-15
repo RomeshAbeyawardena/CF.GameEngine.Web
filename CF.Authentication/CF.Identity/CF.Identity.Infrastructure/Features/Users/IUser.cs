@@ -6,7 +6,7 @@ public interface IUser : IEditableUser
 {
 }
 
-public interface IEditableUser : IUserDetail
+public interface IEditableUser : IUserDetail, IPIIRowVersion
 {
     string EmailAddress { get; }
     string HashedPassword { get; }

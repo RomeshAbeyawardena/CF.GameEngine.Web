@@ -30,6 +30,7 @@ public class UserDto : MappableBase<IUser>, IUser
     public string LastName { get; set; } = null!;
     public Guid Id { get; set; }
     public bool IsSystem { get; set; }
+    public string RowVersion { get; set; } = null!;
 
     public override void Map(IUser source)
     {
@@ -43,5 +44,6 @@ public class UserDto : MappableBase<IUser>, IUser
         LastName = source.LastName;
         Id = source.Id;
         IsSystem = source.IsSystem;
+        RowVersion = source.RowVersion;
     }
 }
