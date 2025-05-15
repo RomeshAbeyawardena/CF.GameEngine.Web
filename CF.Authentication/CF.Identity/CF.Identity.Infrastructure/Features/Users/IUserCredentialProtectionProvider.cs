@@ -71,7 +71,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration) : IU
 
     public string Hash(string secret, IUser user)
     {
-        var salt = Encoding.UTF8.GetBytes(user.Id.ToString());
+        var salt = Encoding.UTF8.GetBytes(user.ClientId.ToString());
         var derived = new Rfc2898DeriveBytes(secret, salt, 100_000, HashAlgorithmName.SHA256);
         return Convert.ToBase64String(derived.GetBytes(32));
     }
@@ -97,6 +97,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration) : IU
         {
             user.PreferredUsername = Encrypt(user.PreferredUsername, aes);
         }
+        user.HashedPassword = Hash(user.HashedPassword, user);
     }
 
     public void Unprotect(UserDto user, IClient client)

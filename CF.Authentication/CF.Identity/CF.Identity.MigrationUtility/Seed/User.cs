@@ -54,8 +54,11 @@ public static partial class Seed
         }
 
         var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserCredentialProtectionProvider>();
-        userCredentialProtectionProvider.Protect(user, isInflight ? client : null);
-
+        var userDto = user.Map<UserDto>();
+        userCredentialProtectionProvider.Protect(userDto, client!);
+        
+        ///maps the encypted values back to the entity model
+        user.Map(userDto);
         context.Users.Add(user);
     }
 }
