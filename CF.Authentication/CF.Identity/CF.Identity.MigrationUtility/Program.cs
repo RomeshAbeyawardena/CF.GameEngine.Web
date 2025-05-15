@@ -29,7 +29,12 @@ static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumera
         }
     }
 
-    if(args.Any(x => x.Equals("seed:api_key", StringComparison.InvariantCultureIgnoreCase)))
+    if(args.Any(x => x.Equals("seed:client", StringComparison.InvariantCultureIgnoreCase)))
+    {
+        await Seed.TrySeedSystemClient(logger, context, serviceProvider, cancellationToken);
+    }
+
+    if (args.Any(x => x.Equals("seed:api_key", StringComparison.InvariantCultureIgnoreCase)))
     {
         await Seed.TrySeedApiKeyAsync(logger, context, serviceProvider, cancellationToken);
     }

@@ -8,6 +8,7 @@ public class CFIdentityDbContext(DbContextOptions<CFIdentityDbContext> options) 
     public DbSet<DbAccessToken> AccessTokens { get; set; } = null!;
     public DbSet<DbClient> Clients { get; set; } = null!;
     public DbSet<DbScope> Scopes { get; set; } = null!;
+    public DbSet<DbUser> Users { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
