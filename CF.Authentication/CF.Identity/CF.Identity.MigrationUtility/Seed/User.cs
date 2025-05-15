@@ -1,4 +1,5 @@
-﻿using CF.Identity.Infrastructure.Features.Users;
+﻿using CF.Identity.Infrastructure.Features.Clients;
+using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +19,8 @@ public static partial class Seed
         {
             client = context.Clients.Local.FirstOrDefault(c => c.IsSystem);
 
-            var isInFlight = client is null;
-            if (isInflight)
+            isInflight = client is not null;
+            if (!isInflight)
             {
                 throw new Exception("System client not found");
             }
@@ -36,6 +37,8 @@ public static partial class Seed
             EmailAddress = "admin@identity.co",
             Username = "admin",
             PreferredUsername = "admin",
+            // The initial password will be hashed/encrypted by Protect(), this is a plain-text seed value.
+            HashedPassword = "@dmin-123!",
             Firstname = "Admin",
             LastName = "User",
             IsSystem = true,
@@ -51,7 +54,7 @@ public static partial class Seed
         }
 
         var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserCredentialProtectionProvider>();
-        userCredentialProtectionProvider.Protect(user);
+        userCredentialProtectionProvider.Protect(user, isInflight ? client : null);
 
         context.Users.Add(user);
     }

@@ -18,6 +18,8 @@ public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<
         {
             Map(targetFilter);
         }
+
+        _filter = targetFilter;
     }
 
     public bool NoTracking { get; set; }
