@@ -17,6 +17,15 @@ internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext con
             return UnitResult.NotFound<UserDto>(id);
         }
 
+        var client = await Context.Clients.FindAsync([user.ClientId], cancellationToken);
+
+        if (client is null)
+        {
+            return UnitResult.NotFound<UserDto>(user.ClientId);
+        }
+
+        userCredentialProtectionProvider.Unprotect(user, client);
+
         return UnitResult.FromResult(user);
     }
 
