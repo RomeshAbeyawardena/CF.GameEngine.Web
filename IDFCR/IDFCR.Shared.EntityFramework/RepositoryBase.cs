@@ -111,10 +111,17 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         return [.. db.Select(MapDto)];
     }
 
-    protected IEnumerable<TDb> MapTo(IEnumerable<T> db, Action<TDb> action)
+    protected IEnumerable<TDb> MapTo(IEnumerable<T> db, Action<T, TDb> action)
     {
-        var result = db.Select(Map).ToList();
-        result.ForEach(action);
+        var result = new List<TDb>();
+
+        foreach (var item in db)
+        {
+            var mappedItem = Map(item);
+            action(item, mappedItem);
+            result.Add(mappedItem);
+        }
+
         return result;
     }
 
