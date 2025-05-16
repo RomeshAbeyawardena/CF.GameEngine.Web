@@ -87,6 +87,20 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         return new UnitPagedResult<T>([.. MapTo(result)], await source.CountAsync(cancellationToken), pagedQuery, UnitAction.Get);
     }
 
+    protected IEnumerable<T> MapTo(IEnumerable<TDb> db, Action<TDb, T> action)
+    {
+        var result = new List<T>();
+        
+        foreach(var item in db)
+        {
+            var mappedItem = MapDto(item);
+            action(item, mappedItem);
+            result.Add(mappedItem);
+        }
+
+        return result;
+    }
+
     /// <summary>
     /// Using ToArray or ToList is not required here, as the result is already materialized.
     /// </summary>
@@ -95,6 +109,13 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     protected IEnumerable<T> MapTo(IEnumerable<TDb> db)
     {
         return [.. db.Select(MapDto)];
+    }
+
+    protected IEnumerable<TDb> MapTo(IEnumerable<T> db, Action<TDb> action)
+    {
+        var result = db.Select(Map).ToList();
+        result.ForEach(action);
+        return result;
     }
 
     /// <summary>

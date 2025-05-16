@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext context) : RepositoryBase<IUser, DbUser, UserDto>(timeProvider, context), IUserRepository
+internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext context, IUserCredentialProtectionProvider userCredentialProtectionProvider) 
+    : RepositoryBase<IUser, DbUser, UserDto>(timeProvider, context), IUserRepository
 {
     public async Task<IUnitResult<UserDto>> FindUserByIdAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -22,9 +23,12 @@ internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext con
     public async Task<IUnitResultCollection<UserDto>> FindUsersAsync(IUserFilter filter, CancellationToken cancellationToken)
     {
         var result = await Set<DbUser>(filter)
+            .Include(x => x.Client)
             .Where(new UserFilter(filter).ApplyFilter(Builder))
             .ToListAsync(cancellationToken);
 
-        return UnitResultCollection.FromResult(MapTo(result));
+        var mappedResult = MapTo(result, (db, x) => userCredentialProtectionProvider.Unprotect(x, db.Client));
+
+        return UnitResultCollection.FromResult(mappedResult);
     }
 }
