@@ -56,6 +56,18 @@ public partial class Seed
                 newApiKey.ClientId = client.Id;
             }
 
+            var user = context.Users.Local.FirstOrDefault(u => u.IsSystem);
+            var userIsInFlight = user is not null;
+            if (!userIsInFlight)
+            {
+                user = await context.Users.FirstOrDefaultAsync(u => u.IsSystem, cancellationToken) ?? throw new NullReferenceException("Seeding can not complete");
+                newApiKey.UserId = user.Id;
+            }
+            else
+            {
+                newApiKey.User = user!;
+            }
+            
             context.AccessTokens.Add(newApiKey);
 
             logger.LogInformation("✅ API key successfully seeded for system client.");

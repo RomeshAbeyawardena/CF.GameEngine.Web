@@ -14,19 +14,26 @@ public interface IUserCredentialProtectionProvider
     void Unprotect(UserDto user, IClient client);
 }
 
-public class UserCredentialProtectionProvider(IConfiguration configuration) : PIIProtectionProviderBase, IUserCredentialProtectionProvider
+public class UserCredentialProtectionProvider(IConfiguration configuration, Encoding encoding) : PIIProtectionProviderBase, IUserCredentialProtectionProvider
 {
     private byte[] GetKey(UserDto user, IClient client)
     {
         var ourValue = configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
 
-        var keyData = GenerateKey(32, '|', Encoding.UTF8, user.Metadata, client.Reference, ourValue);
+        var metaData = user.Metadata;
+
+        if (!string.IsNullOrWhiteSpace(metaData))
+        {
+            metaData = encoding.GetString(Convert.FromBase64String(metaData));
+        }
+
+        var keyData = GenerateKey(32, '|', Encoding.UTF8, metaData, client.Reference, ourValue);
 
         //if all spaces are populated sufficiently with key data, this metadata will be an empty string and won't need persisting to the database
         if (!string.IsNullOrWhiteSpace(keyData.Item1))
         {
 
-            user.Metadata = keyData.Item1;
+            user.Metadata = Convert.ToBase64String(encoding.GetBytes(keyData.Item1));
         }
 
         return keyData.Item2;
