@@ -17,7 +17,7 @@ using var migrationUtility = EFMigrationUtility
 
 static async Task VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, IServiceProvider serviceProvider, CancellationToken cancellationToken)
 {
-    var user = await context.Users.Include(x => x.Client)
+    var user = await context.Users.AsNoTracking().Include(x => x.Client)
         .Include(x => x.FirstCommonName)
         .Include(x => x.MiddleCommonName)
         .Include(x => x.LastCommonName)

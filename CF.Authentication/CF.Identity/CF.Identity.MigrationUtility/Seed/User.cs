@@ -1,6 +1,5 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer;
-using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.Transforms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
