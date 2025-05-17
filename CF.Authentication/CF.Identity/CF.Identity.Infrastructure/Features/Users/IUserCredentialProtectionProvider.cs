@@ -12,10 +12,17 @@ public interface IUserCredentialProtectionProvider
     bool Verify(string secret, string hash, IUser user);
     void Protect(UserDto user, IClient client, out IUserHmac userHmac, bool regenerativeIv = false);
     void Unprotect(UserDto user, IClient client);
+    string HashUsingHmac(UserDto user, IClient client, Func<UserDto, string> target);
+    string HashUsingHmac(IClient client, string value);
 }
 
 public class UserCredentialProtectionProvider(IConfiguration configuration, Encoding encoding) : PIIProtectionProviderBase, IUserCredentialProtectionProvider
 {
+    private byte[] GetClientKey(IClient client)
+    {
+        var ourValue = configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
+
+    }
     private byte[] GetKey(UserDto user, IClient client)
     {
         var ourValue = configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
@@ -43,6 +50,11 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         var salt = Encoding.UTF8.GetBytes(user.ClientId.ToString());
         var derived = new Rfc2898DeriveBytes(secret, salt, 100_000, HashAlgorithmName.SHA256);
         return Convert.ToBase64String(derived.GetBytes(32));
+    }
+
+    public string string HashUsingHmac(IClient client, string value)
+    {
+
     }
 
     public string HashUsingHmac(UserDto user, IClient client, Func<UserDto, string> target)

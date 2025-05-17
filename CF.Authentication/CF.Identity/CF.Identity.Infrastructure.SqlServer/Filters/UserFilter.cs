@@ -6,20 +6,30 @@ using LinqKit;
 
 namespace CF.Identity.Infrastructure.SqlServer.Filters;
 
-public class UserFilter(IUserFilter filter) : FilterBase<IUserFilter, DbUser>(filter), IUserFilter
+public class UserFilter(IUserCredentialProtectionProvider userCredentialProtectionProvider) : InjectableFilterBase<IUserFilter, DbUser>(), IUserFilter
 {
     protected override IUserFilter Source => this;
-    public Guid? ClientId { get; set; }
+    public Guid ClientId { get; set; }
     public string? NameContains { get; set; }
     public bool? IsSystem { get; set; }
 
-    public override ExpressionStarter<DbUser> ApplyFilter(ExpressionStarter<DbUser> query, IUserFilter filter)
+    private string UsernameHmac;
+
+    public override Task<ExpressionStarter<DbUser>> ApplyFilterAsync(ExpressionStarter<DbUser> query, CancellationToken cancellationToken)
     {
-        if (filter.ClientId.HasValue)
+        if (!string.IsNullOrWhiteSpace(NameContains))
         {
-            query = query.And(x => x.ClientId == filter.ClientId.Value);
+            UsernameHmac = userCredentialProtectionProvider.hm
         }
 
+
+        return base.ApplyFilterAsync(query, cancellationToken);
+    }
+
+    public override ExpressionStarter<DbUser> ApplyFilter(ExpressionStarter<DbUser> query, IUserFilter filter)
+    {
+        query = query.And(x => x.ClientId == filter.ClientId);
+        
         if (!string.IsNullOrWhiteSpace(filter.NameContains))
         {
             var nameMatch = PredicateBuilder.New<DbUser>(true);

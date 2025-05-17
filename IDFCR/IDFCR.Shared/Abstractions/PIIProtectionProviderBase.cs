@@ -26,7 +26,6 @@ public abstract class PIIProtectionProviderBase
 
         var builder = new StringBuilder();
 
-
         var index = 0;
         bool isAdditionalSpacer = false;
         foreach (var value in values)

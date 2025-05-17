@@ -12,7 +12,7 @@ public class FilterProvider<TFilter, TDb>(IEnumerable<IInjectableFilter<TFilter,
 {
     public ExpressionStarter<TDb> ApplyFilter(ExpressionStarter<TDb> query, TFilter filter)
     {
-        foreach (var filterImplementation in filters.Where(f => f.ShouldApply(filter)))
+        foreach (var filterImplementation in filters.Where(f => f.CanApply(filter)))
         {
             query = filterImplementation.ApplyFilter(query, filter);
         }
