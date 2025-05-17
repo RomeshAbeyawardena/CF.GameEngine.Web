@@ -6,12 +6,22 @@ namespace CF.Identity.Infrastructure.SqlServer.Models;
 public class DbUser : MappableBase<IUser>, IUser
 {
     protected override IUser Source => this;
+    string IUserDetail.Firstname => FirstCommonName.ValueNormalised;
+    string? IUserDetail.MiddleName => MiddleCommonName.ValueNormalised;
+    string IUserDetail.LastName => LastCommonName.ValueNormalised;
+
+    public string? LookupFirstName { get; set; }
+    public string? LookupMiddleName { get; set; }
+    public string? LookupLastName { get; set; }
+
     public string EmailAddress { get; set; } = null!;
     public string HashedPassword { get; set; } = null!;
-    public string Username { get; set; } = null!;
-    public string Firstname { get; set; } = null!;
-    public string? MiddleName { get; set; }
-    public string LastName { get; set; } = null!;
+    public string Username { get; } = null!;
+
+    public Guid FirstCommonNameId { get; set; }
+    public Guid MiddleCommonNameId { get; set; }
+    public Guid LastCommonNameId { get; set; }
+
     public Guid ClientId { get; set; }
     public string? PreferredUsername { get; set; }
     public Guid Id { get; set; }
@@ -19,16 +29,20 @@ public class DbUser : MappableBase<IUser>, IUser
     public string RowVersion { get; set; } = null!;
 
     public virtual DbClient Client { get; set; } = null!;
+    public virtual DbCommonName FirstCommonName { get; set; } = null!;
+    public virtual DbCommonName MiddleCommonName { get; set; } = null!;
+    public virtual DbCommonName LastCommonName { get; set; } = null!;
+
     public string? Metadata { get; set; }
 
     public override void Map(IUser source)
     {
+        LookupFirstName = source.Firstname;
+        LookupMiddleName = source.MiddleName;
+        LookupLastName = source.LastName;
+
         EmailAddress = source.EmailAddress;
         HashedPassword = source.HashedPassword;
-        Username = source.Username;
-        Firstname = source.Firstname;
-        MiddleName = source.MiddleName;
-        LastName = source.LastName;
         ClientId = source.ClientId;
         PreferredUsername = source.PreferredUsername;
         Id = source.Id;

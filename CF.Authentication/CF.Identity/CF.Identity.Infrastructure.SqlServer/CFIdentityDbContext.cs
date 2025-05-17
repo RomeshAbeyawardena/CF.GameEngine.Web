@@ -6,6 +6,7 @@ namespace CF.Identity.Infrastructure.SqlServer;
 public class CFIdentityDbContext(DbContextOptions<CFIdentityDbContext> options) : DbContext(options)
 {
     public DbSet<DbAccessToken> AccessTokens { get; set; } = null!;
+    public DbSet<DbCommonName> CommonNames { get; set; } = null!;
     public DbSet<DbClient> Clients { get; set; } = null!;
     public DbSet<DbScope> Scopes { get; set; } = null!;
     public DbSet<DbUser> Users { get; set; } = null!;

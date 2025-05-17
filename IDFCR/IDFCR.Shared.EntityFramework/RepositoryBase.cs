@@ -24,6 +24,12 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     protected virtual Func<T, TDb> Map => x => x.Map<TDb>();
     protected virtual  Func<TDb, T> MapDto => x => x.Map<T>();
 
+    protected virtual Task OnAddAsync(TDb db, T source, CancellationToken cancellationToken)
+    {
+        OnAdd(db, source);
+        return Task.CompletedTask;
+    }
+
     protected virtual void OnAdd(TDb db, T source)
     {
         if (db is IAuditCreatedTimestamp createdTimestamp)
@@ -150,7 +156,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
             var dbValue = Map(value);
             if (dbValue.Id == Guid.Empty)
             {
-                OnAdd(dbValue, value);
+                await OnAddAsync(dbValue, value, cancellationToken);
                 await DbSet.AddAsync(dbValue, cancellationToken);
                 unitAction = UnitAction.Add;
             }

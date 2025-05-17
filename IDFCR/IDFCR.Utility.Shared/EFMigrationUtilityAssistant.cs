@@ -105,7 +105,7 @@ internal class EFMigrationUtilityAssistant<TDbContext>(IServiceProvider serviceP
                     {
                         var searchValue = key.Name.Replace("*", "[:|A-z|0-9|-]{0,}");
 
-                        var regex = new Regex(searchValue);
+                        var regex = new Regex($"^{searchValue}");
 
                         predicate = regex.IsMatch;
                     }

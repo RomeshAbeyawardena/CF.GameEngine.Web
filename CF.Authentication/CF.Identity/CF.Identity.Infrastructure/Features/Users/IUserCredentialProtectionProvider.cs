@@ -32,7 +32,6 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         //if all spaces are populated sufficiently with key data, this metadata will be an empty string and won't need persisting to the database
         if (!string.IsNullOrWhiteSpace(keyData.Item1))
         {
-
             user.Metadata = Convert.ToBase64String(encoding.GetBytes(keyData.Item1));
         }
 
