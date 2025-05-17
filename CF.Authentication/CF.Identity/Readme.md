@@ -25,7 +25,7 @@ Example secrets.json
     "Key": "01621481-926b-4c9b-974c-ca7c040b8d40"
   },
   "ConnectionStrings": {
-    "CFIdentity": "Server=localhost,5060;Database=CFIdentity;User Id=sa;Password=123dacb9-a24c-4c4d-b2c5-bf465343f8d8!;MultipleActiveResultSets=true;TrustServerCertificate=true"
+    "CFIdentity": "Server=localhost,5060;Database=CFIdentity;User Id=sa;Password=<password>;MultipleActiveResultSets=true;TrustServerCertificate=true"
   },
   "JwtSettings": {
     "Issuer": "https://localhost:7234",
