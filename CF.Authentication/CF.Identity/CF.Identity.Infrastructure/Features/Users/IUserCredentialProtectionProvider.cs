@@ -10,7 +10,7 @@ public interface IUserCredentialProtectionProvider
 {
     string Hash(string secret, IUser user);
     bool Verify(string secret, string hash, IUser user);
-    void Protect(UserDto user, IClient client, bool regenerativeIv = false);
+    void Protect(UserDto user, IClient client, out IUserHmac userHmac, bool regenerativeIv = false);
     void Unprotect(UserDto user, IClient client);
 }
 
@@ -45,7 +45,14 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         return Convert.ToBase64String(derived.GetBytes(32));
     }
 
-    public void Protect(UserDto user, IClient client, bool regenerativeIv = false)
+    public string HashUsingHmac(UserDto user, IClient client, Func<UserDto, string> target)
+    {
+        var data = encoding.GetBytes(target(user));
+        var key = GetKey(user, client);
+        return Convert.ToBase64String(HMACSHA512.HashData(key, data));
+    }
+
+    public void Protect(UserDto user, IClient client, out IUserHmac userHmac, bool regenerativeIv = false)
     {
         using Aes? aes = Aes.Create();
 
@@ -60,6 +67,12 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
             aes.IV = Convert.FromBase64String(user.RowVersion);
         }
 
+        userHmac = new UserHmac
+        {
+            EmailAddressHmac = HashUsingHmac(user, client, x => x.EmailAddress),
+            UsernameHmac = HashUsingHmac(user, client, x => x.Username)
+        };
+
         user.EmailAddress = Encrypt(user.EmailAddress, aes)!;
         user.Username = Encrypt(user.Username, aes)!;
         if (!string.IsNullOrWhiteSpace(user.PreferredUsername))
@@ -67,6 +80,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
             user.PreferredUsername = Encrypt(user.PreferredUsername, aes);
         }
         user.HashedPassword = Hash(user.HashedPassword, user);
+
     }
 
     public void Unprotect(UserDto user, IClient client)

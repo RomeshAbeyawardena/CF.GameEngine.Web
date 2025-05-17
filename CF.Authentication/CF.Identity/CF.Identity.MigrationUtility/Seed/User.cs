@@ -43,9 +43,9 @@ public static partial class Seed
         };
 
         var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserCredentialProtectionProvider>();
-        userCredentialProtectionProvider.Protect(userDto, client!);
+        userCredentialProtectionProvider.Protect(userDto, client!, out var hmac);
 
-        var user = await UserTransformer.Transform(userDto, context, cancellationToken);
+        var user = await UserTransformer.Transform(userDto, context, hmac, cancellationToken);
 
         if (!isInflight)
         {

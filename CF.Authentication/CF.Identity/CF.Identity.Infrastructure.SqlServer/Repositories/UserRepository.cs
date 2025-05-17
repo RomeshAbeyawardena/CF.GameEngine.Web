@@ -13,7 +13,10 @@ internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext con
 {
     protected override async Task OnAddAsync(DbUser db, UserDto source, CancellationToken cancellationToken)
     {
-        await UserTransformer.Transform(source, Context, cancellationToken, db);
+        var dbClient = await Context.Clients.FindAsync([db.ClientId], cancellationToken) 
+            ?? throw new EntityNotFoundException(typeof(DbClient), db.ClientId);
+        userCredentialProtectionProvider.Protect(source, dbClient, out var hMac);
+        await UserTransformer.Transform(source, Context, hMac, cancellationToken, db);
         await base.OnAddAsync(db, source, cancellationToken);
     }
 

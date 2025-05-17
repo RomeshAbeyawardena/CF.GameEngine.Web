@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CF.Identity.Infrastructure.SqlServer.Models;
 
-public class DbUser : MappableBase<IUser>, IUser
+public class DbUser : MappableBase<IUser>, IUser, IUserHmac
 {
     protected override IUser Source => this;
     string IUserDetail.Firstname => FirstCommonName.ValueNormalised;
@@ -12,8 +12,11 @@ public class DbUser : MappableBase<IUser>, IUser
     string IUserDetail.LastName => LastCommonName.ValueNormalised;
 
     public string EmailAddress { get; set; } = null!;
+    public string EmailAddressHmac { get; set; } = null!;
     public string HashedPassword { get; set; } = null!;
+    
     public string Username { get; set; } = null!;
+    public string UsernameHmac { get; set; } = null!;
 
     public Guid FirstCommonNameId { get; set; }
     public Guid? MiddleCommonNameId { get; set; }
