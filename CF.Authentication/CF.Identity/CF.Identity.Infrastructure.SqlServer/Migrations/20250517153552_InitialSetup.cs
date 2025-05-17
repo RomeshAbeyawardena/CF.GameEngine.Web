@@ -35,6 +35,20 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CommonName",
+                schema: "dbo",
+                columns: table => new
+                {
+                    CommonNameId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    ValueNormalised = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommonName", x => x.CommonNameId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Scope",
                 schema: "dbo",
                 columns: table => new
@@ -66,9 +80,9 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     EmailAddress = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     HashedPassword = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     Username = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
-                    Firstname = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    MiddleName = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    FirstCommonNameId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MiddleCommonNameId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastCommonNameId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PreferredUsername = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: true),
                     IsSystem = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -85,6 +99,27 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                         principalTable: "Client",
                         principalColumn: "ClientId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_User_CommonName_FirstCommonNameId",
+                        column: x => x.FirstCommonNameId,
+                        principalSchema: "dbo",
+                        principalTable: "CommonName",
+                        principalColumn: "CommonNameId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_User_CommonName_LastCommonNameId",
+                        column: x => x.LastCommonNameId,
+                        principalSchema: "dbo",
+                        principalTable: "CommonName",
+                        principalColumn: "CommonNameId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_User_CommonName_MiddleCommonNameId",
+                        column: x => x.MiddleCommonNameId,
+                        principalSchema: "dbo",
+                        principalTable: "CommonName",
+                        principalColumn: "CommonNameId",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -144,6 +179,24 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                 schema: "dbo",
                 table: "User",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_FirstCommonNameId",
+                schema: "dbo",
+                table: "User",
+                column: "FirstCommonNameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_LastCommonNameId",
+                schema: "dbo",
+                table: "User",
+                column: "LastCommonNameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_MiddleCommonNameId",
+                schema: "dbo",
+                table: "User",
+                column: "MiddleCommonNameId");
         }
 
         /// <inheritdoc />
@@ -163,6 +216,10 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Client",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "CommonName",
                 schema: "dbo");
         }
     }

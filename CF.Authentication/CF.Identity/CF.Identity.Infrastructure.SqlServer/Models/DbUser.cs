@@ -20,7 +20,7 @@ public class DbUser : MappableBase<IUser>, IUser
     public string Username { get; set; } = null!;
 
     public Guid FirstCommonNameId { get; set; }
-    public Guid MiddleCommonNameId { get; set; }
+    public Guid? MiddleCommonNameId { get; set; }
     public Guid LastCommonNameId { get; set; }
 
     public Guid ClientId { get; set; }

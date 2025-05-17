@@ -203,7 +203,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<Guid>("MiddleCommonNameId")
+                    b.Property<Guid?>("MiddleCommonNameId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PreferredUsername")
@@ -285,8 +285,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbCommonName", "MiddleCommonName")
                         .WithMany()
                         .HasForeignKey("MiddleCommonNameId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Client");
 
