@@ -31,6 +31,7 @@ public class UserDto : MappableBase<IUser>, IUser
     public Guid Id { get; set; }
     public bool IsSystem { get; set; }
     public string RowVersion { get; set; } = null!;
+    public string? Metadata { get; set; }
 
     public override void Map(IUser source)
     {
@@ -45,5 +46,6 @@ public class UserDto : MappableBase<IUser>, IUser
         Id = source.Id;
         IsSystem = source.IsSystem;
         RowVersion = source.RowVersion;
+        Metadata = source.Metadata;
     }
 }

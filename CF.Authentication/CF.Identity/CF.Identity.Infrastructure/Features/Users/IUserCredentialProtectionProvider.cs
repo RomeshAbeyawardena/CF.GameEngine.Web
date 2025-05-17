@@ -16,7 +16,7 @@ public interface IUserCredentialProtectionProvider
 
 public class UserCredentialProtectionProvider(IConfiguration configuration) : PIIProtectionProviderBase, IUserCredentialProtectionProvider
 {
-    private byte[] GetKey(IUser user, IClient client)
+    private byte[] GetKey(UserDto user, IClient client)
     {
         var ourValue = configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
 

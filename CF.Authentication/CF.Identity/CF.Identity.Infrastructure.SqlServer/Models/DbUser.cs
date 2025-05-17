@@ -19,6 +19,7 @@ public class DbUser : MappableBase<IUser>, IUser
     public string RowVersion { get; set; } = null!;
 
     public virtual DbClient Client { get; set; } = null!;
+    public string? Metadata { get; set; }
 
     public override void Map(IUser source)
     {
@@ -33,5 +34,6 @@ public class DbUser : MappableBase<IUser>, IUser
         Id = source.Id;
         IsSystem = source.IsSystem;
         RowVersion = source.RowVersion;
+        Metadata = source.Metadata;
     }
 }
