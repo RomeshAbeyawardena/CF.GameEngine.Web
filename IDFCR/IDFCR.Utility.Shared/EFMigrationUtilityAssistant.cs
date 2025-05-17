@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace IDFCR.Utility.Shared;
 
@@ -98,7 +99,18 @@ internal class EFMigrationUtilityAssistant<TDbContext>(IServiceProvider serviceP
             {
                 foreach(var (key, extension) in Instance.Extensions)
                 {
-                    if (args.Any(a => a.Equals($"--{key.Name}", StringComparison.CurrentCultureIgnoreCase)))
+                    //wildcard match
+                    Func<string, bool> predicate = a => a.Equals($"{key.Name}", StringComparison.CurrentCultureIgnoreCase);
+                    if (key.Name.Contains('*'))
+                    {
+                        var searchValue = key.Name.Replace("*", "[:|A-z|0-9|-]{0,}");
+
+                        var regex = new Regex(searchValue);
+
+                        predicate = regex.IsMatch;
+                    }
+
+                    if (args.Any(predicate))
                     {
                         logger.LogInformation("Running extension: {Name}", key.Name);
 
