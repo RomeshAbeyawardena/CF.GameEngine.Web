@@ -11,7 +11,7 @@ namespace CF.Identity.MigrationUtility.Seed;
 
 public static partial class Seed
 {
-    public static async Task SeedUsers(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    public static async Task TrySeedUsers(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         var client = await context.Clients.FirstOrDefaultAsync(c => c.IsSystem, cancellationToken);
         bool isInflight = false;
