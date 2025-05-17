@@ -26,6 +26,7 @@ public partial class Seed
         {
             var randomNumberGenerator = serviceProvider.GetRequiredService<RandomNumberGenerator>();
             var jwtSettings = serviceProvider.GetRequiredService<IJwtSettings>();
+            logger.LogInformation(jwtSettings.GetType().FullName);
             var clientCredentialHasher = serviceProvider.GetRequiredService<IClientCredentialHasher>();
 
             var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);

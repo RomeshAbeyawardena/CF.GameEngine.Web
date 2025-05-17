@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace CF.Identity.Infrastructure;
 
@@ -6,10 +7,11 @@ public record JwtSettings(string? Issuer, string? Audience, string? SigningKey) 
 
 public record ConfigurationDerivedJwtSettings : IJwtSettings
 {
-    public ConfigurationDerivedJwtSettings(IConfiguration configuration)
+    public ConfigurationDerivedJwtSettings(ILogger<IJwtSettings> logger, IConfiguration configuration)
     {
-        configuration.GetRequiredSection("JwtSettings")
-            .Bind(this);
+        var jwtSettings = configuration.GetSection("JwtSettings");
+        logger.LogInformation(jwtSettings.Value);
+        jwtSettings.Bind(this);
     }
 
     public string? Issuer { get; set; }
