@@ -19,8 +19,8 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<CFIdentityDbContext>((s, opt) =>
         {
             var connectionString = s.GetRequiredService<IConfiguration>().GetConnectionString(connectionName);
-            opt.UseSqlServer(connectionString)
-                .EnableSensitiveDataLogging();
+            opt.UseSqlServer(connectionString);
+                //.EnableSensitiveDataLogging();
         });
 
         return services

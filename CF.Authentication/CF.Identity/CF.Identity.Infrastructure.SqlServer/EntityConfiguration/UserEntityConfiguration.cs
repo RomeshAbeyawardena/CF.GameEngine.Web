@@ -12,8 +12,10 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd().HasColumnName("UserId").IsRequired();
         builder.Property(x => x.EmailAddress).IsRequired().HasMaxLength(255);
+        builder.Property(x => x.EmailAddressHmac).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.HashedPassword).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.Username).IsRequired().HasMaxLength(80);
+        builder.Property(x => x.UsernameHmac).IsRequired().HasMaxLength(2000);
 
         builder.HasOne(x => x.FirstCommonName)
             .WithMany()
