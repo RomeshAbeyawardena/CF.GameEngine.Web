@@ -23,10 +23,10 @@ public class UserFilter(IUserFilter filter) : FilterBase<IUserFilter, DbUser>(fi
         if (!string.IsNullOrWhiteSpace(filter.NameContains))
         {
             var nameMatch = PredicateBuilder.New<DbUser>(true);
-            nameMatch = nameMatch.Or(x => x.Firstname.Contains(filter.NameContains))
-                .Or(x => x.LastName.Contains(filter.NameContains))
+            nameMatch = nameMatch.Or(x => x.FirstCommonName.ValueNormalised.Contains(filter.NameContains))
+                .Or(x => x.LastCommonName.ValueNormalised.Contains(filter.NameContains))
                 .Or(x => x.Username.Contains(filter.NameContains))
-                .Or(ExpressionExtensions.OrNullContains<DbUser>(u => u.MiddleName, NameContains));
+                .Or(ExpressionExtensions.OrNullContains<DbUser>(u => u.MiddleCommonName.ValueNormalised, NameContains));
 
             query = query.And(nameMatch);
         }

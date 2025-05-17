@@ -11,15 +11,13 @@ internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext con
     : RepositoryBase<IUser, DbUser, UserDto>(timeProvider, context), IUserRepository
 {
     /// <summary>
-    /// 
+    /// Resolves or creates a <see cref="DbCommonName"/> for the given lookup value,
+    /// assigning either a tracked reference or an existing ID accordingly.
     /// </summary>
-    /// <param name="name"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>
-    /// <para>false and null: Did not resolve</para>
-    /// <para>false and not null: Resolved with an existing entity</para>
-    /// <para>true and not null: Resolved with a new entity</para>
-    /// </returns>
+    /// <param name="lookupName">The raw name to resolve.</param>
+    /// <param name="setEntityRef">Callback to assign the newly created tracked entity.</param>
+    /// <param name="setIdRef">Callback to assign the ID of an existing tracked entity.</param>
+    /// <param name="cancellationToken">Token to cancel the async operation.</param>
     private async Task<(bool, DbCommonName?)> ResolveNameAsync(string name, CancellationToken cancellationToken)
     {
         var normalised = name.Trim();
@@ -36,7 +34,7 @@ internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext con
                 ValueNormalised = normalised
             };
             Context.CommonNames.Add(newName);
-            await Context.SaveChangesAsync(cancellationToken);
+            
             return (true, newName);
         }
 

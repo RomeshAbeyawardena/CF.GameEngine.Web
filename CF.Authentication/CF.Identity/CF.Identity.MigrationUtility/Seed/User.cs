@@ -37,8 +37,8 @@ public static partial class Seed
             PreferredUsername = "admin",
             // The initial password will be hashed/encrypted by Protect(), this is a plain-text seed value.
             HashedPassword = "@dmin-123!",
-            Firstname = "Admin",
-            LastName = "User",
+            LookupFirstName = "Admin",
+            LookupLastName = "User",
             IsSystem = true,
         };
 

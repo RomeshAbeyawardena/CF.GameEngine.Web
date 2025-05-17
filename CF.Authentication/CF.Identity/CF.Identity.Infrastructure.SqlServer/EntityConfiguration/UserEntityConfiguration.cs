@@ -14,9 +14,21 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         builder.Property(x => x.EmailAddress).IsRequired().HasMaxLength(255);
         builder.Property(x => x.HashedPassword).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.Username).IsRequired().HasMaxLength(80);
-        builder.Property(x => x.Firstname).IsRequired().HasMaxLength(32);
-        builder.Property(x => x.MiddleName).HasMaxLength(32);
-        builder.Property(x => x.LastName).IsRequired().HasMaxLength(32);
+        builder.HasOne(x => x.FirstCommonName)
+            .WithMany()
+            .HasForeignKey(x => x.FirstCommonNameId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.MiddleCommonName)
+            .WithMany()
+            .HasForeignKey(x => x.MiddleCommonNameId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(x => x.LastCommonName)
+            .WithMany()
+            .HasForeignKey(x => x.LastCommonNameId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Property(x => x.ClientId).HasColumnName("ClientId");
         builder.Property(x => x.PreferredUsername).HasMaxLength(80);
         builder.Property(x => x.IsSystem).HasDefaultValue(false);
