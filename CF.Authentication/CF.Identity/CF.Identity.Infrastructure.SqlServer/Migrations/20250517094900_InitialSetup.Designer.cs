@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CF.Identity.Infrastructure.SqlServer.Migrations
 {
     [DbContext(typeof(CFIdentityDbContext))]
-    [Migration("20250515201425_AddedForeignKeys")]
-    partial class AddedForeignKeys
+    [Migration("20250517094900_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -184,6 +184,10 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
+                    b.Property<string>("Metadata")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
                     b.Property<string>("MiddleName")
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
@@ -191,6 +195,12 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.Property<string>("PreferredUsername")
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("Username")
                         .IsRequired()

@@ -20,7 +20,7 @@ static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumera
     
     await Seed.TrySeedSystemClient(logger, context, serviceProvider, cancellationToken);
 
-    if (args.Any(x => x.StartsWith("seed:", StringComparison.InvariantCultureIgnoreCase)))
+    if (args.Any(x => x.StartsWith("--seed:", StringComparison.InvariantCultureIgnoreCase)))
     {
         IHostEnvironment hostEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
         if (!hostEnvironment.IsDevelopment())
@@ -29,7 +29,7 @@ static async Task SeedData(ILogger logger, CFIdentityDbContext context, IEnumera
         }
     }
 
-    var seedAll = args.Any(x => x.Equals("seed:all", StringComparison.InvariantCultureIgnoreCase));
+    var seedAll = args.Any(x => x.Equals("--seed:all", StringComparison.InvariantCultureIgnoreCase));
 
     if (seedAll || args.Any(x => x.Equals("seed:user", StringComparison.InvariantCultureIgnoreCase)))
     {

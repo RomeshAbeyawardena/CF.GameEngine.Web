@@ -1,11 +1,9 @@
-﻿using CF.Identity.Infrastructure.Features.Clients;
-using CF.Identity.Infrastructure.Features.Users;
+﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics.CodeAnalysis;
 
 namespace CF.Identity.MigrationUtility.Seed;
 

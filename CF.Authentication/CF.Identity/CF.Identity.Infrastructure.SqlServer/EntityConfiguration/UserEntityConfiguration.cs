@@ -20,6 +20,8 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         builder.Property(x => x.ClientId).HasColumnName("ClientId");
         builder.Property(x => x.PreferredUsername).HasMaxLength(80);
         builder.Property(x => x.IsSystem).HasDefaultValue(false);
+        builder.Property(x => x.RowVersion).IsConcurrencyToken().HasMaxLength(2000).IsRequired();
+        builder.Property(x => x.Metadata).HasMaxLength(2000);
         builder.HasOne(x => x.Client)
             .WithMany()
             .HasForeignKey(x => x.ClientId)

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CF.Identity.MigrationUtility": {
+      "commandName": "Project",
+      "commandLineArgs": "--seed --seed:all"
+    }
+  }
+}
