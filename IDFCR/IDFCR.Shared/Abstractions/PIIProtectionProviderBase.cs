@@ -5,36 +5,69 @@ namespace IDFCR.Shared.Abstractions;
 
 public abstract class PIIProtectionProviderBase
 {
-    protected internal static byte[] GenerateKey(int length, char separator, Encoding encoding, params string[] values)
+    private static IEnumerable<string> GetSpacerParts(string parts, char separator)
     {
-        if(length < values.Length)
+        return parts.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    protected internal static (string?, byte[]) GenerateKey(int length, char separator, Encoding encoding, string? spacers, params string[] values)
+    {
+        if (length < values.Length)
         {
             throw new ArgumentException("Length must be greater than or equal to the sum of the lengths of the values.");
+        }
+        List<string> spacerParts = [];
+        if (!string.IsNullOrWhiteSpace(spacers))
+        {
+            spacerParts.AddRange(GetSpacerParts(spacers, separator));
         }
 
         var totalCharactersPerValue = length / values.Length;
 
         var builder = new StringBuilder();
-        
+
+
+        var index = 0;
+        bool isAdditionalSpacer = false;
         foreach (var value in values)
         {
             builder.Append(separator);
-            if(value.Length > totalCharactersPerValue - 1)
+            if (value.Length > totalCharactersPerValue - 1)
             {
-               builder.Append(value.AsSpan(0, totalCharactersPerValue - 1));
+                builder.Append(value.AsSpan(0, totalCharactersPerValue - 1));
             }
             else if (value.Length < totalCharactersPerValue - 1)
             {
                 var additionalLengthNeeded = totalCharactersPerValue - value.Length - 1;
-                var id = Guid.NewGuid().ToString();
-                builder.Append($"{value}{id.AsSpan(0, additionalLengthNeeded)}");
+
+                var spacer = spacerParts.ElementAtOrDefault(index++);
+
+                if (string.IsNullOrEmpty(spacer))
+                {
+                    var id = Guid.NewGuid().ToString();
+                    spacer = id.AsSpan(0, additionalLengthNeeded).ToString();
+                    isAdditionalSpacer = true;
+                }
+
+                if (spacer.Length < additionalLengthNeeded)
+                {
+                    throw new FormatException("Spacer is not long enough to fill the gap.");
+                }
+
+                if (isAdditionalSpacer)
+                {
+                    spacerParts.Add(spacer);
+                }
+
+                builder.Append($"{value}{spacer}");
             }
-            else {
+            else
+            {
                 builder.Append(value);
             }
         }
 
-        return encoding.GetBytes(builder.ToString());
+        return (string.Join(separator, spacerParts), encoding.GetBytes(builder.ToString()));
     }
 
     protected static string? Encrypt(string? value, SymmetricAlgorithm symmetricAlgorithm)
@@ -61,6 +94,4 @@ public abstract class PIIProtectionProviderBase
         }
         return value;
     }
-
-
 }
