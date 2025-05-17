@@ -16,10 +16,20 @@ public interface IUserCredentialProtectionProvider
 
 public class UserCredentialProtectionProvider(IConfiguration configuration) : PIIProtectionProviderBase, IUserCredentialProtectionProvider
 {
-    private byte[] GetKey(IClient client)
+    private byte[] GetKey(IUser user, IClient client)
     {
         var ourValue = configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
-        return GenerateKey(32, '|', Encoding.UTF8, client.Reference, ourValue);
+
+        var keyData = GenerateKey(32, '|', Encoding.UTF8, user.Metadata, client.Reference, ourValue);
+
+        //if all spaces are populated sufficiently with key data, this metadata will be an empty string and won't need persisting to the database
+        if (!string.IsNullOrWhiteSpace(keyData.Item1))
+        {
+
+            user.Metadata = keyData.Item1;
+        }
+
+        return keyData.Item2;
     }
 
     public string Hash(string secret, IUser user)
@@ -33,7 +43,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration) : PI
     {
         using Aes? aes = Aes.Create();
 
-        aes.Key = GetKey(client);
+        aes.Key = GetKey(user, client);
         if (regenerativeIv || string.IsNullOrWhiteSpace(user.RowVersion))
         {
             aes.GenerateIV();
@@ -62,7 +72,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration) : PI
 
         using Aes? aes = Aes.Create();
 
-        aes.Key = GetKey(client);
+        aes.Key = GetKey(user, client);
         aes.IV = Convert.FromBase64String(user.RowVersion);
 
         user.EmailAddress = Decrypt(user.EmailAddress, aes)!;
