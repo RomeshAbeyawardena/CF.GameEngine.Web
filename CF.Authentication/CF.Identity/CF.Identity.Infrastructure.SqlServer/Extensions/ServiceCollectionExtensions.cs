@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Shared.Extensions;
 using CF.Identity.Infrastructure.Features.Users;
+using System.Text;
 
 namespace CF.Identity.Infrastructure.SqlServer.Extensions;
 
@@ -22,6 +23,7 @@ public static class ServiceCollectionExtensions
         });
 
         return services
+            .AddSingleton(Encoding.UTF8)
             .AddSingleton<IClientCredentialHasher, ClientCredentialHasher>()
             .AddSingleton<IUserCredentialProtectionProvider, UserCredentialProtectionProvider>()
             .AddScoped<IAccessTokenRepository, AccessTokenRepository>()
