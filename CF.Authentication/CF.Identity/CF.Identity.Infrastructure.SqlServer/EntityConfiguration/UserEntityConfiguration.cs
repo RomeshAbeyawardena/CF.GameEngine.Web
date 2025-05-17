@@ -15,10 +15,6 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         builder.Property(x => x.HashedPassword).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.Username).IsRequired().HasMaxLength(80);
 
-        builder.Ignore(x => x.LookupFirstName);
-        builder.Ignore(x => x.LookupMiddleName);
-        builder.Ignore(x => x.LookupLastName);
-
         builder.HasOne(x => x.FirstCommonName)
             .WithMany()
             .HasForeignKey(x => x.FirstCommonNameId)

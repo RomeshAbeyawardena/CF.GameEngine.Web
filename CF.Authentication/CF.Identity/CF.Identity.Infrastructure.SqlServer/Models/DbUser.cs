@@ -11,10 +11,6 @@ public class DbUser : MappableBase<IUser>, IUser
     string? IUserDetail.MiddleName => MiddleCommonName.ValueNormalised;
     string IUserDetail.LastName => LastCommonName.ValueNormalised;
 
-    public string? LookupFirstName { get; set; }
-    public string? LookupMiddleName { get; set; }
-    public string? LookupLastName { get; set; }
-
     public string EmailAddress { get; set; } = null!;
     public string HashedPassword { get; set; } = null!;
     public string Username { get; set; } = null!;
@@ -38,10 +34,6 @@ public class DbUser : MappableBase<IUser>, IUser
 
     public override void Map(IUser source)
     {
-        LookupFirstName = source.Firstname;
-        LookupMiddleName = source.MiddleName;
-        LookupLastName = source.LastName;
-
         EmailAddress = source.EmailAddress;
         HashedPassword = source.HashedPassword;
         ClientId = source.ClientId;

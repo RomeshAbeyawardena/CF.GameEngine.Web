@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
+using CF.Identity.Infrastructure.SqlServer.Transforms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -30,17 +31,22 @@ public static partial class Seed
             return;
         }
 
-        var user = new DbUser
+        var userDto = new UserDto
         {
             EmailAddress = "admin@identity.co",
             Username = "admin",
             PreferredUsername = "admin",
             // The initial password will be hashed/encrypted by Protect(), this is a plain-text seed value.
             HashedPassword = "@dmin-123!",
-            LookupFirstName = "Admin",
-            LookupLastName = "User",
+            Firstname = "Admin",
+            LastName = "User",
             IsSystem = true,
         };
+
+        var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserCredentialProtectionProvider>();
+        userCredentialProtectionProvider.Protect(userDto, client!);
+
+        var user = await UserTransformer.Transform(userDto, context, cancellationToken);
 
         if (!isInflight)
         {
@@ -51,12 +57,6 @@ public static partial class Seed
             user.Client = client!;
         }
 
-        var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserCredentialProtectionProvider>();
-        var userDto = user.Map<UserDto>();
-        userCredentialProtectionProvider.Protect(userDto, client!);
-        
-        ///maps the encypted values back to the entity model
-        user.Map(userDto);
         context.Users.Add(user);
     }
 }
