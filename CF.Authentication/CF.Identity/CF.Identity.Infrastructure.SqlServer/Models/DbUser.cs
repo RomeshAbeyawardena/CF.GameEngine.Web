@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using IDFCR.Shared.Abstractions;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CF.Identity.Infrastructure.SqlServer.Models;
 
