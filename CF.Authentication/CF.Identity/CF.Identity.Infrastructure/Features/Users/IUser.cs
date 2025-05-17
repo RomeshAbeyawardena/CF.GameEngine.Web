@@ -26,4 +26,5 @@ public interface IUserDetail : IUserSummary
     string Firstname { get; }
     string? Middlename { get; }
     string Lastname { get; }
+    string PrimaryTelephoneNumber { get; }
 }
