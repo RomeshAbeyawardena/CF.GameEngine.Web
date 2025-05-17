@@ -30,15 +30,17 @@ public static partial class Seed
             return;
         }
 
+        var userInfo = serviceProvider.GetRequiredService<UserInfo>();
+
         var userDto = new UserDto
         {
-            EmailAddress = "admin@identity.co",
-            Username = "admin",
-            PreferredUsername = "admin",
+            EmailAddress = userInfo.EmailAddress,
+            Username = userInfo.Username,
+            PreferredUsername = userInfo.PreferredUsername,
             // The initial password will be hashed/encrypted by Protect(), this is a plain-text seed value.
-            HashedPassword = "@dmin-123!",
-            Firstname = "Admin",
-            LastName = "User",
+            HashedPassword = userInfo.Password,
+            Firstname = userInfo.Firstname,
+            Lastname = userInfo.Lastname,
             IsSystem = true,
         };
 

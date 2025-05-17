@@ -66,8 +66,8 @@ public static class UserTransformer
         dbUser.UsernameHmac = userHmac.UsernameHmac;
 
         await SetCommonNameAsync(context, user.Firstname, name => dbUser.FirstCommonName = name, id => dbUser.FirstCommonNameId = id, cancellationToken);
-        await SetCommonNameAsync(context, user.MiddleName, name => dbUser.MiddleCommonName = name, id => dbUser.MiddleCommonNameId = id, cancellationToken);
-        await SetCommonNameAsync(context, user.LastName, name => dbUser.LastCommonName = name, id => dbUser.LastCommonNameId = id, cancellationToken);
+        await SetCommonNameAsync(context, user.Middlename, name => dbUser.MiddleCommonName = name, id => dbUser.MiddleCommonNameId = id, cancellationToken);
+        await SetCommonNameAsync(context, user.Lastname, name => dbUser.LastCommonName = name, id => dbUser.LastCommonNameId = id, cancellationToken);
 
         return dbUser;
     }

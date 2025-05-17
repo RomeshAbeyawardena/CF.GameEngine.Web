@@ -8,8 +8,8 @@ public class DbUser : MappableBase<IUser>, IUser, IUserHmac
 {
     protected override IUser Source => this;
     string IUserDetail.Firstname => FirstCommonName.ValueNormalised;
-    string? IUserDetail.MiddleName => MiddleCommonName?.ValueNormalised;
-    string IUserDetail.LastName => LastCommonName.ValueNormalised;
+    string? IUserDetail.Middlename => MiddleCommonName?.ValueNormalised;
+    string IUserDetail.Lastname => LastCommonName.ValueNormalised;
 
     public string EmailAddress { get; set; } = null!;
     public string EmailAddressHmac { get; set; } = null!;

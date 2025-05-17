@@ -12,8 +12,8 @@ public record UserDto : MappableBase<IUser>, IUser
     public string Username { get; set; } = null!;
     public string? PreferredUsername { get; set; }
     public string Firstname { get; set; } = null!;
-    public string? MiddleName { get; set; }
-    public string LastName { get; set; } = null!;
+    public string? Middlename { get; set; }
+    public string Lastname { get; set; } = null!;
     public Guid Id { get; set; }
     public bool IsSystem { get; set; }
     public string RowVersion { get; set; } = null!;
@@ -27,8 +27,8 @@ public record UserDto : MappableBase<IUser>, IUser
         Username = source.Username;
         PreferredUsername = source.PreferredUsername;
         Firstname = source.Firstname;
-        MiddleName = source.MiddleName;
-        LastName = source.LastName;
+        Middlename = source.Middlename;
+        Lastname = source.Lastname;
         Id = source.Id;
         IsSystem = source.IsSystem;
         RowVersion = source.RowVersion;
