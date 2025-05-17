@@ -2,13 +2,15 @@
 using CF.Identity.Infrastructure.SqlServer.Filters;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.Transforms;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext context, IUserCredentialProtectionProvider userCredentialProtectionProvider) 
+internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvider timeProvider, 
+    CFIdentityDbContext context, IUserCredentialProtectionProvider userCredentialProtectionProvider) 
     : RepositoryBase<IUser, DbUser, UserDto>(timeProvider, context), IUserRepository
 {
     protected override async Task OnAddAsync(DbUser db, UserDto source, CancellationToken cancellationToken)
@@ -42,9 +44,11 @@ internal class UserRepository(TimeProvider timeProvider, CFIdentityDbContext con
 
     public async Task<IUnitResultCollection<UserDto>> FindUsersAsync(IUserFilter filter, CancellationToken cancellationToken)
     {
+        userFilter.Filter = filter;
+        var externalFilter = await userFilter.ApplyFilterAsync(Builder, cancellationToken);
         var result = await Set<DbUser>(filter)
             .Include(x => x.Client)
-            .Where(new UserFilter(filter).ApplyFilter(Builder))
+            .Where(externalFilter)
             .ToListAsync(cancellationToken);
 
         var mappedResult = MapTo(result, (db, x) => userCredentialProtectionProvider.Unprotect(x, db.Client));

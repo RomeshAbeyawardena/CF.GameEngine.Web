@@ -18,11 +18,6 @@ public interface IUserCredentialProtectionProvider
 
 public class UserCredentialProtectionProvider(IConfiguration configuration, Encoding encoding) : PIIProtectionProviderBase, IUserCredentialProtectionProvider
 {
-    private byte[] GetClientKey(IClient client)
-    {
-        var ourValue = configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
-
-    }
     private byte[] GetKey(UserDto user, IClient client)
     {
         var ourValue = configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
@@ -52,16 +47,20 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         return Convert.ToBase64String(derived.GetBytes(32));
     }
 
-    public string string HashUsingHmac(IClient client, string value)
+    public string HashUsingHmac(IClient client, string value)
     {
+        var key = configuration.GetValue<string>("Encryption:Key") 
+            ?? throw new InvalidOperationException("Encryption key not found in configuration.");
 
+        var reference = client.Reference
+            ?? throw new InvalidOperationException("Encryption key not found in configuration.");
+
+        return Convert.ToBase64String(HMACSHA512.HashData(encoding.GetBytes($"{key}|{reference}"), encoding.GetBytes(value)));
     }
 
     public string HashUsingHmac(UserDto user, IClient client, Func<UserDto, string> target)
     {
-        var data = encoding.GetBytes(target(user));
-        var key = GetKey(user, client);
-        return Convert.ToBase64String(HMACSHA512.HashData(key, data));
+        return HashUsingHmac(client, target(user));
     }
 
     public void Protect(UserDto user, IClient client, out IUserHmac userHmac, bool regenerativeIv = false)

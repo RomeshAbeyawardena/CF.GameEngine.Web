@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
             .FromAssemblyOf<TTargetAssemblyClass>()
             .AddClasses(i => i.AssignableTo<IInjectableFilter>())
             .AsImplementedInterfaces()
+            .WithTransientLifetime()
         );
 
 #if DEBUG
