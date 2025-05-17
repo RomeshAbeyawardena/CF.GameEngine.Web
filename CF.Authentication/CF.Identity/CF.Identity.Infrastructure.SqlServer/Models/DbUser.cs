@@ -8,7 +8,7 @@ public class DbUser : MappableBase<IUser>, IUser
 {
     protected override IUser Source => this;
     string IUserDetail.Firstname => FirstCommonName.ValueNormalised;
-    string? IUserDetail.MiddleName => MiddleCommonName.ValueNormalised;
+    string? IUserDetail.MiddleName => MiddleCommonName?.ValueNormalised;
     string IUserDetail.LastName => LastCommonName.ValueNormalised;
 
     public string EmailAddress { get; set; } = null!;
@@ -35,6 +35,7 @@ public class DbUser : MappableBase<IUser>, IUser
     public override void Map(IUser source)
     {
         EmailAddress = source.EmailAddress;
+        Username = source.Username;
         HashedPassword = source.HashedPassword;
         ClientId = source.ClientId;
         PreferredUsername = source.PreferredUsername;
