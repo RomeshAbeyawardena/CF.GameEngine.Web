@@ -27,19 +27,29 @@ internal partial class Verify
 
             var preferredUsernameHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.PreferredUsername);
 
+            int issueCount = 0;
             if (emailAddressHmac != user.EmailAddressHmac)
             {
                 logger.LogWarning("Email address HMAC does not match: {emailAddressHmac} != {emailAddressHmac}", emailAddressHmac, user.EmailAddressHmac);
+                issueCount++;
             }
 
             if (usernameHmac != user.UsernameHmac)
             {
                 logger.LogWarning("Username HMAC does not match: {usernameHmac} != {usernameHmac}", usernameHmac, user.UsernameHmac);
+                issueCount++;
             }
 
             if (preferredUsernameHmac != user.PreferredUsernameHmac)
             {
                 logger.LogWarning("Preferred username HMAC does not match: {preferredUsernameHmac} != {preferredUsernameHmac}", preferredUsernameHmac, user.PreferredUsernameHmac);
+                issueCount++;
+            }
+
+            if (issueCount > 0)
+            {
+                logger.LogError("There are {issueCount} issues with the user data, see previous entries for details. " +
+                    "This will impact filtering encrypted fields within the system until its resolved", issueCount);
             }
 
             var mappedUser = user.Map<UserDto>();
