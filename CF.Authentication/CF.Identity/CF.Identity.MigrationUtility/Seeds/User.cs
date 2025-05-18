@@ -65,9 +65,12 @@ internal static partial class Seed
 
         context.Scopes.Local.ForEach(s => scopesToAdd.Add((true, s)));
 
-        var scopes = await context.Scopes.Where(x => x.ClientId == client!.Id).ToListAsync(cancellationToken);
-
-        scopes.ForEach(s => scopesToAdd.Add(new(false, s)));
+        if (!isInflight)
+        {
+            //include existing scopes for the client
+            var scopes = await context.Scopes.Where(x => x.ClientId == client!.Id).ToListAsync(cancellationToken);
+            scopes.ForEach(s => scopesToAdd.Add(new(false, s)));
+        }
 
         foreach(var (inflight, scope) in scopesToAdd)
         {
