@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Shared.Extensions;
 using MediatR;
 using System.Runtime.CompilerServices;
 using System.Text;
