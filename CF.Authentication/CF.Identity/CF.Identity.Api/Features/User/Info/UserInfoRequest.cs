@@ -26,7 +26,9 @@ public class UserInfoRequestHandler(IMediator mediator, IClientCredentialHasher 
 
         var hash = clientCredentialHasher.Hash(request.AccessToken, client);
         var utcNow = timeProvider.GetUtcNow();
-        var accessTokens = await mediator.Send(new FindAccessTokenQuery(hash, client.Id, ValidFrom: utcNow, ValidTo: utcNow), cancellationToken);
+        var accessTokens = await mediator.Send(new FindAccessTokenQuery(hash, client.Id, 
+            ValidFrom: utcNow.Date.AddDays(1).AddHours(-1), 
+            ValidTo: utcNow.Date), cancellationToken);
 
         var accessToken = accessTokens.GetOneOrDefault(orderedTranform : x => x.OrderByDescending(a => a.ValidFrom));
         if (accessToken is null)

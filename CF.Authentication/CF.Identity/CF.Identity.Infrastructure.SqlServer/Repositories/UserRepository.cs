@@ -35,11 +35,18 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
 
     public async Task<IUnitResult<UserDto>> FindUserByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var user = await FindAsync(cancellationToken, [id]);
-        if (user is null)
+        var foundUser = await Context.Users
+            .Include(x => x.FirstCommonName)
+            .Include(x => x.MiddleCommonName)
+            .Include(x => x.LastCommonName)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (foundUser is null)
         {
             return UnitResult.NotFound<UserDto>(id);
         }
+
+        var user = foundUser.Map<UserDto>();
 
         var client = await Context.Clients.FindAsync([user.ClientId], cancellationToken);
 
@@ -59,6 +66,9 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         var externalFilter = await userFilter.ApplyFilterAsync(Builder, cancellationToken);
         var result = await Set<DbUser>(filter)
             .Include(x => x.Client)
+             .Include(x => x.FirstCommonName)
+             .Include(x => x.MiddleCommonName)
+            .Include(x => x.LastCommonName)
             .Where(externalFilter)
             .ToListAsync(cancellationToken);
 

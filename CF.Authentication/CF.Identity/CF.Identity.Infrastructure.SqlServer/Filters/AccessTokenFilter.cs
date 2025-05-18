@@ -42,12 +42,12 @@ internal class AccessTokenFilter(IAccessTokenFilter filter) : FilterBase<IAccess
 
         if (filter.ValidFrom.HasValue)
         {
-            query = query.And(x => x.ValidFrom >= filter.ValidFrom.Value);
+            query = query.And(x => x.ValidFrom <= filter.ValidFrom.Value);
         }
 
         if (filter.ValidTo.HasValue)
         {
-            query = query.And(x => x.ValidTo <= filter.ValidTo.Value);
+            query = query.And(x => !x.ValidTo.HasValue || x.ValidTo >= filter.ValidTo.Value);
         }
 
         return query;
