@@ -81,6 +81,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         userHmac = new UserHmac
         {
             EmailAddressHmac = HashUsingHmac(user, client, x => x.EmailAddress),
+            PreferredUsernameHmac = HashUsingHmac(user, client, x => x.Username),
             UsernameHmac = HashUsingHmac(user, client, x => x.Username)
         };
 

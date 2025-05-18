@@ -24,6 +24,7 @@ public class DbUser : MappableBase<IUser>, IUser, IUserHmac
 
     public Guid ClientId { get; set; }
     public string? PreferredUsername { get; set; }
+    public string PreferredUsernameHmac { get; set; } = null!;
     public Guid Id { get; set; }
     public bool IsSystem { get; set; }
     public string RowVersion { get; set; } = null!;
