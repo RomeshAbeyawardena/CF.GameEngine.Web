@@ -6,7 +6,7 @@ public class UserInfo
 {
     public UserInfo(IConfiguration configuration)
     {
-        var userSetting = configuration.GetSection("User");
+        var userSetting = configuration.GetSection("Seed:User");
 
         userSetting.Bind(this);
     }
@@ -18,4 +18,5 @@ public class UserInfo
     public string Firstname { get; set; } = null!;
     public string Lastname { get; set; } = null!;
     public string? MiddleName { get; set; }
+    public string PrimaryTelephoneNumber { get; set; } = null!;
 }

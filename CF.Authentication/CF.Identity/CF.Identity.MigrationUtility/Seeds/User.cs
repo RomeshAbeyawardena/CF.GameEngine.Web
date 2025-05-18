@@ -41,6 +41,7 @@ internal static partial class Seed
             HashedPassword = userInfo.Password,
             Firstname = userInfo.Firstname,
             Lastname = userInfo.Lastname,
+            PrimaryTelephoneNumber = userInfo.PrimaryTelephoneNumber,
             IsSystem = true,
         };
 

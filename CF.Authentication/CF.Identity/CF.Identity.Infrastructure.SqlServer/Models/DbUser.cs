@@ -50,5 +50,6 @@ public class DbUser : MappableBase<IUser>, IUser, IUserHmac
         IsSystem = source.IsSystem;
         RowVersion = source.RowVersion;
         Metadata = source.Metadata;
+        PrimaryTelephoneNumber = source.PrimaryTelephoneNumber;
     }
 }
