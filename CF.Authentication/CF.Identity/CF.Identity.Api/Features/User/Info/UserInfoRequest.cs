@@ -1,9 +1,5 @@
-﻿using CF.Identity.Api.Features.AccessTokens;
-using CF.Identity.Api.Features.AccessTokens.Get;
-using CF.Identity.Api.Features.Clients;
-using CF.Identity.Api.Features.Clients.Get;
-using CF.Identity.Api.Features.User.Get;
-using CF.Identity.Infrastructure.Features.Clients;
+﻿using CF.Identity.Api.Features.User.Get;
+using CF.Identity.Infrastructure.Features.AccessToken;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
@@ -11,33 +7,13 @@ using MediatR;
 
 namespace CF.Identity.Api.Features.User.Info;
 
-public record UserInfoRequest(string AccessToken, string ClientId) : IUnitRequest<UserInfoResponse>;
+public record UserInfoRequest(IAccessToken AccessToken, Infrastructure.Features.Clients.IClientDetails Client) : IUnitRequest<UserInfoResponse>;
 
-public class UserInfoRequestHandler(IMediator mediator, IClientCredentialHasher clientCredentialHasher, TimeProvider timeProvider) : IUnitRequestHandler<UserInfoRequest, UserInfoResponse>
+public class UserInfoRequestHandler(IMediator mediator) : IUnitRequestHandler<UserInfoRequest, UserInfoResponse>
 {
     public async Task<IUnitResult<UserInfoResponse>> Handle(UserInfoRequest request, CancellationToken cancellationToken)
     {
-        var clients = await mediator.Send(new FindClientQuery(request.ClientId), cancellationToken);
-        var client = clients.GetOneOrDefault();
-        if (client is null)
-        {
-            return UnitResult.NotFound<UserInfoResponse>(request.ClientId).As<UserInfoResponse>();
-        }
-
-        var hash = clientCredentialHasher.Hash(request.AccessToken, client);
-        var utcNow = timeProvider.GetUtcNow();
-        var accessTokens = await mediator.Send(new FindAccessTokenQuery(hash, client.Id, 
-            ValidFrom: utcNow.Date.AddDays(1).AddHours(-1), 
-            ValidTo: utcNow.Date), cancellationToken);
-
-        var accessToken = accessTokens.GetOneOrDefault(orderedTranform : x => x.OrderByDescending(a => a.ValidFrom));
-        if (accessToken is null)
-        {
-            return new UnitResult(new UnauthorizedAccessException()).As<UserInfoResponse>();
-        }
-
-        //TODO get associated user and return response
-        var usersResult = await mediator.Send(new GetUserByIdQuery(accessToken!.UserId), cancellationToken);
+        var usersResult = await mediator.Send(new GetUserByIdQuery(request.AccessToken!.UserId), cancellationToken);
 
         var user = usersResult.GetResultOrDefault();
         

@@ -17,15 +17,13 @@ public static class UserInfoEndpoint
             ?? throw new NullReferenceException("HttpContext not available in this context");
 
         var authenticatedClient = context.GetAuthenticatedClient();
-
-        var accessToken = context.Items["AccessToken"]?.ToString();
-
-        if (authenticatedClient is null || string.IsNullOrWhiteSpace(accessToken))
+        var accessToken = context.GetAccessToken();
+        if (authenticatedClient is null || accessToken is null)
         {
             return Results.Unauthorized();
         }
 
-        var result = await mediator.Send(new UserInfoRequest(accessToken, authenticatedClient.ClientId), cancellationToken);
+        var result = await mediator.Send(new UserInfoRequest(accessToken, authenticatedClient.ClientDetails), cancellationToken);
 
         if (!result.IsSuccess)
         {
