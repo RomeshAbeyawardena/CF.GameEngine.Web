@@ -2,6 +2,7 @@
 using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.Transforms;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -60,19 +61,28 @@ internal static partial class Seed
             user.Client = client!;
         }
 
-        isInflight = context.Scopes.Local.Count != 0;
-        var scopes = isInflight ? [.. context.Scopes.Local] : await context.Scopes.ToListAsync(cancellationToken);
+        List<(bool, DbScope)> scopesToAdd = [];
 
-        foreach(var scope in scopes)
+        context.Scopes.Local.ForEach(s => scopesToAdd.Add((true, s)));
+
+        var scopes = await context.Scopes.Where(x => x.ClientId == client!.Id).ToListAsync(cancellationToken);
+
+        scopes.ForEach(s => scopesToAdd.Add(new(false, s)));
+
+        foreach(var (inflight, scope) in scopesToAdd)
         {
             var userScope = new DbUserScope
             {
                 User = user
             };
 
-            if (isInflight)
+            if (inflight)
             {
                 userScope.Scope = scope;
+            }
+            else
+            {
+                userScope.ScopeId = scope.Id;
             }
 
             user.UserScopes.Add(userScope);
