@@ -28,7 +28,9 @@ public class DbUser : MappableBase<IUser>, IUser, IUserHmac
     public Guid Id { get; set; }
     public bool IsSystem { get; set; }
     public string RowVersion { get; set; } = null!;
+    
     public string PrimaryTelephoneNumber { get; set; } = null!;
+    public string PrimaryTelephoneNumberHmac { get; set; } = null!;
 
     public virtual DbClient Client { get; set; } = null!;
     public virtual DbCommonName FirstCommonName { get; set; } = null!;

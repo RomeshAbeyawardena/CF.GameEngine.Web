@@ -43,6 +43,12 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         
     }
 
+    protected virtual Task OnUpdateAsync(TDb db, T source, CancellationToken cancellationToken)
+    {
+        OnUpdate(db, source);
+        return Task.CompletedTask;
+    }
+
     protected virtual void OnUpdate(TDb db, T source)
     {
         if (db is IAuditModifiedTimestamp modifiedTimestamp)
@@ -171,7 +177,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
                 }
                 BeforeUpdate(foundEntry, value);
                 foundEntry.Apply(dbValue);
-                OnUpdate(foundEntry, value);
+                await OnUpdateAsync(foundEntry, value, cancellationToken);
                 unitAction = UnitAction.Update;
             }
 

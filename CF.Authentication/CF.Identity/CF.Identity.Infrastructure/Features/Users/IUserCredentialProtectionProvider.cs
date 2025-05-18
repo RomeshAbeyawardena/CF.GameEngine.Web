@@ -82,7 +82,8 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         {
             EmailAddressHmac = HashUsingHmac(user, client, x => x.EmailAddress),
             PreferredUsernameHmac = HashUsingHmac(user, client, x => x.Username),
-            UsernameHmac = HashUsingHmac(user, client, x => x.Username)
+            UsernameHmac = HashUsingHmac(user, client, x => x.Username),
+            PrimaryTelephoneNumberHmac = HashUsingHmac(user, client, x => x.PrimaryTelephoneNumber)
         };
 
         user.EmailAddress = Encrypt(user.EmailAddress, aes)!;
@@ -91,8 +92,9 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         {
             user.PreferredUsername = Encrypt(user.PreferredUsername, aes);
         }
-        user.HashedPassword = Hash(user.HashedPassword, user);
 
+        user.PrimaryTelephoneNumber = Encrypt(user.PrimaryTelephoneNumber, aes)!;
+        user.HashedPassword = Hash(user.HashedPassword, user);
     }
 
     public void Unprotect(UserDto user, IClient client)

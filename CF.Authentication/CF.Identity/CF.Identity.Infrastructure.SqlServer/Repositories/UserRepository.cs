@@ -22,6 +22,17 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         await base.OnAddAsync(db, source, cancellationToken);
     }
 
+    //it is assumed the data recieved is unencrypted, we take no assurance that the data is unencrypted as we can confirm anything we've given to the consumer is unencrypted.
+    protected override async Task OnUpdateAsync(DbUser db, UserDto source, CancellationToken cancellationToken)
+    {
+        var dbClient = await Context.Clients.FindAsync([db.ClientId], cancellationToken) 
+            ?? throw new EntityNotFoundException(typeof(DbClient), db.ClientId);
+        userCredentialProtectionProvider.Protect(source, dbClient, out var hMac);
+        await UserTransformer.Transform(source, Context, hMac, cancellationToken, db);
+
+        await base.OnUpdateAsync(db, source, cancellationToken);
+    }
+
     public async Task<IUnitResult<UserDto>> FindUserByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var user = await FindAsync(cancellationToken, [id]);
