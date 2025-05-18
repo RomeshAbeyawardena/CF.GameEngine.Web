@@ -72,6 +72,10 @@ public partial class AuthMiddleware
                 context.Items[ClientItemKey] = new AuthenticatedClient(clientId,
                     clientResult);
             }
+            catch (FormatException)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            }
             finally
             {
                 if (@continue)
