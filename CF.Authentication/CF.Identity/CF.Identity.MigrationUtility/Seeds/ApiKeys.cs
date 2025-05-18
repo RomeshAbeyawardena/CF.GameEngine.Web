@@ -7,9 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 
-namespace CF.Identity.MigrationUtility.Seed;
+namespace CF.Identity.MigrationUtility.Seeds;
 
-public partial class Seed
+internal static partial class Seed
 {
     internal static async Task TrySeedApiKeyAsync(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {

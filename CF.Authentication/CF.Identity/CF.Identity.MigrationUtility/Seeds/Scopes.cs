@@ -3,9 +3,9 @@ using CF.Identity.Infrastructure.SqlServer;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 
-namespace CF.Identity.MigrationUtility.Seed;
+namespace CF.Identity.MigrationUtility.Seeds;
 
-public static partial class Seed
+internal static partial class Seed
 {
     public static IEnumerable<string> DefaultScopes => ["api:read", "api:write"];
     internal static async Task TrySeedScopesAsync(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToken)

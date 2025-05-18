@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace CF.Identity.MigrationUtility.Seed;
+namespace CF.Identity.MigrationUtility.Seeds;
 
-public static partial class Seed
+internal static partial class Seed
 {
-    public static async Task TrySeedUsers(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    public static async Task TrySeedUsersAsync(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         var client = await context.Clients.FirstOrDefaultAsync(c => c.IsSystem, cancellationToken);
         bool isInflight = false;

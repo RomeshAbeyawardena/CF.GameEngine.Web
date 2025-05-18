@@ -6,11 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 
-namespace CF.Identity.MigrationUtility.Seed;
+namespace CF.Identity.MigrationUtility.Seeds;
 
-public static partial class Seed
+internal static partial class Seed
 {
-    internal static async Task TrySeedSystemClient(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    internal static async Task TrySeedSystemClientAsync(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         if (await context.Clients.Where(c => c.IsSystem).AnyAsync(cancellationToken))
         {
