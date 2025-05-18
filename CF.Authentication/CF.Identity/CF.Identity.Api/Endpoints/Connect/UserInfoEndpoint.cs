@@ -44,7 +44,7 @@ public static class UserInfoEndpoint
         var clientResult = (await mediator.Send(new FindClientQuery(clientId), cancellationToken)).GetOneOrDefault();
 
         if(clientResult is null 
-            || clientCredentialHasher.Verify(clientSecret, clientResult))
+            || !clientCredentialHasher.Verify(clientSecret, clientResult))
         {
             return Results.Unauthorized();
         }
@@ -58,8 +58,8 @@ public static class UserInfoEndpoint
     {
         builder.MapGet("/connect/userinfo", GetUserInfoAsync)
             .Produces<UserInfoResponse>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status401Unauthorized)
-            .RequireRateLimiting("authentication-rate-limits");
+            .Produces(StatusCodes.Status401Unauthorized);
+            //.RequireRateLimiting("authentication-rate-limits");
         return builder;
     }
 }

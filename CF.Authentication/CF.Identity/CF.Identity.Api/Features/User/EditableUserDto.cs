@@ -19,6 +19,7 @@ public class EditableUserDto : MappableBase<IUser>, IEditableUser, IUser
     public Guid Id { get; set; }
     public string RowVersion { get; set; } = null!;
     public string? Metadata { get; set; }
+    public string PrimaryTelephoneNumber { get; set; } = null!;
 
     public override void Map(IUser source)
     {
@@ -34,5 +35,6 @@ public class EditableUserDto : MappableBase<IUser>, IEditableUser, IUser
         IsSystem = source.IsSystem;
         RowVersion = source.RowVersion;
         Metadata = source.Metadata;
+        PrimaryTelephoneNumber = source.PrimaryTelephoneNumber;
     }
 }

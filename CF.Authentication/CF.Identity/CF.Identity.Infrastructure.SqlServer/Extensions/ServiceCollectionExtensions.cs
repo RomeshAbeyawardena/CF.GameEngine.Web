@@ -9,6 +9,7 @@ using IDFCR.Shared.Extensions;
 using CF.Identity.Infrastructure.Features.Users;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CF.Identity.Infrastructure.SqlServer.Extensions;
 
@@ -23,6 +24,8 @@ public static class ServiceCollectionExtensions
                 //.EnableSensitiveDataLogging();
         });
 
+        services.TryAddSingleton(TimeProvider.System);
+
         return services
             .AddSingleton(Encoding.UTF8)
             .AddTransient((x) => RandomNumberGenerator.Create())
@@ -32,6 +35,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IAccessTokenRepository, AccessTokenRepository>()
             .AddScoped<IClientRepository, ClientRepository>()
             .AddScoped<IScopeRepository, ScopeRepository>()
+            .AddScoped<IUserRepository, UserRepository>()
             .AddInjectableFilters<CFIdentityDbContext>();
     }
 }

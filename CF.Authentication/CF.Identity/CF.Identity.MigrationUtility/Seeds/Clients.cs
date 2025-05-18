@@ -29,10 +29,9 @@ internal static partial class Seed
 
         var clientCredentialHasher = serviceProvider.GetRequiredService<IClientCredentialHasher>();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        await context.Clients.AddAsync(systemClient, cancellationToken);
         systemClient.SecretHash = clientCredentialHasher.Hash(configuration["Seed:Client:SystemClientSecret"]
             ?? throw new NullReferenceException("System client secret not configured"), systemClient);
-
-        await context.Clients.AddAsync(systemClient, cancellationToken);
     }
 
 }
