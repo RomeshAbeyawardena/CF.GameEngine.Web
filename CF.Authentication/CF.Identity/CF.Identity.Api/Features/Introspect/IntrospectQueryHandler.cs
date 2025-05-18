@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Api.Features.AccessTokens.Get;
 using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
@@ -19,7 +20,10 @@ public class IntrospectQueryHandler(IMediator mediator, IClientCredentialHasher 
         var hashedToken = clientCredentialHasher.Hash(request.Token, request.Client);
 
         var utcNow = timeProvider.GetUtcNow();
-        var foundApiTokenResponse = await mediator.Send(new FindAccessTokenQuery(hashedToken, request.Client.Id, ValidFrom: utcNow, ValidTo: utcNow), cancellationToken);
+        var range = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
+
+        var foundApiTokenResponse = await mediator.Send(new FindAccessTokenQuery(hashedToken, request.Client.Id, 
+            ValidFrom: range.FromValue, ValidTo: range.ToValue), cancellationToken);
 
         var latestToken = foundApiTokenResponse.GetOneOrDefault(orderedTranform: x => x
             .OrderByDescending(y => y.ValidFrom)

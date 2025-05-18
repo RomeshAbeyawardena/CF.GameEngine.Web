@@ -23,7 +23,7 @@ internal static partial class Seed
             Reference = "system",
             Name = "System Client",
             ValidFrom = DateTimeOffset.UtcNow,
-            ValidTo = DateTimeOffset.UtcNow.AddYears(100),
+            ValidTo = DateTimeOffset.UtcNow.AddYears(1),
             IsSystem = true,
         };
 

@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Extensions;
 using MediatR;
 using System.Runtime.CompilerServices;
@@ -54,7 +55,12 @@ public partial class AuthMiddleware
 
                 var clientCredentialHasher = context.RequestServices.GetRequiredService<IClientCredentialHasher>();
 
-                var clientResult = (await mediator.Send(new FindClientQuery(clientId))).GetOneOrDefault();
+                var timeProvider = context.RequestServices.GetRequiredService<TimeProvider>();
+                var utcNow = timeProvider.GetUtcNow();
+
+                var range = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
+
+                var clientResult = (await mediator.Send(new FindClientQuery(clientId, range.FromValue, range.ToValue))).GetOneOrDefault();
 
                 if (clientResult is null
                     || !clientCredentialHasher.Verify(clientSecret, clientResult))

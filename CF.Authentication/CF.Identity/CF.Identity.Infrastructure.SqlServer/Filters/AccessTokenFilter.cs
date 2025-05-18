@@ -41,8 +41,6 @@ internal class AccessTokenFilter(IAccessTokenFilter filter) : FilterBase<IAccess
             query = query.And(x => x.Type == filter.Type);
         }
 
-        query.FilterValidity(filter);
-
-        return query;
+        return query.FilterValidity(filter);
     }
 }

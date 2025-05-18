@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Filters;
+using IDFCR.Shared.Extensions;
 using LinqKit;
 
 namespace CF.Identity.Infrastructure.SqlServer.Filters;
@@ -9,6 +10,9 @@ internal class ClientFilter(IClientFilter filter) : FilterBase<IClientFilter, Db
 {
     protected override IClientFilter Source => this;
     public string? Key { get; set; }
+    public DateTimeOffset? ValidFrom { get; set; }
+    public DateTimeOffset? ValidTo { get; set; }
+
     public override void Map(IClientFilter source)
     {
         Key = source.Key;
@@ -21,6 +25,6 @@ internal class ClientFilter(IClientFilter filter) : FilterBase<IClientFilter, Db
             query = query.And(x => x.Reference == filter.Key || x.Name == filter.Key);
         }
 
-        return query;
+        return query.FilterValidity(filter);
     }
 }
