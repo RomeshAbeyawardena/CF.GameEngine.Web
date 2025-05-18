@@ -17,6 +17,9 @@ internal class ClientFilter(IClientFilter filter) : FilterBase<IClientFilter, Db
     public override void Map(IClientFilter source)
     {
         Key = source.Key;
+        ShowAll = source.ShowAll;
+        ValidFrom = source.ValidFrom;
+        ValidTo = source.ValidTo;
     }
 
     public override ExpressionStarter<DbClient> ApplyFilter(ExpressionStarter<DbClient> query, IClientFilter filter)

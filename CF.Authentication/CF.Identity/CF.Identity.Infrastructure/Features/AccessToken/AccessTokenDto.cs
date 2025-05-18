@@ -14,6 +14,7 @@ public class AccessTokenDto : MappableBase<IAccessToken>, IAccessToken
     public DateTimeOffset? ValidTo { get; set; }
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
+    public DateTimeOffset? SuspendedTimestampUtc { get; set; }
 
     public override void Map(IAccessToken source)
     {
@@ -26,5 +27,6 @@ public class AccessTokenDto : MappableBase<IAccessToken>, IAccessToken
         ValidTo = source.ValidTo;
         Id = source.Id;
         UserId = source.UserId;
+        SuspendedTimestampUtc = source.SuspendedTimestampUtc;
     }
 }

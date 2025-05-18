@@ -11,6 +11,7 @@ public interface IEditableAccessToken : IMappable<IAccessToken>, IAccessTokenSum
     string ReferenceToken { get; }
     string AccessToken { get; }
     string? RefreshToken { get; }
+    DateTimeOffset? SuspendedTimestampUtc { get; }
 }
 
 public interface IAccessTokenSummary : IValidity

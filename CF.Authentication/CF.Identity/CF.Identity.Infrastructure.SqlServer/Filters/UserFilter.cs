@@ -56,7 +56,7 @@ public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionPr
 
     public override void Map(IUserFilter source)
     {
-        UsernameHmac = source.Username;
+        Username = source.Username;
         ClientId = source.ClientId;
         NameContains = source.NameContains;
         IsSystem = source.IsSystem;

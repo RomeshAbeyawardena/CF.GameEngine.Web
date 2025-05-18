@@ -14,6 +14,7 @@ internal class AccessTokenFilter(IAccessTokenFilter filter) : FilterBase<IAccess
     public string? Type { get; set; }
     public DateTimeOffset? ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
+    public bool ShowAll { get; set; }
 
     public override void Map(IAccessTokenFilter source)
     {
@@ -22,10 +23,16 @@ internal class AccessTokenFilter(IAccessTokenFilter filter) : FilterBase<IAccess
         Type = source.Type;
         ValidFrom = source.ValidFrom;
         ValidTo = source.ValidTo;
+        ShowAll = source.ShowAll;
     }
 
     public override ExpressionStarter<DbAccessToken> ApplyFilter(ExpressionStarter<DbAccessToken> query, IAccessTokenFilter filter)
     {
+        if (!ShowAll)
+        {
+            query = query.And(x => !x.SuspendedTimestampUtc.HasValue);
+        }
+
         if (!string.IsNullOrWhiteSpace(filter.ReferenceToken))
         {
             query = query.And(x => x.ReferenceToken == filter.ReferenceToken);

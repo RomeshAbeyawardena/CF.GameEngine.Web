@@ -13,6 +13,7 @@ public class DbAccessToken : MappableBase<IAccessToken>, IAccessToken
     public string Type { get; set; } = null!;
     public DateTimeOffset ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
+    public DateTimeOffset? SuspendedTimestampUtc { get; set; }
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
 
@@ -31,5 +32,6 @@ public class DbAccessToken : MappableBase<IAccessToken>, IAccessToken
         ValidTo = source.ValidTo;
         Id = source.Id;
         UserId = source.UserId;
+        SuspendedTimestampUtc = source.SuspendedTimestampUtc;
     }
 }
