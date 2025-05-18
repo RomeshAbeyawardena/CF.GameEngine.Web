@@ -18,16 +18,12 @@ public static class UserInfoEndpoint
 
         var authenticatedClient = context.GetAuthenticatedClient();
 
-        var authorisation = context.Request.Headers.Authorization.FirstOrDefault();
+        var accessToken = context.Items["AccessToken"]?.ToString();
 
-        if (authenticatedClient is null
-            || string.IsNullOrWhiteSpace(authorisation)
-            || !authorisation.StartsWith("Bearer", StringComparison.InvariantCultureIgnoreCase))
+        if (authenticatedClient is null || string.IsNullOrWhiteSpace(accessToken))
         {
             return Results.Unauthorized();
         }
-
-        var accessToken = authorisation["Bearer ".Length..].Trim();
 
         var result = await mediator.Send(new UserInfoRequest(accessToken, authenticatedClient.ClientId), cancellationToken);
 
