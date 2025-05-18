@@ -6,7 +6,7 @@ public static class Endpoints
     {
         return builder
             //.AddIntrospectTokenEndpoint()
-            //.AddTokenRequestEndpoint()
+            .AddTokenRequestEndpoint()
             .AddUserInfoEndpoint();
     }
 }

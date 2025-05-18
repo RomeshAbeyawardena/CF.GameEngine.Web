@@ -51,6 +51,11 @@ public static class UserInfoEndpoint
 
         var result = await mediator.Send(new UserInfoRequest(accessToken, clientId), cancellationToken);
 
+        if (!result.IsSuccess)
+        {
+            return Results.Unauthorized();
+        }
+
         return Results.Ok(result.GetResultOrDefault());
     }
 
