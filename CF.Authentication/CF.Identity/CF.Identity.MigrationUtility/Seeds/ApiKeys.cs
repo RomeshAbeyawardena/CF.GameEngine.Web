@@ -38,8 +38,8 @@ internal static partial class Seed
             var newApiKey = new DbAccessToken
             {
                 Id = Guid.NewGuid(),
-                ReferenceToken = referenceToken,
-                RefreshToken = refreshToken,
+                ReferenceToken = hashedReferenceToken,
+                RefreshToken = hashedRefreshToken,
                 AccessToken = JwtHelper.GenerateJwt(client, string.Join(' ', DefaultScopes)
                 , jwtSettings),
                 Type = "api_key",
