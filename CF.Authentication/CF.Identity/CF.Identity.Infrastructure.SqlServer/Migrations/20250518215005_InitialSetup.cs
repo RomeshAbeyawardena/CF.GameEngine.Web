@@ -68,7 +68,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                         principalSchema: "dbo",
                         principalTable: "Client",
                         principalColumn: "ClientId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,7 +103,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                         principalSchema: "dbo",
                         principalTable: "Client",
                         principalColumn: "ClientId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_User_CommonName_FirstCommonNameId",
                         column: x => x.FirstCommonNameId,
@@ -132,7 +132,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    AcessTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccessTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ReferenceToken = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
                     AccessToken = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
@@ -140,11 +140,12 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     Type = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
                     ValidFrom = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: false),
                     ValidTo = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: true),
+                    SuspendedTimestampUtc = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccessToken", x => x.AcessTokenId);
+                    table.PrimaryKey("PK_AccessToken", x => x.AccessTokenId);
                     table.ForeignKey(
                         name: "FK_AccessToken_Client_ClientId",
                         column: x => x.ClientId,
@@ -154,6 +155,35 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AccessToken_User_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "dbo",
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserScope",
+                schema: "dbo",
+                columns: table => new
+                {
+                    UserScopeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ScopeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserScope", x => x.UserScopeId);
+                    table.UniqueConstraint("AK_UserScope_UserId_ScopeId", x => new { x.UserId, x.ScopeId });
+                    table.ForeignKey(
+                        name: "FK_UserScope_Scope_ScopeId",
+                        column: x => x.ScopeId,
+                        principalSchema: "dbo",
+                        principalTable: "Scope",
+                        principalColumn: "ScopeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserScope_User_UserId",
                         column: x => x.UserId,
                         principalSchema: "dbo",
                         principalTable: "User",
@@ -202,6 +232,12 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                 schema: "dbo",
                 table: "User",
                 column: "MiddleCommonNameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserScope_ScopeId",
+                schema: "dbo",
+                table: "UserScope",
+                column: "ScopeId");
         }
 
         /// <inheritdoc />
@@ -209,6 +245,10 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AccessToken",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "UserScope",
                 schema: "dbo");
 
             migrationBuilder.DropTable(

@@ -55,6 +55,6 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         builder.HasMany(x => x.UserScopes)
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

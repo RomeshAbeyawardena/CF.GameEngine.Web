@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CF.Identity.Infrastructure.SqlServer.Migrations
 {
     [DbContext(typeof(CFIdentityDbContext))]
-    [Migration("20250518164925_Added")]
-    partial class Added
+    [Migration("20250518215005_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,7 +30,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("AcessTokenId");
+                        .HasColumnName("AccessTokenId");
 
                     b.Property<string>("AccessToken")
                         .IsRequired()
@@ -265,6 +265,28 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.ToTable("User", "dbo");
                 });
 
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbUserScope", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserScopeId");
+
+                    b.Property<Guid>("ScopeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("UserId", "ScopeId");
+
+                    b.HasIndex("ScopeId");
+
+                    b.ToTable("UserScope", "dbo");
+                });
+
             modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbAccessToken", b =>
                 {
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbClient", "Client")
@@ -289,7 +311,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbClient", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Client");
                 });
@@ -299,7 +321,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbClient", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbCommonName", "FirstCommonName")
                         .WithMany()
@@ -325,6 +347,35 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.Navigation("LastCommonName");
 
                     b.Navigation("MiddleCommonName");
+                });
+
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbUserScope", b =>
+                {
+                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbScope", "Scope")
+                        .WithMany("UserScopes")
+                        .HasForeignKey("ScopeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbUser", "User")
+                        .WithMany("UserScopes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Scope");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbScope", b =>
+                {
+                    b.Navigation("UserScopes");
+                });
+
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbUser", b =>
+                {
+                    b.Navigation("UserScopes");
                 });
 #pragma warning restore 612, 618
         }

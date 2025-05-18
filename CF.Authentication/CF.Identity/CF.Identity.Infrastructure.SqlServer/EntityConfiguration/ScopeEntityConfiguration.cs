@@ -23,7 +23,7 @@ internal class ScopeEntityConfiguration : IEntityTypeConfiguration<DbScope>
         builder.HasOne(x => x.Client)
             .WithMany()
             .HasForeignKey(x => x.ClientId)
-            .OnDelete(DeleteBehavior.SetNull)
+            .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(false);
     }
 }
