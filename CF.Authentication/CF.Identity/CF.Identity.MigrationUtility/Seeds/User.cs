@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer;
+using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.Transforms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,6 +58,24 @@ internal static partial class Seed
         else
         {
             user.Client = client!;
+        }
+
+        isInflight = context.Scopes.Local.Count != 0;
+        var scopes = isInflight ? [.. context.Scopes.Local] : await context.Scopes.ToListAsync(cancellationToken);
+
+        foreach(var scope in scopes)
+        {
+            var userScope = new DbUserScope
+            {
+                User = user
+            };
+
+            if (isInflight)
+            {
+                userScope.Scope = scope;
+            }
+
+            user.UserScopes.Add(userScope);
         }
 
         context.Users.Add(user);
