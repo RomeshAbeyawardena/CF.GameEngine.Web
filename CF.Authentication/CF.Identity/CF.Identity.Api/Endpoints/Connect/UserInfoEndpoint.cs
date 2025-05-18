@@ -16,28 +16,32 @@ public static class UserInfoEndpoint
         var context = httpContextAccessor.HttpContext
             ?? throw new NullReferenceException("HttpContext not available in this context");
 
-        var authenticatedClient = context.GetAuthenticatedClient();
-        var accessToken = context.GetAccessToken();
-        if (authenticatedClient is null || accessToken is null)
-        {
-            return Results.Unauthorized();
-        }
+        var id = context.User.Identities;
 
-        var result = await mediator.Send(new UserInfoRequest(accessToken, authenticatedClient.ClientDetails), cancellationToken);
+        //var authenticatedClient = context.GetAuthenticatedClient();
+        //var accessToken = context.GetAccessToken();
+        //if (authenticatedClient is null || accessToken is null)
+        //{
+        //    return Results.Unauthorized();
+        //}
 
-        if (!result.IsSuccess)
-        {
-            return Results.Unauthorized();
-        }
+        ////var result = await mediator.Send(new UserInfoRequest(accessToken, authenticatedClient.ClientDetails), cancellationToken);
 
-        return Results.Ok(result.GetResultOrDefault());
+        //if (!result.IsSuccess)
+        //{
+        //    return Results.Unauthorized();
+        //}
+
+        //return Results.Ok(result.GetResultOrDefault());
+        return Results.Ok();
     }
 
     public static IEndpointRouteBuilder AddUserInfoEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapGet("/connect/userinfo", GetUserInfoAsync)
             .Produces<UserInfoResponse>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status401Unauthorized);
+            .Produces(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization();
             //.RequireRateLimiting("authentication-rate-limits");
         return builder;
     }

@@ -1,16 +1,28 @@
 using CF.Identity.Api.Endpoints.Connect;
-using CF.Identity.Api.Middleware;
+using CF.Identity.Api.Extensions;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddBackendDependencies("CFIdentity")
     .AddMediatR(s => s.RegisterServicesFromAssemblyContaining<Program>())
     //.AddRateLimiter(opt => opt.AddPolicy("",))
-    .AddHttpContextAccessor();
-
+    .AddAuthentication("ClientBearer")
+    .AddScheme<AuthenticationSchemeOptions, AuthHandler>("ClientBearer", options => {
+    });
+    
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "ClientBearer";
+    options.DefaultChallengeScheme = "ClientBearer";
+});
 var app = builder.Build();
-app.UseAuthMiddleware();
+app.UseAuthentication();
+app.UseAuthorization();
+//app.UseAuthMiddleware();
 app.AddConnectEndpoints();
 //app.UseRateLimiter();
 

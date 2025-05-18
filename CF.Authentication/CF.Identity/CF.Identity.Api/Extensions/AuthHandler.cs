@@ -2,9 +2,7 @@
 using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Api.Features.User.Get;
-using CF.Identity.Api.Middleware;
 using CF.Identity.Infrastructure.Features.Clients;
-using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Extensions;
 using MediatR;
