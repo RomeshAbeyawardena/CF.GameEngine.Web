@@ -1,39 +1,29 @@
 ﻿using CF.Identity.Api.Extensions;
-using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.User.Info;
 using CF.Identity.Infrastructure.Features.Clients;
-using IDFCR.Shared.Extensions;
-using MediatR;
-using System.Text;
 
 namespace CF.Identity.Api.Endpoints.Connect;
 
 public static class UserInfoEndpoint
 {
-    public static async Task<IResult> GetUserInfoAsync(IHttpContextAccessor httpContextAccessor, 
-        IMediator mediator, IClientCredentialHasher clientCredentialHasher, CancellationToken cancellationToken)
+    public static async Task<IResult> GetUserInfoAsync(IHttpContextAccessor httpContextAccessor, IClientCredentialHasher clientCredentialHasher, CancellationToken cancellationToken)
     {
+        await Task.CompletedTask;
         var context = httpContextAccessor.HttpContext
             ?? throw new NullReferenceException("HttpContext not available in this context");
 
-        var id = context.User.Identities;
-
-        //var authenticatedClient = context.GetAuthenticatedClient();
-        //var accessToken = context.GetAccessToken();
-        //if (authenticatedClient is null || accessToken is null)
-        //{
-        //    return Results.Unauthorized();
-        //}
-
-        ////var result = await mediator.Send(new UserInfoRequest(accessToken, authenticatedClient.ClientDetails), cancellationToken);
-
-        //if (!result.IsSuccess)
-        //{
-        //    return Results.Unauthorized();
-        //}
-
-        //return Results.Ok(result.GetResultOrDefault());
-        return Results.Ok();
+        var userId = context.User.GetUserId() 
+            ?? throw new NullReferenceException();
+        var name = context.User.GetUserDisplayName() 
+            ?? throw new NullReferenceException();
+        var username = context.User.GetUserName() 
+            ?? throw new NullReferenceException();
+        var email = context.User.GetUserEmail() 
+            ?? throw new NullReferenceException();
+        
+        return Results.Ok(
+            new UserInfoResponse(userId, name, username, email)
+            );
     }
 
     public static IEndpointRouteBuilder AddUserInfoEndpoint(this IEndpointRouteBuilder builder)
