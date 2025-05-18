@@ -5,6 +5,7 @@ using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Api.Features.User.Get;
 using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.Clients;
+using CF.Identity.Infrastructure.Features.Users;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
@@ -14,8 +15,8 @@ using System.Security.Cryptography;
 
 namespace CF.Identity.Api.Features.TokenExchange;
 
-public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediator, IClientCredentialHasher clientCredentialHasher,
-    TimeProvider timeProvider, RandomNumberGenerator randomNumberGenerator) : IUnitRequestHandler<TokenRequestQuery, TokenResponse>
+public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediator, IUserCredentialProtectionProvider userCredentialProtectionProvider, 
+    IClientCredentialHasher clientCredentialHasher, TimeProvider timeProvider, RandomNumberGenerator randomNumberGenerator) : IUnitRequestHandler<TokenRequestQuery, TokenResponse>
 {
     private string GenerateJwt(ClientDetailResponse client, string scope)
     {
@@ -61,13 +62,22 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             return new UnitResult(new Exception("Invalid scope requested")).As<TokenResponse>();
         }
 
-        var userResult = await mediator.Send(new FindUsersQuery(clientDetail.Id, IsSystem: true), cancellationToken);
+        var isSystemUser = string.IsNullOrEmpty(request.TokenRequest.Username);
+
+        string? username = null;
+        if (!isSystemUser)
+        {
+            username = userCredentialProtectionProvider.HashUsingHmac(clientDetail, request.TokenRequest.Username);
+        }
+
+        var userResult = await mediator.Send(new FindUsersQuery(clientDetail.Id, Username: username, IsSystem: isSystemUser), cancellationToken);
 
         var systemUser = userResult.GetOneOrDefault();
 
         if (systemUser is null)
         {
-            return new UnitResult(new UnauthorizedAccessException("System user not found")).As<TokenResponse>();
+            var prefix = isSystemUser ? "System u" : "U";
+            return new UnitResult(new UnauthorizedAccessException($"{prefix}ser not found")).As<TokenResponse>();
         }
 
         var accessToken = GenerateJwt(clientDetail, request.TokenRequest.Scope);
@@ -93,7 +103,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         //TODO: Generate token
         var result = new UnitResult<TokenResponse>(new TokenResponse(referenceToken,
                 "Bearer",
-                "3600",
+                TimeSpan.FromHours(1).Seconds.ToString(),
                 refreshToken,
                 request.TokenRequest.Scope
             ));

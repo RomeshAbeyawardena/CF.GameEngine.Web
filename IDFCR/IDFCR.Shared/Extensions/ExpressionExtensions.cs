@@ -12,12 +12,12 @@ public static class ExpressionExtensions
 
         if (filter.ValidFrom.HasValue)
         {
-            query = query.And(a => a.ValidFrom >= filter.ValidFrom);
+            query = query.And(x => x.ValidFrom <= filter.ValidFrom.Value);
         }
 
         if (filter.ValidTo.HasValue)
         {
-            query = query.And(a => a.ValidTo <= filter.ValidTo);
+            query = query.And(x => !x.ValidTo.HasValue || x.ValidTo >= filter.ValidTo.Value);
         }
 
         return query;

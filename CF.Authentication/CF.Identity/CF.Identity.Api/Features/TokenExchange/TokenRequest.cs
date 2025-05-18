@@ -5,5 +5,6 @@ public record TokenRequest(
     string ClientId,
     string ClientSecret,
     string Scope,
-    string RedirectUri
+    string RedirectUri,
+    string Username
 );

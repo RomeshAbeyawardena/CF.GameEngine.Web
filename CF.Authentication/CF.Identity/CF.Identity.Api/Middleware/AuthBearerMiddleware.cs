@@ -2,6 +2,7 @@
 using CF.Identity.Api.Features.AccessTokens.Get;
 using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Extensions;
 using MediatR;
 
@@ -41,9 +42,12 @@ public static partial class AuthMiddleware
                 var utcNow = timeProvider.GetUtcNow();
 
                 var mediator = context.RequestServices.GetRequiredService<IMediator>();
+
+                var range = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
+
                 var accessTokens = await mediator.Send(new FindAccessTokenQuery(hash, client.ClientDetails.Id,
-                    ValidFrom: utcNow.Date.AddDays(1).AddHours(-1),
-                    ValidTo: utcNow.Date));
+                    ValidFrom: range.FromValue,
+                    ValidTo: range.ToValue));
 
                 var validAccessToken = accessTokens.GetOneOrDefault(orderedTranform: x => x.OrderByDescending(a => a.ValidFrom));
                 if (validAccessToken is null)

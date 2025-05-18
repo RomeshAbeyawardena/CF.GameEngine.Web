@@ -2,11 +2,9 @@
 
 namespace CF.Identity.Infrastructure.Features.AccessToken;
 
-public interface IAccessTokenFilter : IFilter<IAccessTokenFilter>
+public interface IAccessTokenFilter : IFilter<IAccessTokenFilter>, IValidityFilter
 {
     string? ReferenceToken { get; }
     Guid? ClientId { get; }
     string? Type { get; }
-    DateTimeOffset? ValidFrom { get; }
-    DateTimeOffset? ValidTo { get; }
 }

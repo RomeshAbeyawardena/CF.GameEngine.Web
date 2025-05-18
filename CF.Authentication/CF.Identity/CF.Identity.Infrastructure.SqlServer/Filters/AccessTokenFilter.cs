@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.AccessToken;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Filters;
+using IDFCR.Shared.Extensions;
 using LinqKit;
 
 namespace CF.Identity.Infrastructure.SqlServer.Filters;
@@ -40,15 +41,7 @@ internal class AccessTokenFilter(IAccessTokenFilter filter) : FilterBase<IAccess
             query = query.And(x => x.Type == filter.Type);
         }
 
-        if (filter.ValidFrom.HasValue)
-        {
-            query = query.And(x => x.ValidFrom <= filter.ValidFrom.Value);
-        }
-
-        if (filter.ValidTo.HasValue)
-        {
-            query = query.And(x => !x.ValidTo.HasValue || x.ValidTo >= filter.ValidTo.Value);
-        }
+        query.FilterValidity(filter);
 
         return query;
     }
