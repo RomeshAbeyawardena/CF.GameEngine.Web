@@ -13,6 +13,7 @@ public class DbScope : MappableBase<IScope>, IScope
     public Guid? ClientId { get; set; }
 
     public virtual DbClient? Client { get; set; }
+    public virtual ICollection<DbUserScope> UserScopes { get; set; } = [];
 
     public override void Map(IScope source)
     {

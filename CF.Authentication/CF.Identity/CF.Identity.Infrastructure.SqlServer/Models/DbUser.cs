@@ -36,6 +36,8 @@ public class DbUser : MappableBase<IUser>, IUser, IUserHmac
     public virtual DbCommonName MiddleCommonName { get; set; } = null!;
     public virtual DbCommonName LastCommonName { get; set; } = null!;
 
+    public virtual ICollection<DbUserScope> UserScopes { get; set; } = [];
+
     public string? Metadata { get; set; }
 
     public override void Map(IUser source)

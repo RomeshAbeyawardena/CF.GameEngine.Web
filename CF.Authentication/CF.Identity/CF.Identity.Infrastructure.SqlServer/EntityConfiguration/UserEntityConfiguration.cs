@@ -49,7 +49,12 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         builder.HasOne(x => x.Client)
             .WithMany()
             .HasForeignKey(x => x.ClientId)
-            .OnDelete(DeleteBehavior.Cascade)
+            .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(false);
+
+        builder.HasMany(x => x.UserScopes)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

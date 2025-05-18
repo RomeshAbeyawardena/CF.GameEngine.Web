@@ -15,10 +15,15 @@ internal class ScopeEntityConfiguration : IEntityTypeConfiguration<DbScope>
         builder.Property(x => x.Description).HasMaxLength(250);
         builder.Property(x => x.Key).IsRequired().HasMaxLength(20);
         builder.Property(x => x.ClientId).HasColumnName("ClientId").IsRequired(false);
+        builder.HasMany(x => x.UserScopes)
+            .WithOne(x => x.Scope)
+            .HasForeignKey(x => x.ScopeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne(x => x.Client)
             .WithMany()
             .HasForeignKey(x => x.ClientId)
-            .OnDelete(DeleteBehavior.Cascade)
+            .OnDelete(DeleteBehavior.SetNull)
             .IsRequired(false);
     }
 }

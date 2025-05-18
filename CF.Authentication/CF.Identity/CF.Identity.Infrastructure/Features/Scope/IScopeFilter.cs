@@ -6,5 +6,6 @@ public interface IScopeFilter : IFilter<IScopeFilter>
 {
     IEnumerable<string>? Keys { get; }
     Guid? ClientId { get; }
+    Guid? UserId { get; }
     string? Key { get; }
 }
