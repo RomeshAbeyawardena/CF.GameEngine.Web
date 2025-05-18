@@ -3,5 +3,5 @@ using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.Clients.Get;
 
-public record FindClientQuery(string? Key = null, DateTimeOffset? ValidFrom = null, DateTimeOffset? ValidTo = null,  bool NoTracking = true) 
+public record FindClientQuery(string? Key = null, DateTimeOffset? ValidFrom = null, DateTimeOffset? ValidTo = null, bool ShowAll = false,  bool NoTracking = true) 
     : IUnitRequestCollection<ClientDetailResponse>, IClientFilter;

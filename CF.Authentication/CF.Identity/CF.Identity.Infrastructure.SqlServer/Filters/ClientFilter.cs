@@ -10,6 +10,7 @@ internal class ClientFilter(IClientFilter filter) : FilterBase<IClientFilter, Db
 {
     protected override IClientFilter Source => this;
     public string? Key { get; set; }
+    public bool ShowAll { get; set; }
     public DateTimeOffset? ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
 
@@ -20,6 +21,11 @@ internal class ClientFilter(IClientFilter filter) : FilterBase<IClientFilter, Db
 
     public override ExpressionStarter<DbClient> ApplyFilter(ExpressionStarter<DbClient> query, IClientFilter filter)
     {
+        if (!ShowAll)
+        {
+            query = query.And(x => !x.SuspendedTimestampUtc.HasValue);
+        }
+
         if (!string.IsNullOrWhiteSpace(filter.Key))
         {
             query = query.And(x => x.Reference == filter.Key || x.Name == filter.Key);

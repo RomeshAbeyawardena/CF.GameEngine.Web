@@ -6,6 +6,7 @@ using CF.Identity.Api.Features.User.Get;
 using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.Features.Users;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
@@ -31,7 +32,10 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             return new UnitResult(new NotSupportedException("Grant type not supported")).As<TokenResponse>();
         }
 
-        var clientResult = await mediator.Send(new FindClientQuery(request.TokenRequest.ClientId), cancellationToken);
+        var utcNow = timeProvider.GetUtcNow();
+        var dateRange = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
+
+        var clientResult = await mediator.Send(new FindClientQuery(request.TokenRequest.ClientId, dateRange.FromValue, dateRange.ToValue), cancellationToken);
 
         var clientDetail = clientResult.GetOneOrDefault();
 
@@ -40,11 +44,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             return new UnitResult(new UnauthorizedAccessException("Client not found")).As<TokenResponse>();
         }
 
-        var utcNow = timeProvider.GetUtcNow();
-        if (!clientCredentialHasher.Verify(request.TokenRequest.ClientSecret, clientDetail)
-            || utcNow < clientDetail.ValidFrom
-            || utcNow > clientDetail.ValidTo
-            || clientDetail.SuspendedTimestampUtc.HasValue)
+        if (!clientCredentialHasher.Verify(request.TokenRequest.ClientSecret, clientDetail))
         {
             return new UnitResult(new UnauthorizedAccessException("Invalid client secret")).As<TokenResponse>();
         }
