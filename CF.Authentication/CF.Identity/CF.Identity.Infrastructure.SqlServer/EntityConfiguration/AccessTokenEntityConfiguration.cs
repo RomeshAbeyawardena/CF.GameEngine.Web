@@ -10,7 +10,7 @@ internal class AccessTokenEntityConfiguration : IEntityTypeConfiguration<DbAcces
     {
         builder.ToTable("AccessToken", "dbo");
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id).ValueGeneratedOnAdd().HasColumnName("AcessTokenId").IsRequired();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd().HasColumnName("AccessTokenId").IsRequired();
         builder.Property(x => x.UserId).IsRequired();
         builder.Property(x => x.ReferenceToken).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.RefreshToken).HasMaxLength(2000);
