@@ -21,28 +21,28 @@ internal partial class Verify
             var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserCredentialProtectionProvider>();
             var userInfo = serviceProvider.GetRequiredService<UserInfo>();
 
-            var emailAddressHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.EmailAddress);
+            var expectedEmailAddressHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.EmailAddress);
 
-            var usernameHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.Username);
+            var expectedUsernameHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.Username);
 
-            var preferredUsernameHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.PreferredUsername);
+            var expectedPreferredUsernameHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.PreferredUsername);
 
             int issueCount = 0;
-            if (emailAddressHmac != user.EmailAddressHmac)
+            if (expectedEmailAddressHmac != user.EmailAddressHmac)
             {
-                logger.LogWarning("Email address HMAC does not match: {emailAddressHmac} != {emailAddressHmac}", emailAddressHmac, user.EmailAddressHmac);
+                logger.LogWarning("Email address HMAC does not match: {expectedEmailAddressHmac} != {EmailAddressHmac}", expectedEmailAddressHmac, user.EmailAddressHmac);
                 issueCount++;
             }
 
-            if (usernameHmac != user.UsernameHmac)
+            if (expectedUsernameHmac != user.UsernameHmac)
             {
-                logger.LogWarning("Username HMAC does not match: {usernameHmac} != {usernameHmac}", usernameHmac, user.UsernameHmac);
+                logger.LogWarning("Username HMAC does not match: {expectedUsernameHmac} != {UsernameHmac}", expectedUsernameHmac, user.UsernameHmac);
                 issueCount++;
             }
 
-            if (preferredUsernameHmac != user.PreferredUsernameHmac)
+            if (expectedPreferredUsernameHmac != user.PreferredUsernameHmac)
             {
-                logger.LogWarning("Preferred username HMAC does not match: {preferredUsernameHmac} != {preferredUsernameHmac}", preferredUsernameHmac, user.PreferredUsernameHmac);
+                logger.LogWarning("Preferred username HMAC does not match: {expectedPreferredUsernameHmac} != {preferredUsernameHmac}", expectedPreferredUsernameHmac, user.PreferredUsernameHmac);
                 issueCount++;
             }
 
@@ -57,19 +57,33 @@ internal partial class Verify
 
             if (userInfo.EmailAddress != mappedUser.EmailAddress)
             {
-                logger.LogWarning("Email address does not match: {emailAddress} != {emailAddress}", userInfo.EmailAddress, mappedUser.EmailAddress);
+                var expected = userInfo.EmailAddress;
+                logger.LogWarning("Email address does not match: {emailAddress} != {expected}", mappedUser.EmailAddress, expected);
+                issueCount++;
             }
 
             if (userInfo.Username != mappedUser.Username)
             {
-                logger.LogWarning("Username does not match: {userName} != {userName}", userInfo.Username, mappedUser.Username);
+                var expected = userInfo.Username;
+                logger.LogWarning("Username does not match: {userName} != {expected}", mappedUser.Username, expected);
+                issueCount++;
             }
 
             if (userInfo.PreferredUsername != mappedUser.PreferredUsername)
             {
-                logger.LogWarning("Preferred username does not match: {preferredUserName} != {preferredUserName}", userInfo.PreferredUsername, mappedUser.PreferredUsername);
+                var expected = userInfo.PreferredUsername;
+                logger.LogWarning("Preferred username does not match: {preferredUserName} != {expected}", mappedUser.PreferredUsername, expected);
+                issueCount++;
             }
 
+            if (issueCount == 0)
+            {
+                logger.LogInformation("User data verified successfully.");
+            }
+            else
+            {
+                logger.LogWarning("User data verified with errors");
+            }
         }
     }
 }
