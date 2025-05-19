@@ -2,7 +2,7 @@
   "profiles": {
     "CF.Identity.MigrationUtility": {
       "commandName": "Project",
-      "commandLineArgs": "--help"
+      "commandLineArgs": "--verify-seed-data"
     }
   }
 }

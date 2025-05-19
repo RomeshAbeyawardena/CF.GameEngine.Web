@@ -8,7 +8,7 @@ namespace CF.Identity.MigrationUtility.Verify;
 
 internal static partial class Verify
 {
-    public static async Task VerifyUserSeedData(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    public static async Task<bool> VerifyUserSeedData(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         var user = await context.Users.AsNoTracking().Include(x => x.Client)
         .Include(x => x.FirstCommonName)
@@ -76,6 +76,15 @@ internal static partial class Verify
                 issueCount++;
             }
 
+            var hashedPassword = userCredentialProtectionProvider.Hash(userInfo.Password, user);
+
+            if(user.HashedPassword != hashedPassword)
+            {
+                logger.LogWarning("Password matches the hashed password in the database, this is not expected. " +
+                    "This is likely due to the password being seeded with the same value as the hashed password.");
+                issueCount++;
+            }
+
             if (issueCount == 0)
             {
                 logger.LogInformation("User data verified successfully.");
@@ -84,6 +93,9 @@ internal static partial class Verify
             {
                 logger.LogWarning("User data verified with errors");
             }
+
+            return issueCount == 0;
         }
+        return false;
     }
 }
