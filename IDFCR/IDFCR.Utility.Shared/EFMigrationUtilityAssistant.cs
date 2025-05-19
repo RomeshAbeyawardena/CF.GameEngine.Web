@@ -32,7 +32,7 @@ internal class EFMigrationUtilityAssistant<TDbContext>(IServiceProvider serviceP
         if (Instance?.Extensions.Count == 0)
         {
             logger.LogInformation("No extensions available.");
-            return new MigrationResult(MigrationStatus.Completed);
+            return new MigrationResult(nameof(DisplayHelp), MigrationStatus.Completed);
         }
 
         stringBuilder.AppendLine("Available extensions:");
@@ -49,7 +49,7 @@ internal class EFMigrationUtilityAssistant<TDbContext>(IServiceProvider serviceP
         }
 
         logger.LogInformation("{stringBuilder}", stringBuilder.ToString());
-        return new MigrationResult(MigrationStatus.Completed);
+        return new MigrationResult(nameof(DisplayHelp), MigrationStatus.Completed);
     }
 
     private async Task<MigrationResult> VerifyDatabaseAsync(CancellationToken cancellationToken)
@@ -57,12 +57,12 @@ internal class EFMigrationUtilityAssistant<TDbContext>(IServiceProvider serviceP
         if (await context.Database.CanConnectAsync(cancellationToken))
         {
             logger.LogInformation("Database is connected.");
-            return new MigrationResult(MigrationStatus.Completed);
+            return new MigrationResult(nameof(VerifyDatabaseAsync), MigrationStatus.Completed);
         }
         
         var newLine = Environment.NewLine;
         logger.LogInformation("Database is not connected, if this is a server related issue the following actions will fail{newLine}\t* Migrations{newLine}\t* Seeding", newLine, newLine);
-        return new MigrationResult(MigrationStatus.CompletedWithErrors);
+        return new MigrationResult(nameof(VerifyDatabaseAsync), MigrationStatus.CompletedWithErrors);
     }
 
     private async Task<MigrationResult> ListMigrationsAsync(CancellationToken cancellationToken)
@@ -78,7 +78,7 @@ internal class EFMigrationUtilityAssistant<TDbContext>(IServiceProvider serviceP
             logger.LogInformation("No pending migrations.");
         }
 
-        return new MigrationResult(MigrationStatus.Completed);
+        return new MigrationResult(nameof(ListMigrationsAsync), MigrationStatus.Completed);
     }
 
 
@@ -122,22 +122,30 @@ internal class EFMigrationUtilityAssistant<TDbContext>(IServiceProvider serviceP
             {
                 foreach(var (key, extension) in Instance.Extensions)
                 {
-                    //wildcard match
-                    Func<string, bool> predicate = a => a.Equals($"{key.Name}", StringComparison.CurrentCultureIgnoreCase);
-                    if (key.Name.Contains('*'))
+                    try
                     {
-                        var searchValue = key.Name.Replace("*", "[:|A-z|0-9|-]{0,}");
+                        //wildcard match
+                        Func<string, bool> predicate = a => a.Equals($"{key.Name}", StringComparison.CurrentCultureIgnoreCase);
+                        if (key.Name.Contains('*'))
+                        {
+                            var searchValue = key.Name.Replace("*", "[:|A-z|0-9|-]{0,}");
 
-                        var regex = new Regex($"^{searchValue}");
+                            var regex = new Regex($"^{searchValue}");
 
-                        predicate = regex.IsMatch;
+                            predicate = regex.IsMatch;
+                        }
+
+                        if (args.Any(predicate))
+                        {
+                            logger.LogInformation("Running extension: {Name}", key.Name);
+
+                            results.Add(await extension(logger, context, args, serviceProvider, cancellationToken));
+                        }
                     }
-
-                    if (args.Any(predicate))
+                    catch (Exception exception)
                     {
-                        logger.LogInformation("Running extension: {Name}", key.Name);
-
-                        results.Add(await extension(logger, context, args, serviceProvider, cancellationToken));
+                        results.Add(new MigrationResult(key.Name, MigrationStatus.Failed, Exception: exception));
+                        logger.LogError(exception, "Extension {Name} threw an exception", key.Name);
                     }
                 }
             }
@@ -147,7 +155,7 @@ internal class EFMigrationUtilityAssistant<TDbContext>(IServiceProvider serviceP
         catch (Exception exception)
         {
             logger.LogError("An error has occured: {Message}", exception.Message);
-            results.Add(new MigrationResult(MigrationStatus.Failed));
+            results.Add(new MigrationResult(nameof(RunAsync), MigrationStatus.Failed, Exception: exception));
             return UnitResultCollection.FromResult(results, UnitAction.None, false);
         }
     }

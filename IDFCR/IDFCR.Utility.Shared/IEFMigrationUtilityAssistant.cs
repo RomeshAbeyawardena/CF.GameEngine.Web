@@ -11,7 +11,7 @@ public enum MigrationStatus
     CompletedWithErrors = 3,
     Failed = 4
 }
-public record MigrationResult(MigrationStatus Status, string? Message = null);
+public record MigrationResult(string Key, MigrationStatus Status, string? Message = null, Exception? Exception = null);
 
 public interface IEFMigrationUtilityAssistant<TDbContext>
     where TDbContext : DbContext
