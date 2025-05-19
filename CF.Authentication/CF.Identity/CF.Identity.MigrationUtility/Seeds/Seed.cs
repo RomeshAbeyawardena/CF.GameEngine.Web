@@ -11,8 +11,7 @@ internal static partial class Seed
     public static async Task<MigrationResult> SeedAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
         IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        var hasErrors = false;
-
+        bool hasWarnings = false;
         logger.LogInformation("Seeding data...");
 
         await TrySeedScopesAsync(logger, context, cancellationToken);
@@ -24,8 +23,9 @@ internal static partial class Seed
             IHostEnvironment hostEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
             if (!hostEnvironment.IsDevelopment())
             {
+                hasWarnings = true;
                 logger.LogWarning("Test data seeding is not recommended out of development environments.");
-                hasErrors = true;
+                
             }
         }
 
@@ -42,8 +42,8 @@ internal static partial class Seed
         }
 
         await context.SaveChangesAsync(cancellationToken);
-        return new MigrationResult(nameof(SeedAsync), hasErrors 
-            ? MigrationStatus.CompletedWithErrors 
+        return new MigrationResult(nameof(SeedAsync), hasWarnings 
+            ? MigrationStatus.CompletedWithWarnings 
             : MigrationStatus.Completed);
     }
 }

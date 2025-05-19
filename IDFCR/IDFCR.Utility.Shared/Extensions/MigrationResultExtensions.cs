@@ -14,10 +14,11 @@ public static class MigrationResultExtensions
         var statusIcon = result.Status switch
         {
             MigrationStatus.Completed => "✓",
-            MigrationStatus.CompletedWithErrors => "⚠",
-            MigrationStatus.Failed => "✗",
-            MigrationStatus.InProgress => "…",
-            _ => "?"
+            MigrationStatus.CompletedWithWarnings => "⚠",
+            MigrationStatus.CompletedWithErrors => "✗",
+            MigrationStatus.Failed => "❌",
+            MigrationStatus.InProgress => "⏳",
+            _ => "🤷"
         };
 
         var messageBuilder = new StringBuilder($"{statusIcon}\t[{result.Key}] - {result.Status}");

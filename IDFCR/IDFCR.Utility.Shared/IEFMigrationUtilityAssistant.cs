@@ -9,7 +9,8 @@ public enum MigrationStatus
     InProgress = 1,
     Completed = 2,
     CompletedWithErrors = 3,
-    Failed = 4
+    CompletedWithWarnings = 4,
+    Failed = 5
 }
 public record MigrationResult(string Key, MigrationStatus Status, string? Message = null, Exception? Exception = null);
 

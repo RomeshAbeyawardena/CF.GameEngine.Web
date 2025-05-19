@@ -74,7 +74,7 @@ internal static partial class Seed
 
         foreach(var (inflight, scope) in scopesToAdd)
         {
-            if(scopesToAdd.Any(b => b.Item2.Name == scope.Name))
+            if(user.UserScopes.Any(x=> x.Scope.Name == scope.Name))
             {
                 continue;
             }
