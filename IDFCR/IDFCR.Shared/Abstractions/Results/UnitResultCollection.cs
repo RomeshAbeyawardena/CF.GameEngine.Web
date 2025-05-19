@@ -2,9 +2,9 @@
 
 public static class UnitResultCollection
 {
-    public static IUnitResultCollection<T> FromResult<T>(IEnumerable<T>? result, UnitAction action = UnitAction.Get)
+    public static IUnitResultCollection<T> FromResult<T>(IEnumerable<T>? result, UnitAction action = UnitAction.Get, bool isSuccess = true)
     {
-        return new UnitResultCollection<T>(result, action);
+        return new UnitResultCollection<T>(result, action, isSuccess);
     }
 }
 
