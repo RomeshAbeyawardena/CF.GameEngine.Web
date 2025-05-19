@@ -1,4 +1,5 @@
 ﻿using CF.Identity.Infrastructure.SqlServer;
+using IDFCR.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -7,8 +8,11 @@ namespace CF.Identity.MigrationUtility.Seeds;
 
 internal static partial class Seed
 {
-    public static async Task SeedAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    public static async Task<MigrationResult> SeedAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
+        IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
+        var hasErrors = false;
+
         logger.LogInformation("Seeding data...");
 
         await TrySeedScopesAsync(logger, context, cancellationToken);
@@ -21,6 +25,7 @@ internal static partial class Seed
             if (!hostEnvironment.IsDevelopment())
             {
                 logger.LogWarning("Test data seeding is not recommended out of development environments.");
+                hasErrors = true;
             }
         }
 
@@ -37,5 +42,8 @@ internal static partial class Seed
         }
 
         await context.SaveChangesAsync(cancellationToken);
+        return new MigrationResult(nameof(SeedAsync), hasErrors 
+            ? MigrationStatus.CompletedWithErrors 
+            : MigrationStatus.Completed);
     }
 }

@@ -8,6 +8,7 @@ namespace IDFCR.Utility.Shared;
 public interface IEFMigrationUtility<TDbContext> : IDisposable, IAsyncDisposable
     where TDbContext : DbContext
 {
+    IEnumerable<MigrationResult> Results { get; }
     IHost? Host { get; }
     IEFMigrationUtility<TDbContext> Extend(string name, string? description,
         Func<ILogger<IEFMigrationUtilityAssistant<TDbContext>>, TDbContext, IEnumerable<string>,CancellationToken,Task<MigrationResult>> extension);

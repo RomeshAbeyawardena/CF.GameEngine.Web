@@ -5,6 +5,7 @@ using CF.Identity.MigrationUtility;
 using CF.Identity.MigrationUtility.Seeds;
 using CF.Identity.MigrationUtility.Verify;
 using IDFCR.Utility.Shared;
+using IDFCR.Utility.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -15,10 +16,16 @@ using var migrationUtility = EFMigrationUtility
     .Extend("--seed*", "Seed basic data required for the database to operate correctly", Seed.SeedAsync)
     .Extend("--verify-seed-data", "Verify seeded data can be decrypted or used to verify security data", VerifySeedData);
 
-static async Task VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
+    IServiceProvider serviceProvider, CancellationToken cancellationToken)
 {
    await Verify
         .VerifyUserSeedData(logger, context, serviceProvider, cancellationToken);
+
+    return new MigrationResult(nameof(VerifySeedData), MigrationStatus.Completed);
 }
 
 await migrationUtility.InitialiseAsync();
+
+Console.WriteLine(migrationUtility.Results.ToReport());
+Environment.Exit(migrationUtility.Results.ToExitCode());

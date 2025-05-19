@@ -4,6 +4,11 @@ namespace IDFCR.Utility.Shared.Extensions;
 
 public static class MigrationResultExtensions
 {
+    public static int ToExitCode(this IEnumerable<MigrationResult> results, int failureExitCode = 0)
+    {
+        return results.Any(r => r.Status == MigrationStatus.Failed) ? 1 : failureExitCode;
+    }
+
     public static string ToSummary(this MigrationResult result)
     {
         var statusIcon = result.Status switch

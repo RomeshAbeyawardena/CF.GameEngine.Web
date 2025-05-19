@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using IDFCR.Shared.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,17 +30,15 @@ internal class EFMigrationUtility<TDbContext>(EFMigrationUtilityName utilityName
 
     public IHost? Host { get; private set; }
 
-    public Task RunMigrationAssistant(IHost host, CancellationToken cancellationToken)
+    public IEnumerable<MigrationResult> Results { get; private set; } = [];
+
+    public async Task RunMigrationAssistant(IHost host, CancellationToken cancellationToken)
     {
-        var migrationAssitant = host.Services.GetRequiredService<IEFMigrationUtilityAssistant<TDbContext>>() as EFMigrationUtilityAssistant<TDbContext>;
+        var migrationAssitant = host.Services.GetRequiredService<IEFMigrationUtilityAssistant<TDbContext>>() as EFMigrationUtilityAssistant<TDbContext> 
+            ?? throw new InvalidCastException();
 
-        if (migrationAssitant is not null)
-        {
-            migrationAssitant.Instance = this;
-            return migrationAssitant.RunAsync(utilityName, args, cancellationToken);
-        }
-
-        throw new InvalidCastException();
+        migrationAssitant.Instance = this;
+        Results = (await migrationAssitant.RunAsync(utilityName, args, cancellationToken)).GetResultOrDefault() ?? [];
     }
 
     public async Task InitialiseAsync(bool runMigrationAssistance = true, CancellationToken cancellationToken = default)
