@@ -26,6 +26,6 @@ static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbCo
 }
 
 await migrationUtility.InitialiseAsync();
-
+Console.WriteLine(new string('-', Console.BufferWidth));
 Console.WriteLine(migrationUtility.Results.ToReport());
 Environment.Exit(migrationUtility.Results.ToExitCode());

@@ -20,7 +20,7 @@ public static class MigrationResultExtensions
             _ => "?"
         };
 
-        var messageBuilder = new StringBuilder($"{statusIcon} [{result.Key}] - {result.Status}");
+        var messageBuilder = new StringBuilder($"{statusIcon}\t[{result.Key}] - {result.Status}");
 
         if (!string.IsNullOrWhiteSpace(result.Message))
         {
