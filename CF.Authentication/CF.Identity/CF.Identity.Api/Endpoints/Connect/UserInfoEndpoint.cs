@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Api.Extensions;
 using CF.Identity.Api.Features.User.Info;
 using CF.Identity.Infrastructure.Features.Clients;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CF.Identity.Api.Endpoints.Connect;
 
@@ -31,7 +32,7 @@ public static class UserInfoEndpoint
         builder.MapGet("/connect/userinfo", GetUserInfoAsync)
             .Produces<UserInfoResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
-            .RequireAuthorization();
+            .RequireAuthorization(new AuthorizeAttribute("api-read"));
             //.RequireRateLimiting("authentication-rate-limits");
         return builder;
     }
