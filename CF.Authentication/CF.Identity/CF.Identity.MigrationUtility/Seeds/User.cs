@@ -74,6 +74,11 @@ internal static partial class Seed
 
         foreach(var (inflight, scope) in scopesToAdd)
         {
+            if(scopesToAdd.Any(b => b.Item2.Name == scope.Name))
+            {
+                continue;
+            }
+
             var userScope = new DbUserScope
             {
                 User = user

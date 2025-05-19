@@ -80,18 +80,8 @@ internal static partial class Verify
 
             if(user.HashedPassword != hashedPassword)
             {
-                logger.LogWarning("Password matches the hashed password in the database, this is not expected. " +
-                    "This is likely due to the password being seeded with the same value as the hashed password.");
+                logger.LogWarning("Password does not match the value stored in the database");
                 issueCount++;
-            }
-
-            if (issueCount == 0)
-            {
-                logger.LogInformation("User data verified successfully.");
-            }
-            else
-            {
-                logger.LogWarning("User data verified with errors");
             }
 
             return issueCount == 0;

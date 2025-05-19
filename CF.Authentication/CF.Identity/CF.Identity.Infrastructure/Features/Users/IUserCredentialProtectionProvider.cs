@@ -8,7 +8,7 @@ namespace CF.Identity.Infrastructure.Features.Users;
 
 public interface IUserCredentialProtectionProvider
 {
-    string Hash(string secret, IUser user);
+    string Hash(string secret, IUser user, IClient? client = null);
     bool Verify(string secret, string hash, IUser user);
     void Protect(UserDto user, IClient client, out IUserHmac userHmac, bool regenerativeIv = false);
     void Unprotect(UserDto user, IClient client);
@@ -40,9 +40,10 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         return keyData.Item2;
     }
 
-    public string Hash(string secret, IUser user)
+    public string Hash(string secret, IUser user, IClient? client = null)
     {
-        var salt = Encoding.UTF8.GetBytes(user.ClientId.ToString());
+        var clientId = client?.Id ?? user.ClientId;
+        var salt = Encoding.UTF8.GetBytes(clientId.ToString());
         var derived = new Rfc2898DeriveBytes(secret, salt, 100_000, HashAlgorithmName.SHA256);
         return Convert.ToBase64String(derived.GetBytes(32));
     }
@@ -94,7 +95,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         }
 
         user.PrimaryTelephoneNumber = Encrypt(user.PrimaryTelephoneNumber, aes)!;
-        user.HashedPassword = Hash(user.HashedPassword, user);
+        user.HashedPassword = Hash(user.HashedPassword, user, client);
     }
 
     public void Unprotect(UserDto user, IClient client)
