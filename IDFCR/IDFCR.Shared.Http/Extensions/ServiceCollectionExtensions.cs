@@ -1,5 +1,6 @@
 ﻿using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Http.Links;
+using IDFCR.Shared.Http.Mediatr;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics;
@@ -8,6 +9,12 @@ namespace IDFCR.Shared.Http.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    public static void AddRoleRequirementPreProcessor(MediatRServiceConfiguration configuration)
+    {
+        configuration
+            .AddOpenRequestPreProcessor(typeof(RoleRequirementPrequestHandler<,>));
+    }
+
     public static IServiceCollection AddLinkDependencies<TTargetAssemblyClass>(this IServiceCollection services)
     {
         services.AddSingleton<ILinkKeyDirective, DefaultLinkKeyDirective>();
