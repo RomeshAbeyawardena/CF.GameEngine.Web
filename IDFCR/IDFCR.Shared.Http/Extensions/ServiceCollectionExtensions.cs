@@ -15,6 +15,13 @@ public static class ServiceCollectionExtensions
             .AddOpenRequestPreProcessor(typeof(RoleRequirementPrequestHandler<,>));
     }
 
+    public static IServiceCollection AddRoleRequirementServices(this IServiceCollection services)
+    {
+        return services
+            .AddScoped<IScopedStateReader, ScopedStateFactory>()
+            .AddScoped<IScopedStateWriter, ScopedStateFactory>();
+    }
+
     public static IServiceCollection AddLinkDependencies<TTargetAssemblyClass>(this IServiceCollection services)
     {
         services.AddSingleton<ILinkKeyDirective, DefaultLinkKeyDirective>();
