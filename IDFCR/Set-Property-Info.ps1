@@ -37,12 +37,7 @@ switch ([VersionComponent]$versionElement) {
     "Revision" {
         $version = [System.Version]::new($version.Major, $version.Minor, $version.Build, $version.Revision + 1)
     }
-    default {
-        Write-Host "Invalid version element specified. Use 0 for Major, 1 for Minor, 2 for Build, or 3 for Revision."
-        exit 1
-    }
 }
-
 
 $properties.Version = $version.ToString()
 $properties.AssemblyVersion = $version.ToString()

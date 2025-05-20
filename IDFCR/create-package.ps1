@@ -1,5 +1,6 @@
 param (
-    [int]$targetPath
+    [int]$targetPath,
+    [bool]$skipVersionIncrement = $false
 )
 
 enum TargetPath {
@@ -31,10 +32,14 @@ $versionComponent = 0
 switch ([TargetPath]$targetPath) {
     "Local" {
         $deploymentPath = "C:\dev\packages\IDFCR"
-        $versionComponent = 4
+        if ($skipVersionIncrement -eq $false) {
+            $versionComponent = 4
+        }
     }
     "Remote" {
-        $versionComponent = 3
+        if ($skipVersionIncrement -eq $false) {
+            $versionComponent = 3
+        }
     }
     default {
         Write-Host "Invalid target path specified. Use 1 for Local or 2 for Remote."
