@@ -1,6 +1,7 @@
 using CF.Identity.Api.Endpoints.Connect;
 using CF.Identity.Api.Extensions;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
+using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
 
 using Microsoft.AspNetCore.Authentication;
@@ -8,9 +9,11 @@ using Microsoft.AspNetCore.Authentication;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddBackendDependencies("CFIdentity")
-    .AddMediatR(s => s.RegisterServicesFromAssemblyContaining<Program>()
-        .AddRoleRequirementPreProcessor()
-        .AddGenericExceptionHandler())
+    .AddMediatR(s => {
+        s.RegisterServicesFromAssemblyContaining<Program>()
+        .AddRoleRequirementPreProcessor();
+    })
+    .AddGenericExceptionHandler()
     .AddLinkDependencies<Program>()
     //.AddRateLimiter(opt => opt.AddPolicy("",))
     .AddAuthentication("ClientBearer")

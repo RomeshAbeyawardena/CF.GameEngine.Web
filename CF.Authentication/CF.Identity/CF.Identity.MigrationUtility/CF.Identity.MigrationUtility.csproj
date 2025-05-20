@@ -19,14 +19,4 @@
   <ItemGroup>
     <ProjectReference Include="..\CF.Identity.Infrastructure.SqlServer\CF.Identity.Infrastructure.SqlServer.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="IDFCR.Shared">
-      <HintPath>..\..\..\IDFCR\IDFCR.Shared\bin\Debug\net9.0\IDFCR.Shared.dll</HintPath>
-    </Reference>
-    <Reference Include="IDFCR.Utility.Shared">
-      <HintPath>..\..\..\IDFCR\IDFCR.Utility.Shared\bin\Debug\net9.0\IDFCR.Utility.Shared.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

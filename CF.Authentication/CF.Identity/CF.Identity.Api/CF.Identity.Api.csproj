@@ -14,24 +14,12 @@
     <None Remove="Endpoints\Authenticate\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="IDFCR.Shared.FluentValidation" Version="1.0.0.1" />
+    <PackageReference Include="IDFCR.Shared.Http" Version="1.0.0.1" />
     <PackageReference Include="MediatR" Version="12.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CF.Identity.Infrastructure.SqlServer\CF.Identity.Infrastructure.SqlServer.csproj" />
     <ProjectReference Include="..\CF.Identity\CF.Identity.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="IDFC.Shared.FluentValidation">
-      <HintPath>..\..\..\IDFCR\IDFC.Shared.FluentValidation\bin\Debug\net9.0\IDFC.Shared.FluentValidation.dll</HintPath>
-    </Reference>
-    <Reference Include="IDFCR.Shared">
-      <HintPath>..\..\..\IDFCR\IDFCR.Shared\bin\Debug\net9.0\IDFCR.Shared.dll</HintPath>
-    </Reference>
-    <Reference Include="IDFCR.Shared.FluentValidation">
-      <HintPath>..\..\..\IDFCR\IDFC.Shared.FluentValidation\bin\Debug\net9.0\IDFCR.Shared.FluentValidation.dll</HintPath>
-    </Reference>
-    <Reference Include="IDFCR.Shared.Http">
-      <HintPath>..\..\..\IDFCR\IDFCR.Shared.Http\bin\Debug\net9.0\IDFCR.Shared.Http.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>
