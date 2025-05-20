@@ -7,13 +7,14 @@ using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
 using System.Linq.Dynamic.Core;
 using IDFCR.Shared.Abstractions.Paging;
+using System.Runtime.CompilerServices;
 
 namespace IDFCR.Shared.EntityFramework;
 
 public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     TimeProvider timeProvider,
     TDbContext context) 
-    : IRepository<T>
+    : TransactionalUnitOfWork<TDbContext>(context), IRepository<T>
     where T : class, IMappable<TAbstraction>, IIdentifer
     where TDb : class, IMappable<TAbstraction>, IIdentifer
     where TDbContext : DbContext
@@ -80,8 +81,6 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         return query;
     }
 
-    protected TDbContext Context => context;
-
     protected async Task<IUnitPagedResult<T>> GetPagedAsync(IPagedQuery pagedQuery, IEntityOrder entityOrder, IQueryable<TDb> source, CancellationToken cancellationToken)
     {
         var conventional = pagedQuery.ToConventional();
@@ -147,9 +146,9 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         return [.. source.Select(Map)];
     }
 
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
-        var affectedRows = await context.SaveChangesAsync(cancellationToken);
+        var affectedRows = await base.SaveChangesAsync(cancellationToken);
         OnCommit(affectedRows);
         return affectedRows;
     }
