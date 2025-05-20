@@ -2,6 +2,7 @@ using CF.Identity.Api.Endpoints.Connect;
 using CF.Identity.Api.Extensions;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
 using IDFCR.Shared.Http.Extensions;
+
 using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);

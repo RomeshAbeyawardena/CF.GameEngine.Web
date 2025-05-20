@@ -1,7 +1,7 @@
 ﻿using MediatR.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IDFC.Shared.FluentValidation.Extensions;
+namespace IDFCR.Shared.FluentValidation.Extensions;
 
 public static class FluentValidationExtensions
 {

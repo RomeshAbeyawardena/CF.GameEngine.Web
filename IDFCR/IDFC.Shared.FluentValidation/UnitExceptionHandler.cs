@@ -2,7 +2,7 @@
 using IDFCR.Shared.Abstractions.Results;
 using MediatR.Pipeline;
 
-namespace IDFC.Shared.FluentValidation;
+namespace IDFCR.Shared.FluentValidation;
 
 public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExceptionHandler<TRequest, TResponse, TException>
     where TRequest : notnull

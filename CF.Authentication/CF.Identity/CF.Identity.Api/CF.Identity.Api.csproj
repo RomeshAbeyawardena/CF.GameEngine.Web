@@ -21,8 +21,14 @@
     <ProjectReference Include="..\CF.Identity\CF.Identity.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="IDFC.Shared.FluentValidation">
+      <HintPath>..\..\..\IDFCR\IDFC.Shared.FluentValidation\bin\Debug\net9.0\IDFC.Shared.FluentValidation.dll</HintPath>
+    </Reference>
     <Reference Include="IDFCR.Shared">
       <HintPath>..\..\..\IDFCR\IDFCR.Shared\bin\Debug\net9.0\IDFCR.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="IDFCR.Shared.FluentValidation">
+      <HintPath>..\..\..\IDFCR\IDFC.Shared.FluentValidation\bin\Debug\net9.0\IDFCR.Shared.FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="IDFCR.Shared.Http">
       <HintPath>..\..\..\IDFCR\IDFCR.Shared.Http\bin\Debug\net9.0\IDFCR.Shared.Http.dll</HintPath>

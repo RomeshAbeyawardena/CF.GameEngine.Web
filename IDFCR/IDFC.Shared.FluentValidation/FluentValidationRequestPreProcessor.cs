@@ -2,7 +2,7 @@
 using FluentValidation.Results;
 using MediatR.Pipeline;
 
-namespace IDFC.Shared.FluentValidation;
+namespace IDFCR.Shared.FluentValidation;
 
 internal class FluentValidationRequestPreProcessor<TRequest>(IEnumerable<IValidator<TRequest>> validators) 
     : IRequestPreProcessor<TRequest>

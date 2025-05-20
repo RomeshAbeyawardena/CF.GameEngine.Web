@@ -4,7 +4,7 @@ using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
 using MediatR.Pipeline;
 
-namespace IDFC.Shared.FluentValidation.Tests;
+namespace IDFCR.Shared.FluentValidation.Tests;
 
 public class Tests
 {
