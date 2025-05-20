@@ -3,7 +3,9 @@ using System.Collections.Concurrent;
 
 namespace IDFCR.Shared.Http.Mediatr.Scopes
 {
-    public class ScopedStateFactory : IScopedStateReader, IScopedStateWriter
+    public interface IScopedStateFactory : IScopedStateReader, IScopedStateWriter;
+
+    public class ScopedStateFactory : IScopedStateFactory
     {
         private readonly ConcurrentDictionary<string, IScopedState> state = [];
 

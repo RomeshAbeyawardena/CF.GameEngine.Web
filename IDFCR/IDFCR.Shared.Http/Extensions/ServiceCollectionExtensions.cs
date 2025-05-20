@@ -19,8 +19,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddRoleRequirementServices(this IServiceCollection services)
     {
         return services
-            .AddScoped<IScopedStateReader, ScopedStateFactory>()
-            .AddScoped<IScopedStateWriter, ScopedStateFactory>();
+            .AddScoped<IScopedStateFactory, ScopedStateFactory>()
+            .AddScoped<IScopedStateReader>(s => s.GetRequiredService<IScopedStateFactory>())
+            .AddScoped<IScopedStateWriter>(s => s.GetRequiredService<IScopedStateFactory>());
     }
 
     public static IServiceCollection AddLinkDependencies<TTargetAssemblyClass>(this IServiceCollection services)
