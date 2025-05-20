@@ -9,7 +9,7 @@ namespace IDFCR.Shared.Http.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddRoleRequirementPreProcessor(MediatRServiceConfiguration configuration)
+    public static void AddRoleRequirementPreProcessor(this MediatRServiceConfiguration configuration)
     {
         configuration
             .AddOpenRequestPreProcessor(typeof(RoleRequirementPrequestHandler<,>));
