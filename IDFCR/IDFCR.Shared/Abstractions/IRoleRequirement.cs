@@ -9,6 +9,7 @@ public enum RoleRequirementType
 
 public interface IRoleRequirement
 {
+    bool Bypass { get; }
     IEnumerable<string> Roles { get; }
     RoleRequirementType RoleRequirementType { get; }
 }

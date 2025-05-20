@@ -8,7 +8,7 @@ public static class Roles
     public const string Client = "client:api:read";
 }
 
-public record FindClientByIdQuery(Guid ClientId) : IUnitRequest<ClientDetailResponse>, IRoleRequirement
+public record FindClientByIdQuery(Guid ClientId, bool Bypass = false) : IUnitRequest<ClientDetailResponse>, IRoleRequirement
 {
     IEnumerable<string> IRoleRequirement.Roles => [Roles.Client];
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.All;
