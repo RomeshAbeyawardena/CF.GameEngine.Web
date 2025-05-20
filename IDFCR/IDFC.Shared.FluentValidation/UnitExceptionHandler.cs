@@ -32,10 +32,13 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
 
     public Task Handle(TRequest request, TException exception, RequestExceptionHandlerState<TResponse> state, CancellationToken cancellationToken)
     {
-        if(exception is ValidationException validationException && typeof(TResponse).IsAssignableTo(typeof(IUnitResult)))
+        bool isHandled = exception is UnauthorizedAccessException || exception is ValidationException;
+
+        if (isHandled && typeof(TResponse).IsAssignableTo(typeof(IUnitResult)))
         {
-            var errors = validationException.Errors
-                .ToDictionary(x => x.PropertyName, x => (object?)x.ErrorMessage);
+            var errors = (exception is ValidationException validationException) ? validationException.Errors
+                    .ToDictionary(x => x.PropertyName, x => (object?)x.ErrorMessage) : [];
+            
             var baseResponseType = typeof(TResponse);
             
             var mayBeGenericResponseType = baseResponseType.IsGenericType ? baseResponseType.GetGenericTypeDefinition() : baseResponseType;
