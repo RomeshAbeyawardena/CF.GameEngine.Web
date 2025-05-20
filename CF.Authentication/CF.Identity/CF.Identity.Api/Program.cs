@@ -5,6 +5,7 @@ using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddBackendDependencies("CFIdentity")
     .AddRoleRequirementServices()
     .AddLinkDependencies<Program>()
     //.AddRateLimiter(opt => opt.AddPolicy("",))
+    .AddSingleton<IAuthorizationHandler, ScopeClaimPolicyHandler>()
+    .AddSingleton<IAuthorizationPolicyProvider, ScopeClaimPolicyProvider>()
     .AddAuthentication("ClientBearer")
     .AddScheme<AuthenticationSchemeOptions, AuthHandler>("ClientBearer", options => {
     });
