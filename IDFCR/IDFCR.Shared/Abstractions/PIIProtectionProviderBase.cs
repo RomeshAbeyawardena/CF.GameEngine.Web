@@ -5,7 +5,7 @@ namespace IDFCR.Shared.Abstractions;
 
 public abstract class PIIProtectionProviderBase
 {
-    private static IEnumerable<string> GetSpacerParts(string parts, char separator)
+    private static string[] GetSpacerParts(string parts, char separator)
     {
         return parts.Split(separator, StringSplitOptions.RemoveEmptyEntries);
     }

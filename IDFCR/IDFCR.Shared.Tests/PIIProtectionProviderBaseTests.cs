@@ -1,7 +1,7 @@
 ﻿using IDFCR.Shared.Abstractions;
 using System.Text;
 
-namespace IDFC.Shared.Tests;
+namespace IDFCR.Shared.Tests;
 
 [TestFixture]
 internal class PIIProtectionProviderBaseTests

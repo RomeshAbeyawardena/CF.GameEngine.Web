@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("IDFC.Shared.Tests")]
+[assembly: InternalsVisibleTo("IDFCR.Shared.Tests")]

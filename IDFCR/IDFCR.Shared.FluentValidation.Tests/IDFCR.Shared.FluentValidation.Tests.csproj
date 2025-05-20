@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IDFC.Shared.FluentValidation\IDFCR.Shared.FluentValidation.csproj" />
+    <ProjectReference Include="..\IDFCR.Shared.FluentValidation\IDFCR.Shared.FluentValidation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
