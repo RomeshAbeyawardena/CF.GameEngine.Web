@@ -3,7 +3,7 @@ using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Api.Features.AccessTokens;
 
-public class AccessTokenDto : MappableBase<IAccessToken>, IEditableAccessToken, IAccessToken
+public class AccessTokenDto() : MappableBase<IAccessToken>, IEditableAccessToken, IAccessToken
 {
     protected override IAccessToken Source => this;
     public string AccessToken { get; set; } = null!;

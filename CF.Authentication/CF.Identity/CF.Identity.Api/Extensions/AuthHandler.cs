@@ -21,7 +21,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
     private async Task AttachScopes(Guid clientId, List<Claim> claims)
     {
-        var scopes = (await mediator.Send(new FindScopeQuery(clientId))).GetResultOrDefault();
+        var scopes = (await mediator.Send(new FindScopeQuery(clientId, Bypass: true))).GetResultOrDefault();
 
         if(scopes is null || !scopes.Any())
         {
@@ -68,7 +68,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
         var range = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
 
-        var clientResult = (await mediator.Send(new FindClientQuery(clientId, range.FromValue, range.ToValue))).GetOneOrDefault();
+        var clientResult = (await mediator.Send(new FindClientQuery(clientId, range.FromValue, range.ToValue, Bypass: true))).GetOneOrDefault();
 
         if (clientResult is null
             || !clientCredentialHasher.Verify(clientSecret, clientResult))
@@ -107,7 +107,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
         var accessTokens = await mediator.Send(new FindAccessTokenQuery(hash, client.ClientDetails.Id,
             ValidFrom: range.FromValue,
-            ValidTo: range.ToValue));
+            ValidTo: range.ToValue, Bypass: true));
 
         var validAccessToken = accessTokens.GetOneOrDefault(orderedTranform: x => x.OrderByDescending(a => a.ValidFrom));
         if (validAccessToken is null)
@@ -123,7 +123,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
             new(ClaimTypes.Authentication, accessToken)
         };
 
-        var user = (await mediator.Send(new GetUserByIdQuery(validAccessToken.UserId))).GetResultOrDefault();
+        var user = (await mediator.Send(new GetUserByIdQuery(validAccessToken.UserId, Bypass: true))).GetResultOrDefault();
 
         if(user is not null)
         {

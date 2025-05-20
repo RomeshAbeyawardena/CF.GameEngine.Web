@@ -35,7 +35,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         var utcNow = timeProvider.GetUtcNow();
         var dateRange = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
 
-        var clientResult = await mediator.Send(new FindClientQuery(request.TokenRequest.ClientId, dateRange.FromValue, dateRange.ToValue), cancellationToken);
+        var clientResult = await mediator.Send(new FindClientQuery(request.TokenRequest.ClientId, dateRange.FromValue, dateRange.ToValue, Bypass: true), cancellationToken);
 
         var clientDetail = clientResult.GetOneOrDefault();
 
@@ -55,7 +55,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         }
 
         var requestedScopes = request.TokenRequest.Scope.Split();
-        var scopesResponse = await mediator.Send(new FindScopeQuery(clientDetail.Id, Keys: requestedScopes), cancellationToken);
+        var scopesResponse = await mediator.Send(new FindScopeQuery(clientDetail.Id, Keys: requestedScopes, Bypass: true), cancellationToken);
         var scopes = scopesResponse.AsList();
         if (!requestedScopes.All(y => scopes.Any(x => x.Key.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
         {
@@ -70,7 +70,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             username = userCredentialProtectionProvider.HashUsingHmac(clientDetail, request.TokenRequest.Username);
         }
 
-        var userResult = await mediator.Send(new FindUsersQuery(clientDetail.Id, Username: username, IsSystem: isSystemUser), cancellationToken);
+        var userResult = await mediator.Send(new FindUsersQuery(clientDetail.Id, Username: username, IsSystem: isSystemUser, Bypass: true), cancellationToken);
 
         var systemUser = userResult.GetOneOrDefault();
 
@@ -98,7 +98,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             ValidFrom = utcNow,
             ValidTo = utcNow.AddHours(1),
             UserId = systemUser.Id,
-        }), cancellationToken);
+        }, true), cancellationToken);
 
         //TODO: Generate token
         var result = new UnitResult<TokenResponse>(new TokenResponse(referenceToken,
