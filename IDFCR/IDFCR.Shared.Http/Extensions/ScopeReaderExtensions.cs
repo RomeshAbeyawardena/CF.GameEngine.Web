@@ -1,6 +1,6 @@
 ﻿using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
-using IDFCR.Shared.Http.Mediatr;
+using IDFCR.Shared.Http.Mediatr.Scopes;
 
 namespace IDFCR.Shared.Http.Extensions;
 

@@ -1,7 +1,7 @@
 ﻿using IDFCR.Shared.Abstractions.Results;
 using System.Collections.Concurrent;
 
-namespace IDFCR.Shared.Http.Mediatr
+namespace IDFCR.Shared.Http.Mediatr.Scopes
 {
     public class ScopedStateFactory : IScopedStateReader, IScopedStateWriter
     {
@@ -10,7 +10,7 @@ namespace IDFCR.Shared.Http.Mediatr
         public async Task<IUnitResult<IScopedState>> ReadAsync(string key, CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
-            if(state.TryGetValue(key, out var scopedStateEntry))
+            if (state.TryGetValue(key, out var scopedStateEntry))
             {
                 return UnitResult.FromResult(scopedStateEntry);
             }

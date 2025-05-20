@@ -1,6 +1,7 @@
 ﻿using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Http.Links;
 using IDFCR.Shared.Http.Mediatr;
+using IDFCR.Shared.Http.Mediatr.Scopes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics;

@@ -1,5 +1,6 @@
 ﻿using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Http.Extensions;
+using IDFCR.Shared.Http.Mediatr.Scopes;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

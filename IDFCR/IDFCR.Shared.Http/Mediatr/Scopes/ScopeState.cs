@@ -1,4 +1,4 @@
-﻿namespace IDFCR.Shared.Http.Mediatr
+﻿namespace IDFCR.Shared.Http.Mediatr.Scopes
 {
     public record ScopedState(string Key, object? Value, Type Type) : IScopedState;
 

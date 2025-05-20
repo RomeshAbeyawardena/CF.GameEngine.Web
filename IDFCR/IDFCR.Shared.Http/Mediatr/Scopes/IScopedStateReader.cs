@@ -1,6 +1,6 @@
 ﻿using IDFCR.Shared.Abstractions.Results;
 
-namespace IDFCR.Shared.Http.Mediatr
+namespace IDFCR.Shared.Http.Mediatr.Scopes
 {
     public interface IScopedStateReader
     {
