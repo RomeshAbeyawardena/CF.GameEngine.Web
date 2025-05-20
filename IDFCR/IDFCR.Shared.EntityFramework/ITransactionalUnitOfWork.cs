@@ -66,6 +66,7 @@ public class TransactionalUnitOfWork<TDbContext>(TDbContext dbContext) : ITransa
     {
         transaction?.Dispose();
         transaction = null;
+        GC.SuppressFinalize(this);
     }
 
     private void EnsureDbContext()
