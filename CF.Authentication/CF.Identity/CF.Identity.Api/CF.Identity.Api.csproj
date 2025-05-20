@@ -14,8 +14,8 @@
     <None Remove="Endpoints\Authenticate\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IDFCR.Shared.FluentValidation" Version="1.0.0.2" />
-    <PackageReference Include="IDFCR.Shared.Http" Version="1.0.0.2" />
+    <PackageReference Include="IDFCR.Shared.FluentValidation" Version="1.0.0.3" />
+    <PackageReference Include="IDFCR.Shared.Http" Version="1.0.0.3" />
     <PackageReference Include="MediatR" Version="12.5.0" />
   </ItemGroup>
   <ItemGroup>
