@@ -9,7 +9,7 @@ namespace IDFCR.Shared.Http.Mediatr;
 
 public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleRequirementPrequestHandler<TRequest, TResponse>> logger, 
     IHttpContextAccessor contextAccessor, IScopedStateReader scopedStateReader) : MediatR.Pipeline.IRequestPreProcessor<TRequest>
-    where TRequest : IRequest<TResponse>, IRoleRequirement
+    where TRequest : notnull, IRequest<TResponse>, IRoleRequirement
     where TResponse : class
 {
     public async Task Process(TRequest request, CancellationToken cancellationToken)

@@ -10,10 +10,10 @@ namespace IDFCR.Shared.Http.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddRoleRequirementPreProcessor(this MediatRServiceConfiguration configuration)
+    public static MediatRServiceConfiguration AddRoleRequirementPreProcessor(this MediatRServiceConfiguration configuration)
     {
-        configuration
-            .AddOpenRequestPreProcessor(typeof(RoleRequirementPrequestHandler<,>));
+        return configuration
+            .AddOpenBehavior(typeof(RoleRequirementPrequestHandler<,>));
     }
 
     public static IServiceCollection AddRoleRequirementServices(this IServiceCollection services)
