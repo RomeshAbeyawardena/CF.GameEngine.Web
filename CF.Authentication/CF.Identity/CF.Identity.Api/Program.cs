@@ -9,11 +9,10 @@ using Microsoft.AspNetCore.Authentication;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddBackendDependencies("CFIdentity")
-    .AddMediatR(s => {
-        s.RegisterServicesFromAssemblyContaining<Program>()
-        .AddRoleRequirementPreProcessor();
-    })
     .AddGenericExceptionHandler()
+    .AddMediatR(s => s.RegisterServicesFromAssemblyContaining<Program>()
+        .AddRoleRequirementPreProcessor())
+    .AddRoleRequirementServices()
     .AddLinkDependencies<Program>()
     //.AddRateLimiter(opt => opt.AddPolicy("",))
     .AddAuthentication("ClientBearer")
