@@ -4,6 +4,7 @@ using CF.Identity.Infrastructure.Features.Users;
 using IDFCR.Shared.Abstractions.Records;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.Users.Post;
@@ -30,6 +31,7 @@ public record PostRequest(Guid ClientId, string Username, string EmailAddress, s
 
     public override void Map(IUser source)
     {
+        //this is the top level mapping method, so we don't need to do anything here
         throw new NotSupportedException();
     }
 }
@@ -46,7 +48,10 @@ public static class Endpoint
 
     public static IEndpointRouteBuilder AddPostEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapPost(Endpoints.Url, SaveUserAsync);
+        builder.MapPost(Endpoints.Url, SaveUserAsync)
+            .RequireAuthorization(new AuthorizeAttribute(Features.Roles.ConcatenateRoles(
+                Features.Roles.GlobalWrite,
+                Features.Roles.UserWrite)));
         return builder;
     }
 }

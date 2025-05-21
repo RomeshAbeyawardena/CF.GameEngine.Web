@@ -1,10 +1,16 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.User.Post;
 
-public record PostUserCommand(EditableUserDto User) : IUnitRequest<Guid>;
+public record PostUserCommand(EditableUserDto User) : IUnitRequest<Guid>, IRoleRequirement
+{
+    bool IRoleRequirement.Bypass => false;
+    IEnumerable<string> IRoleRequirement.Roles => [Roles.GlobalWrite, Roles.UserWrite];
+    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
+}
 
 public class PostUserCommandHandler(IUserRepository userRepository) : IUnitRequestHandler<PostUserCommand, Guid>
 {
