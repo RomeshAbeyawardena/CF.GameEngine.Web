@@ -8,7 +8,6 @@ public interface IUser : IEditableUser
 
 public interface IEditableUser : IUserDetail, IPIIRowVersion
 {
-    string? Metadata { get; set; }
     string EmailAddress { get; }
     string HashedPassword { get; }
 }
@@ -22,6 +21,7 @@ public interface IUserSummary : IMappable<IUser>, IIdentifer
 
 public interface IUserDetail : IUserSummary
 {
+    string? Metadata { get; set; }
     string Username { get; }
     string Firstname { get; }
     string? Middlename { get; }
