@@ -46,9 +46,22 @@ $properties.FileVersion = $version.ToString()
 $properties.InformationalVersion = $version.ToString()
 
 if ($includeSymbols) {
-    $properties.IncludeSymbols = "true"
-    $properties.IncludeSource = "true"
-    $properties.SymbolPackageFormat = "snupkg"
+
+    $el = $xmlDoc.CreateElement("IncludeSymbols")
+    $el.InnerText = "true"
+    $properties.AppendChild($el)
+
+    $el = $xmlDoc.CreateElement("IncludeSource")
+    $el.InnerText = "true"
+    $properties.AppendChild($el)
+
+    $el = $xmlDoc.CreateElement("EmbedUntrackedSources")
+    $el.InnerText = "true"
+    $properties.AppendChild($el)
+
+    $el = $xmlDoc.CreateElement("SymbolPackageFormat")
+    $el.InnerText = "SymbolPackageFormat"
+    $properties.AppendChild($el)
 } else {
     $properties.RemoveChild($properties.SelectSingleNode("IncludeSymbols"))
     $properties.RemoveChild($properties.SelectSingleNode("IncludeSource"))
