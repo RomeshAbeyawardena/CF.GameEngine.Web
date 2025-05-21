@@ -4,8 +4,11 @@ using IDFCR.Shared.Abstractions.Records;
 namespace CF.Identity.Api.Endpoints.Users.Post;
 
 public record PostRequest(string Username, string EmailAddress, string Password, string Firstname, string? Middlename, string Lastname, 
-    string PrimaryTelephoneNumber, string? PreferredUsername = null, string? Client = null, Guid? ClientId = null) : MappableBase<IUser>, IEditableUser
+    string PrimaryTelephoneNumber, string? PreferredUsername = null) : MappableBase<IUser>
 {
+    public string? Client { get; set; } 
+    public Guid? ClientId { get; set; }
+
     protected override IUser Source => new Features.User.EditableUserDto
     {
         ClientId = ClientId.GetValueOrDefault(),
@@ -20,10 +23,6 @@ public record PostRequest(string Username, string EmailAddress, string Password,
         PreferredUsername = PreferredUsername ?? Username
     };
 
-    Guid IUserSummary.ClientId => ClientId.GetValueOrDefault();
-    bool IUserSummary.IsSystem => false;
-    string IEditableUser.HashedPassword => Password;
-    Guid IDFCR.Shared.Abstractions.IIdentifer.Id => Guid.Empty;
 
     public override void Map(IUser source)
     {

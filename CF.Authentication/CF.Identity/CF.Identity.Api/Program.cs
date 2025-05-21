@@ -3,6 +3,7 @@ using CF.Identity.Api.Endpoints.Connect;
 using CF.Identity.Api.Endpoints.Users;
 using CF.Identity.Api.Extensions;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
+using FluentValidation;
 using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
 
@@ -14,9 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddBackendDependencies("CFIdentity")
     .AddGenericExceptionHandler()
     .AddMediatR(s => s.RegisterServicesFromAssemblyContaining<Program>()
-        .AddRoleRequirementPreProcessor())
+        .AddRoleRequirementPreProcessor()
+        .AddFluentValidationRequestPreProcessor())
     .AddRoleRequirementServices()
     .AddLinkDependencies<Program>()
+    .AddValidatorsFromAssemblyContaining<Program>()
     //.AddRateLimiter(opt => opt.AddPolicy("",))
     .AddSingleton<IAuthorizationHandler, ScopeClaimPolicyHandler>()
     .AddSingleton<IAuthorizationPolicyProvider, ScopeClaimPolicyProvider>()

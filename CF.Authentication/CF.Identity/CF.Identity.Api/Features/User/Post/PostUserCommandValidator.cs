@@ -27,6 +27,11 @@ public class PostUserCommandValidator : AbstractValidator<PostUserCommand>
     public async Task<bool> BeUnique(PostUserCommand request, CancellationToken cancellationToken)
     {
         var user = request.User;
+        if (user.ClientId == Guid.Empty)
+        {
+            return false;
+        }
+
         var existingUser = (await _mediator.Send(new FindUsersQuery(user.ClientId, user.Username, Bypass: true), cancellationToken)).GetOneOrDefault();
 
         return existingUser is null;
@@ -53,7 +58,7 @@ public class PostUserCommandValidator : AbstractValidator<PostUserCommand>
             return false;
         }
 
-        user.ClientId = result.Id;
+        request.User.ClientId = result.Id;
         return true;
     }
 }

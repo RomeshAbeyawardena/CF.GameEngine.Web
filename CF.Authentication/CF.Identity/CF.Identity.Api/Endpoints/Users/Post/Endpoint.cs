@@ -13,13 +13,16 @@ public static class Endpoint
         IHttpContextAccessor httpContextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new PostUserCommand(request.Map<EditableUserDto>()), cancellationToken);
+        var data = request.Map<EditableUserDto>();
+        data.Client = request.Client;
+        var result = await mediator.Send(new PostUserCommand(data), cancellationToken);
         return result.NegotiateResult(httpContextAccessor, Endpoints.Url);
     }
 
     public static IEndpointRouteBuilder AddPostEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost(Endpoints.Url, SaveUserAsync)
+            .DisableAntiforgery()
             .RequireAuthorization(new AuthorizeAttribute(Features.Roles.ConcatenateRoles(
                 Features.Roles.GlobalWrite,
                 Features.Roles.UserWrite)));
