@@ -53,4 +53,9 @@ switch ([TargetPath]$targetPath) {
 ./Set-Property-Info -propFile "$PSScriptRoot/Directory.Build.props" -versionElement $versionComponent -includeSymbols $includeSymbols
 
 dotnet pack -c Release -o $deploymentPath
-
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "❌ Pack failed with exit code $LASTEXITCODE"
+}
+else {
+    Write-Host "✅ Pack succeeded!"
+}
