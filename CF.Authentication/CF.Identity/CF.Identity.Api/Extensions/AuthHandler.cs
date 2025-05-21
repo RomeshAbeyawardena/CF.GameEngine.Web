@@ -19,9 +19,9 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 {
     private AuthenticatedClient? authenticatedClient;
 
-    private async Task AttachScopes(Guid clientId, List<Claim> claims)
+    private async Task AttachScopes(Guid clientId, Guid userId, List<Claim> claims)
     {
-        var scopes = (await mediator.Send(new FindScopeQuery(clientId, Bypass: true))).GetResultOrDefault();
+        var scopes = (await mediator.Send(new FindScopeQuery(clientId, userId, Bypass: true))).GetResultOrDefault();
 
         if(scopes is null || !scopes.Any())
         {
@@ -125,15 +125,17 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
         var user = (await mediator.Send(new GetUserByIdQuery(validAccessToken.UserId, Bypass: true))).GetResultOrDefault();
 
-        if(user is not null)
+        if(user is null)
         {
-            claims.Add(new(ClaimTypes.NameIdentifier, user.Id.ToString()));
-            claims.Add(new(ClaimTypes.Name, user.PreferredUsername ?? user.Username));
-            claims.Add(new(ClaimTypes.Email, user.EmailAddress));
-            claims.Add(new(ClaimTypes.GivenName, user.FormatName()));
+            return AuthenticateResult.Fail("User not found");
         }
 
-        await AttachScopes(client.ClientDetails.Id, claims);
+        claims.Add(new(ClaimTypes.NameIdentifier, user.Id.ToString()));
+        claims.Add(new(ClaimTypes.Name, user.PreferredUsername ?? user.Username));
+        claims.Add(new(ClaimTypes.Email, user.EmailAddress));
+        claims.Add(new(ClaimTypes.GivenName, user.FormatName()));
+
+        await AttachScopes(client.ClientDetails.Id, user.Id, claims);
 
         var identity = new ClaimsIdentity(claims, Bearer);
         var principal = new ClaimsPrincipal(identity);
