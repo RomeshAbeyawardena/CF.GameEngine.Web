@@ -1,5 +1,6 @@
 using CF.Identity.Api;
 using CF.Identity.Api.Endpoints.Connect;
+using CF.Identity.Api.Endpoints.Users;
 using CF.Identity.Api.Extensions;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
 using IDFCR.Shared.FluentValidation.Extensions;
@@ -35,6 +36,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 //app.UseAuthMiddleware();
 app.AddConnectEndpoints();
+app.AddUserEndpoints();
 //app.UseRateLimiter();
 
 app.Run();
