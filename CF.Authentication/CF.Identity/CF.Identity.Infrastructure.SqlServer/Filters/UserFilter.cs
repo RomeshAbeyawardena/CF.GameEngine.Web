@@ -1,4 +1,5 @@
-﻿using CF.Identity.Infrastructure.Features.Users;
+﻿using Azure.Core;
+using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Extensions;
@@ -18,7 +19,7 @@ public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionPr
 
     public override async Task<ExpressionStarter<DbUser>> ApplyFilterAsync(ExpressionStarter<DbUser> query, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace(Username))
+        if (!string.IsNullOrWhiteSpace())
         {
             var foundClient = await context.Clients.FindAsync([ClientId], cancellationToken) ?? throw new NullReferenceException("Client not found");
             UsernameHmac = userCredentialProtectionProvider.HashUsingHmac(foundClient, Username);
@@ -31,7 +32,7 @@ public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionPr
     {
         query = query.And(x => x.ClientId == filter.ClientId);
 
-        if (!string.IsNullOrWhiteSpace(filter.Username))
+        if (!string.IsNullOrWhiteSpace(UsernameHmac))
         {
             query = query.And(x => x.EmailAddressHmac == UsernameHmac || x.UsernameHmac == UsernameHmac);
         }

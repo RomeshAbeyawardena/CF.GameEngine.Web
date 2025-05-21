@@ -1,15 +1,16 @@
 ﻿using CF.Identity.Infrastructure.Features.AccessToken;
 using CF.Identity.Infrastructure.Features.Clients;
+using CF.Identity.Infrastructure.Features.Scope;
+using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer.Repositories;
+using IDFCR.Shared.EntityFramework;
+using IDFCR.Shared.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using CF.Identity.Infrastructure.Features.Scope;
-using IDFCR.Shared.Extensions;
-using CF.Identity.Infrastructure.Features.Users;
-using System.Text;
-using System.Security.Cryptography;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CF.Identity.Infrastructure.SqlServer.Extensions;
 
@@ -33,6 +34,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IClientCredentialHasher, ClientCredentialHasher>()
             .AddSingleton<IUserCredentialProtectionProvider, UserCredentialProtectionProvider>()
             .AddScoped<IAccessTokenRepository, AccessTokenRepository>()
+            .AddScoped<ITransactionalUnitOfWork>(x => x.GetRequiredService<IAccessTokenRepository>() as AccessTokenRepository ?? throw new InvalidCastException())
             .AddScoped<IClientRepository, ClientRepository>()
             .AddScoped<IScopeRepository, ScopeRepository>()
             .AddScoped<IUserRepository, UserRepository>()

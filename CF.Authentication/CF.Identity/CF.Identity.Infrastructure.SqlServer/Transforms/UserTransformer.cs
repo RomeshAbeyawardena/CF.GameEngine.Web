@@ -60,6 +60,7 @@ public static class UserTransformer
     public static async Task<DbUser> Transform(IUser user, CFIdentityDbContext context, IUserHmac userHmac,
         CancellationToken cancellationToken, DbUser? dbUser = null)
     {
+        bool isDbUserProvided = dbUser is not null;
         dbUser ??= user.Map<DbUser>();
 
         dbUser.EmailAddressHmac = userHmac.EmailAddressHmac;
@@ -70,6 +71,12 @@ public static class UserTransformer
         await SetCommonNameAsync(context, user.Firstname, name => dbUser.FirstCommonName = name, id => dbUser.FirstCommonNameId = id, cancellationToken);
         await SetCommonNameAsync(context, user.Middlename, name => dbUser.MiddleCommonName = name, id => dbUser.MiddleCommonNameId = id, cancellationToken);
         await SetCommonNameAsync(context, user.Lastname, name => dbUser.LastCommonName = name, id => dbUser.LastCommonNameId = id, cancellationToken);
+
+        if(isDbUserProvided)
+        {
+            dbUser.Map(user);
+            dbUser.RowVersion = user.RowVersion;
+        }
 
         return dbUser;
     }
