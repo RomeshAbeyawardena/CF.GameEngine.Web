@@ -1,3 +1,4 @@
+using CF.Identity.Api;
 using CF.Identity.Api.Endpoints.Connect;
 using CF.Identity.Api.Extensions;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
@@ -18,16 +19,16 @@ builder.Services.AddBackendDependencies("CFIdentity")
     //.AddRateLimiter(opt => opt.AddPolicy("",))
     .AddSingleton<IAuthorizationHandler, ScopeClaimPolicyHandler>()
     .AddSingleton<IAuthorizationPolicyProvider, ScopeClaimPolicyProvider>()
-    .AddAuthentication("ClientBearer")
-    .AddScheme<AuthenticationSchemeOptions, AuthHandler>("ClientBearer", options => {
+    .AddAuthentication(SystemAuthenticationScheme.Name)
+    .AddScheme<AuthenticationSchemeOptions, AuthHandler>(SystemAuthenticationScheme.Name, options => {
     });
     
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = "ClientBearer";
-    options.DefaultChallengeScheme = "ClientBearer";
+    options.DefaultAuthenticateScheme = SystemAuthenticationScheme.Name;
+    options.DefaultChallengeScheme = SystemAuthenticationScheme.Name;
 });
 var app = builder.Build();
 app.UseAuthentication();
