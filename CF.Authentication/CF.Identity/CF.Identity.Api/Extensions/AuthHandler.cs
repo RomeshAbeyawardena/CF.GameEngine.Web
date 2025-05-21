@@ -133,10 +133,10 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
             claims.Add(new(ClaimTypes.GivenName, user.FormatName()));
         }
 
+        await AttachScopes(client.ClientDetails.Id, claims);
+
         var identity = new ClaimsIdentity(claims, Bearer);
         var principal = new ClaimsPrincipal(identity);
-
-        await AttachScopes(client.ClientDetails.Id, claims);
 
         return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
     }
