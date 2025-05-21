@@ -9,5 +9,9 @@
     <!-- Optional: what shows in Explorer file properties -->
     <InformationalVersion>1.0.0.3</InformationalVersion>
     <!-- Rich Git/hash metadata -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 </Project>

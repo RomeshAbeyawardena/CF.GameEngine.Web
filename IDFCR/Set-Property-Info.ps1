@@ -48,23 +48,22 @@ if ([Enum]::IsDefined([VersionComponent], $versionElement)) {
     Write-Host "Updated version to $($version.ToString()) in $propFile"
 }
 
+function EnsureElementValue($parent, $name, $value) {
+    $existing = $parent.SelectSingleNode($name)
+    if (-not $existing) {
+        $el = $xmlDoc.CreateElement($name)
+        $el.InnerText = $value
+        $parent.AppendChild($el) | Out-Null
+    } else {
+        $existing.InnerText = $value
+    }
+}
+
 if ($includeSymbols) {
-
-    $el = $xmlDoc.CreateElement("IncludeSymbols")
-    $el.InnerText = "true"
-    $node = $properties.AppendChild($el)
-
-    $el = $xmlDoc.CreateElement("IncludeSource")
-    $el.InnerText = "true"
-    $node = $properties.AppendChild($el)
-
-    $el = $xmlDoc.CreateElement("EmbedUntrackedSources")
-    $el.InnerText = "true"
-    $node = $properties.AppendChild($el)
-
-    $el = $xmlDoc.CreateElement("SymbolPackageFormat")
-    $el.InnerText = "snupkg"
-    $node = $properties.AppendChild($el)
+    EnsureElementValue $properties "IncludeSymbols" "true"
+    EnsureElementValue $properties "IncludeSource" "true"
+    EnsureElementValue $properties "EmbedUntrackedSources" "true"
+    EnsureElementValue $properties "SymbolPackageFormat" "snupkg"
 } else {
     $remove = @("IncludeSymbols", "IncludeSource", "SymbolPackageFormat", "EmbedUntrackedSources")
     foreach ($name in $remove) {
