@@ -17,12 +17,12 @@ public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionPr
 
     private string? UsernameHmac;
 
-    public override async Task<ExpressionStarter<DbUser>> ApplyFilterAsync(ExpressionStarter<DbUser> query, CancellationToken cancellationToken)
+    public override async Task<ExpressionStarter<DbUser>> ApplyFilterAsync(ExpressionStarter<DbUser> query, IUserFilter filter, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace())
+        if (!string.IsNullOrWhiteSpace(filter.Username))
         {
             var foundClient = await context.Clients.FindAsync([ClientId], cancellationToken) ?? throw new NullReferenceException("Client not found");
-            UsernameHmac = userCredentialProtectionProvider.HashUsingHmac(foundClient, Username);
+            UsernameHmac = userCredentialProtectionProvider.HashUsingHmac(foundClient, filter.Username);
         }
 
         return await base.ApplyFilterAsync(query, cancellationToken);
