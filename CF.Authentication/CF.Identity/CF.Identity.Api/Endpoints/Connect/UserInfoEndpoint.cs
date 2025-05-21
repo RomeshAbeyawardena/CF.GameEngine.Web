@@ -32,7 +32,7 @@ public static class UserInfoEndpoint
         builder.MapGet("/connect/userinfo", GetUserInfoAsync)
             .Produces<UserInfoResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
-            .RequireAuthorization(new AuthorizeAttribute(Features.Roles.GlobalRead));
+            .RequireAuthorization(new AuthorizeAttribute());
             //.RequireRateLimiting("authentication-rate-limits");
         return builder;
     }

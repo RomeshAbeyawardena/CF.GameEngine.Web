@@ -41,7 +41,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
         if (string.IsNullOrWhiteSpace(auth))
         {
-            return AuthenticateResult.Fail("");
+            return AuthenticateResult.Fail("Authenication header missing");
         }
 
         var raw = encoding.GetString(Convert.FromBase64String(auth));
@@ -49,7 +49,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         var parts = raw.Split(':', 2);
         if (parts.Length != 2)
         {
-            return AuthenticateResult.Fail("");
+            return AuthenticateResult.Fail("Authentication header invalid");
         }
 
         var clientId = parts[0];
@@ -58,7 +58,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         if (string.IsNullOrWhiteSpace(clientId)
              || string.IsNullOrWhiteSpace(clientSecret))
         {
-            return AuthenticateResult.Fail("");
+            return AuthenticateResult.Fail("Authentication header invalid, two-part requirement is incorrect");
         }
 
         var clientCredentialHasher = Context.RequestServices.GetRequiredService<IClientCredentialHasher>();
