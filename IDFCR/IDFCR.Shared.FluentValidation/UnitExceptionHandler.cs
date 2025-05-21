@@ -62,6 +62,10 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
             {
                 foreach (var (k, v) in errors)
                 {
+                    if (string.IsNullOrWhiteSpace(k))
+                    {
+                        continue;
+                    }
                     response.AddMeta(k,v);
                 }
             }
