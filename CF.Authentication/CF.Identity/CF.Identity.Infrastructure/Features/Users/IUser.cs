@@ -2,11 +2,12 @@
 
 namespace CF.Identity.Infrastructure.Features.Users;
 
-public interface IUser : IEditableUser
+public interface IUser : IEditableUser, IPIIRowVersion
 {
+    string? Metadata { get; set; }
 }
 
-public interface IEditableUser : IUserDetail, IPIIRowVersion
+public interface IEditableUser : IUserDetail
 {
     string EmailAddress { get; }
     string HashedPassword { get; }
@@ -21,7 +22,6 @@ public interface IUserSummary : IMappable<IUser>, IIdentifer
 
 public interface IUserDetail : IUserSummary
 {
-    string? Metadata { get; set; }
     string Username { get; }
     string Firstname { get; }
     string? Middlename { get; }
