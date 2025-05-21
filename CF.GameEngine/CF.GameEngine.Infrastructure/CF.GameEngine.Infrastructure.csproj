@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\IDFCR\IDFCR.Shared\IDFCR.Shared.csproj" />
     <ProjectReference Include="..\CF.GameEngine.Shared\CF.GameEngine.Shared.csproj" />
   </ItemGroup>
 

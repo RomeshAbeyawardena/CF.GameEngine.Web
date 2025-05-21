@@ -14,7 +14,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\IDFCR\IDFC.Shared.FluentValidation\IDFC.Shared.FluentValidation.csproj" />
-    <ProjectReference Include="..\..\..\IDFCR\IDFCR.Shared.Http\IDFCR.Shared.Http.csproj" />
     <ProjectReference Include="..\..\CF.GameEngine.Infrastructure.SqlServer\CF.GameEngine.Infrastructure.SqlServer.csproj" />
   </ItemGroup>
 

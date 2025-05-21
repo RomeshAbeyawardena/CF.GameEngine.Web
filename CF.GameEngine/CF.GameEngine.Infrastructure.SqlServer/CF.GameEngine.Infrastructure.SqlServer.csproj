@@ -9,7 +9,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IDFCR\IDFCR.Shared.EntityFramework\IDFCR.Shared.EntityFramework.csproj" />
     <ProjectReference Include="..\CF.GameEngine.Infrastructure\CF.GameEngine.Infrastructure.csproj" />
   </ItemGroup>
 

@@ -14,7 +14,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IDFCR\IDFCR.Utility.Shared\IDFCR.Utility.Shared.csproj" />
     <ProjectReference Include="..\CF.GameEngine.Infrastructure.SqlServer\CF.GameEngine.Infrastructure.SqlServer.csproj" />
   </ItemGroup>
 
