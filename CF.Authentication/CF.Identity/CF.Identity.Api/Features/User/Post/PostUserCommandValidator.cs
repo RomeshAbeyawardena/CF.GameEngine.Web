@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Api.Endpoints.Users.Post;
 using CF.Identity.Api.Features.Clients.Get;
+using CF.Identity.Api.Features.User.Get;
 using FluentValidation;
 using IDFCR.Shared.Extensions;
 using MediatR;
@@ -20,6 +21,15 @@ public class PostUserCommandValidator : AbstractValidator<PostUserCommand>
         RuleFor(x => x.User.Lastname).NotEmpty().WithMessage("Lastname is required.");
         RuleFor(x => x.User.PrimaryTelephoneNumber).NotEmpty().WithMessage("Primary telephone number is required.");
         RuleFor(x => x).MustAsync(HaveValidClientAsync);
+        RuleFor(x => x).MustAsync(BeUnique);
+    }
+
+    public async Task<bool> BeUnique(PostUserCommand request, CancellationToken cancellationToken)
+    {
+        var user = request.User;
+        var existingUser = (await _mediator.Send(new FindUsersQuery(user.ClientId, user.Username, Bypass: true), cancellationToken)).GetOneOrDefault();
+
+        return existingUser is null;
     }
 
     public async Task<bool> HaveValidClientAsync(PostUserCommand request, CancellationToken cancellationToken)
@@ -27,7 +37,7 @@ public class PostUserCommandValidator : AbstractValidator<PostUserCommand>
         var user = request.User;
         if (user.ClientId != Guid.Empty)
         {
-            var client = (await _mediator.Send(new FindClientByIdQuery(user.ClientId), cancellationToken)).GetResultOrDefault();
+            var client = (await _mediator.Send(new FindClientByIdQuery(user.ClientId, Bypass: true), cancellationToken)).GetResultOrDefault();
             return client is not null;
         }
 
