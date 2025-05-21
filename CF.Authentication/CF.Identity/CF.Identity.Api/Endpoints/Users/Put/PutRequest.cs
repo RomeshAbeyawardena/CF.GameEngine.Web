@@ -1,7 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using IDFCR.Shared.Abstractions.Records;
 
-namespace CF.Identity.Api.Endpoints.Users.Post;
+namespace CF.Identity.Api.Endpoints.Users.Put;
 
 public record PutRequest(Guid Id, Guid ClientId, string Username, string EmailAddress, string Password, string Firstname, string? Middlename, string Lastname,
     string PrimaryTelephoneNumber, string PreferredUsername = null!) : MappableBase<IUser>, IEditableUser
@@ -16,7 +16,7 @@ public record PutRequest(Guid Id, Guid ClientId, string Username, string EmailAd
         Middlename = Middlename,
         Lastname = Lastname,
         PrimaryTelephoneNumber = PrimaryTelephoneNumber,
-        PreferredUsername = PreferredUsername
+        PreferredUsername = PreferredUsername ?? Username
     };
 
     bool IUserSummary.IsSystem => false;

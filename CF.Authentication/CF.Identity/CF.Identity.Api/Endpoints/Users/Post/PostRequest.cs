@@ -16,7 +16,7 @@ public record PostRequest(Guid ClientId, string Username, string EmailAddress, s
         Middlename = Middlename,
         Lastname = Lastname,
         PrimaryTelephoneNumber = PrimaryTelephoneNumber,
-        PreferredUsername = PreferredUsername
+        PreferredUsername = PreferredUsername ?? Username
     };
 
     bool IUserSummary.IsSystem => false;
