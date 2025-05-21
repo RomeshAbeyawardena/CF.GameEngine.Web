@@ -146,7 +146,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         var result = await ExtractAndValidateClientHeaderAsync();
-        if(result is not null) //failure at any point enters here
+        if(result is not null)
         {
             return result;
         }

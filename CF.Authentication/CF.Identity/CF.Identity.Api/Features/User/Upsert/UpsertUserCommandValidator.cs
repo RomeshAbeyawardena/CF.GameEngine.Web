@@ -1,5 +1,4 @@
-﻿using CF.Identity.Api.Endpoints.Users.Post;
-using CF.Identity.Api.Features.Clients.Get;
+﻿using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.User.Get;
 using FluentValidation;
 using IDFCR.Shared.Extensions;
