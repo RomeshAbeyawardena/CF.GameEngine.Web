@@ -20,8 +20,10 @@ public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
         RuleFor(x => x.User.Firstname).NotEmpty().WithMessage("Firstname is required.");
         RuleFor(x => x.User.Lastname).NotEmpty().WithMessage("Lastname is required.");
         RuleFor(x => x.User.PrimaryTelephoneNumber).NotEmpty().WithMessage("Primary telephone number is required.");
-        RuleFor(x => x).MustAsync(HaveValidClientAsync).WithName("Existing_Client");
-        RuleFor(x => x).MustAsync(BeUnique).WithName("Unique_Username");
+        RuleFor(x => x).MustAsync(HaveValidClientAsync).WithName("Existing_Client")
+            .WithMessage("Unable to find client by id or name required for user enrollment");
+        RuleFor(x => x).MustAsync(BeUnique).WithName("Unique_Username")
+            .WithMessage("Username and email must be unique for a given client/realm");
     }
 
     public async Task<bool> BeUnique(UpsertUserCommand request, CancellationToken cancellationToken)
