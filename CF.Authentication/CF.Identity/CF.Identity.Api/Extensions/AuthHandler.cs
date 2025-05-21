@@ -73,7 +73,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         if (clientResult is null
             || !clientCredentialHasher.Verify(clientSecret, clientResult))
         {
-            return AuthenticateResult.Fail("");
+            return AuthenticateResult.Fail("Client authentication failed");
         }
 
         authenticatedClient = new(clientId,
@@ -91,7 +91,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         if (client is null || string.IsNullOrWhiteSpace(authorisation)
         || !authorisation.StartsWith("Bearer", StringComparison.InvariantCultureIgnoreCase))
         {
-            return AuthenticateResult.Fail("");
+            return AuthenticateResult.Fail("Invalid authentication scheme");
         }
 
         var accessToken = authorisation["Bearer ".Length..].Trim();
@@ -112,7 +112,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         var validAccessToken = accessTokens.GetOneOrDefault(orderedTranform: x => x.OrderByDescending(a => a.ValidFrom));
         if (validAccessToken is null)
         {
-            return AuthenticateResult.Fail("");
+            return AuthenticateResult.Fail("Access token failed");
         }
 
         const string Bearer = "Bearer";
