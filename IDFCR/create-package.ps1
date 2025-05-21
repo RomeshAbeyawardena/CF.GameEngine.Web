@@ -28,13 +28,14 @@ if ($LASTEXITCODE -ne 0) {
 
 $deploymentPath = ""
 $versionComponent = 0
-
+$includeSymbols = $false
 switch ([TargetPath]$targetPath) {
     "Local" {
         $deploymentPath = "C:\dev\packages\IDFCR"
         if ($skipVersionIncrement -eq $false) {
             $versionComponent = 4
         }
+        $includeSymbols = $true
     }
     "Remote" {
         if ($skipVersionIncrement -eq $false) {
@@ -47,7 +48,7 @@ switch ([TargetPath]$targetPath) {
     }
 }
 
-./Set-Property-Info "$PSScriptRoot/Directory.Build.props" $versionComponent
+./Set-Property-Info -propFile "$PSScriptRoot/Directory.Build.props" -versionElement $versionComponent -includeSymbols $includeSymbols
 
 dotnet pack -c Release -o $deploymentPath
 

@@ -1,6 +1,7 @@
 param (
     [string]$propFile,
-    [int]$versionElement
+    [int]$versionElement,
+    [bool]$includeSymbols = $false
 )
 
 enum VersionComponent {
@@ -43,6 +44,16 @@ $properties.Version = $version.ToString()
 $properties.AssemblyVersion = $version.ToString()
 $properties.FileVersion = $version.ToString()
 $properties.InformationalVersion = $version.ToString()
+
+if ($includeSymbols) {
+    $properties.IncludeSymbols = "true"
+    $properties.IncludeSource = "true"
+    $properties.SymbolPackageFormat = "snupkg"
+} else {
+    $properties.RemoveChild($properties.SelectSingleNode("IncludeSymbols"))
+    $properties.RemoveChild($properties.SelectSingleNode("IncludeSource"))
+    $properties.RemoveChild($properties.SelectSingleNode("SymbolPackageFormat"))
+}
 
 $xmlDoc.Save($propFile)
 Write-Host "Updated version to $($version.ToString()) in $propFile"
