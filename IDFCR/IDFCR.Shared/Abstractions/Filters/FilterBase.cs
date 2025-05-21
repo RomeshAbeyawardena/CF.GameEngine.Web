@@ -35,5 +35,10 @@ public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<
         return ApplyFilter(query, _filter ?? throw new NullReferenceException("Filter not supplied"));
     }
 
+    public virtual Task<ExpressionStarter<TDb>> ApplyFilterAsync(ExpressionStarter<TDb> query, TFilter filter, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(ApplyFilter(query, filter));
+    }
+
     public abstract ExpressionStarter<TDb> ApplyFilter(ExpressionStarter<TDb> query, TFilter filter);
 }
