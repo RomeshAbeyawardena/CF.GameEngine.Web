@@ -36,11 +36,13 @@ switch ([TargetPath]$targetPath) {
             $versionComponent = 4
         }
         $includeSymbols = $true
+        break;
     }
     "Remote" {
         if ($skipVersionIncrement -eq $false) {
             $versionComponent = 3
         }
+        break;
     }
     default {
         Write-Host "Invalid target path specified. Use 1 for Local or 2 for Remote."
