@@ -60,12 +60,16 @@ if ($includeSymbols) {
     $properties.AppendChild($el)
 
     $el = $xmlDoc.CreateElement("SymbolPackageFormat")
-    $el.InnerText = "SymbolPackageFormat"
+    $el.InnerText = "snupkg"
     $properties.AppendChild($el)
 } else {
-    $properties.RemoveChild($properties.SelectSingleNode("IncludeSymbols"))
-    $properties.RemoveChild($properties.SelectSingleNode("IncludeSource"))
-    $properties.RemoveChild($properties.SelectSingleNode("SymbolPackageFormat"))
+    $remove = @("IncludeSymbols", "IncludeSource", "SymbolPackageFormat", "EmbedUntrackedSources")
+    foreach ($name in $remove) {
+        $node = $properties.SelectSingleNode($name)
+        if ($node) {
+            $properties.RemoveChild($node) | Out-Null
+        }
+    }
 }
 
 $xmlDoc.Save($propFile)
