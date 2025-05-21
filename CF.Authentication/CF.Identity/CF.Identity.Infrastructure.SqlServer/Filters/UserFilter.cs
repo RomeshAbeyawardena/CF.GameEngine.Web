@@ -31,7 +31,7 @@ public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionPr
     {
         query = query.And(x => x.ClientId == filter.ClientId);
 
-        if (!string.IsNullOrWhiteSpace(Username))
+        if (!string.IsNullOrWhiteSpace(filter.Username))
         {
             query = query.And(x => x.EmailAddressHmac == UsernameHmac || x.UsernameHmac == UsernameHmac);
         }

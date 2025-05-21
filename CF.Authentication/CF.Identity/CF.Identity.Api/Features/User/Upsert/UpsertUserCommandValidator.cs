@@ -1,0 +1,64 @@
+﻿using CF.Identity.Api.Endpoints.Users.Post;
+using CF.Identity.Api.Features.Clients.Get;
+using CF.Identity.Api.Features.User.Get;
+using FluentValidation;
+using IDFCR.Shared.Extensions;
+using MediatR;
+
+namespace CF.Identity.Api.Features.User.Upsert;
+
+public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
+{
+    private readonly IMediator _mediator;
+    public UpsertUserCommandValidator(IMediator mediator)
+    {
+        _mediator = mediator;
+        
+        RuleFor(x => x.User.Username).NotEmpty().WithMessage("Username is required.");
+        RuleFor(x => x.User.EmailAddress).NotEmpty().WithMessage("Email address is required.");
+        RuleFor(x => x.User.HashedPassword).NotEmpty().WithMessage("Password is required.");
+        RuleFor(x => x.User.Firstname).NotEmpty().WithMessage("Firstname is required.");
+        RuleFor(x => x.User.Lastname).NotEmpty().WithMessage("Lastname is required.");
+        RuleFor(x => x.User.PrimaryTelephoneNumber).NotEmpty().WithMessage("Primary telephone number is required.");
+        RuleFor(x => x).MustAsync(HaveValidClientAsync).WithName("Existing_Client");
+        RuleFor(x => x).MustAsync(BeUnique).WithName("Unique_Username");
+    }
+
+    public async Task<bool> BeUnique(UpsertUserCommand request, CancellationToken cancellationToken)
+    {
+        var user = request.User;
+        if (user.ClientId == Guid.Empty)
+        {
+            return false;
+        }
+
+        var existingUser = (await _mediator.Send(new FindUsersQuery(user.ClientId, user.Username, Bypass: true), cancellationToken)).GetOneOrDefault();
+
+        return existingUser is null;
+    }
+
+    public async Task<bool> HaveValidClientAsync(UpsertUserCommand request, CancellationToken cancellationToken)
+    {
+        var user = request.User;
+        if (user.ClientId != Guid.Empty)
+        {
+            var client = (await _mediator.Send(new FindClientByIdQuery(user.ClientId, Bypass: true), cancellationToken)).GetResultOrDefault();
+            return client is not null;
+        }
+
+        if (string.IsNullOrWhiteSpace(user.Client))
+        {
+            return false;
+        }
+
+        var result = (await _mediator.Send(new FindClientQuery(user.Client), cancellationToken)).GetOneOrDefault();
+
+        if(result is null)
+        {
+            return false;
+        }
+
+        request.User.ClientId = result.Id;
+        return true;
+    }
+}

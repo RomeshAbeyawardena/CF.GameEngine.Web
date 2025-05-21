@@ -29,7 +29,7 @@ public record UnitResult(Exception? Exception = null, UnitAction Action = UnitAc
 
     public IUnitResult AddMeta(string key, object? value)
     {
-        ArgumentException.ThrowIfNullOrEmpty(key);
+        ArgumentException.ThrowIfNullOrEmpty(key, nameof(key));
         _metaProperties.AddOrUpdate(key, value, (_, _) => value);   
         return this;
     }
