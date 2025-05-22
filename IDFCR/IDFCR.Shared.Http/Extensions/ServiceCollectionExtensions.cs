@@ -2,6 +2,7 @@
 using IDFCR.Shared.Http.Links;
 using IDFCR.Shared.Http.Mediatr;
 using IDFCR.Shared.Http.Mediatr.Scopes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics;
@@ -38,6 +39,11 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddLinkDependencies<TTargetAssemblyClass>(this IServiceCollection services)
     {
+        if(services.Any(s => s.ServiceType != typeof(IHttpContextAccessor)))
+        {
+            services.AddHttpContextAccessor();
+        }
+
         services.AddSingleton<ILinkKeyDirective, DefaultLinkKeyDirective>();
         services.AddSingleton<ILinkKeyDirectiveOptions>(LinkKeyDirectiveOptions.Default);
         services.Scan(c => c

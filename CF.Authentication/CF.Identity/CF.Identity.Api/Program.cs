@@ -26,19 +26,21 @@ builder.Services.AddBackendDependencies("CFIdentity")
     .AddScheme<AuthenticationSchemeOptions, AuthHandler>(SystemAuthenticationScheme.Name, options => {
     });
     
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthorization()
+    .AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = SystemAuthenticationScheme.Name;
     options.DefaultChallengeScheme = SystemAuthenticationScheme.Name;
 });
+
 var app = builder.Build();
-app.UseAuthentication();
-app.UseAuthorization();
-//app.UseAuthMiddleware();
-app.AddConnectEndpoints();
-app.AddUserEndpoints();
+app
+    .UseAuthentication()
+    .UseAuthorization();
+
+app
+    .AddConnectEndpoints()
+    .AddUserEndpoints();
 //app.UseRateLimiter();
 
 app.Run();
