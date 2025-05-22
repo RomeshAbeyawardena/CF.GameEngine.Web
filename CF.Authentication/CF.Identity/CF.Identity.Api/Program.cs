@@ -2,13 +2,14 @@ using CF.Identity.Api;
 using CF.Identity.Api.Endpoints.Connect;
 using CF.Identity.Api.Endpoints.Users;
 using CF.Identity.Api.Extensions;
+using CF.Identity.Api.Features;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
 using FluentValidation;
+using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,9 +22,7 @@ builder.Services.AddBackendDependencies("CFIdentity")
     .AddLinkDependencies<Program>()
     .AddValidatorsFromAssemblyContaining<Program>()
     //.AddRateLimiter(opt => opt.AddPolicy("",))
-    .AddSingleton<IAuthorizationHandler, ScopeClaimPolicyHandler>()
-    .AddSingleton<IAuthorizationPolicyProvider, ScopeClaimPolicyProvider>()
-    .AddAuthentication(SystemAuthenticationScheme.Name)
+    .AddScopeBasedAuthorization(SystemAuthenticationScheme.Name, Roles.AccessTokenRead)
     .AddScheme<AuthenticationSchemeOptions, AuthHandler>(SystemAuthenticationScheme.Name, options => {
     });
     
