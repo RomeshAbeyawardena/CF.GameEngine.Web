@@ -1,7 +1,7 @@
 using CF.GameEngine.Infrastructure.SqlServer.Extensions;
 using CF.GameEngine.Web.Api.Endpoints;
 using FluentValidation;
-using IDFC.Shared.FluentValidation.Extensions;
+using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using IDFCR.Shared.Http.Middleware;
 
