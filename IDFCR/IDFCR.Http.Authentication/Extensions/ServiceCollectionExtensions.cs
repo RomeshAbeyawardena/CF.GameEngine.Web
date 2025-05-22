@@ -9,7 +9,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IDefaultScopeClaimPolicy>(new DefaultScopeClaimPolicy(defaultScheme, defaultScopes))
             .AddSingleton<IAuthorizationPolicyProvider, ScopeClaimPolicyProvider>()
-            .AddSingleton<IAuthorizationHandler, ScopeClaimPolicyHandler>();
+            .AddSingleton<IAuthorizationHandler, ScopeClaimPolicyHandler>()
+            .AddAuthentication(defaultScheme);
 
         return services;
     }
