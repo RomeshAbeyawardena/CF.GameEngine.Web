@@ -48,7 +48,7 @@ public static class ApiResultExtensions
         {
             apiResult = new ApiResult<T>(result.Result, statusCode);
 
-            if (result.Action == UnitAction.Add)
+            if (result.Action == UnitAction.Add || result.Action == UnitAction.Update)
             {
                 apiResult.AddHeader("Location", $"{location}/{result.Result}");
             }
