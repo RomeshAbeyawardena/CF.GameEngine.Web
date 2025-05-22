@@ -22,9 +22,11 @@ internal class AccessTokenRepository(TimeProvider timeProvider, CFIdentityDbCont
                 continue;
             }
 
+            var utcNow = TimeProvider.GetUtcNow();
+            accessToken.SuspendedTimestampUtc = utcNow;
+            accessToken.ValidTo = utcNow;
             accessToken.RevokeReason = revokeReason;
             accessToken.RevokedBy = revokedBy;
-            accessToken.ValidTo = TimeProvider.GetUtcNow();
             updatedIds.Add(id);
         }
 
