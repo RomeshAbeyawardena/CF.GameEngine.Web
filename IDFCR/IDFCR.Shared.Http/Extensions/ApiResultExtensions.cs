@@ -20,6 +20,7 @@ public static class ApiResultExtensions
             UnitAction.Update => StatusCodes.Status200OK,
             UnitAction.Get => StatusCodes.Status200OK,
             UnitAction.Delete => StatusCodes.Status204NoContent,
+            UnitAction.Pending => StatusCodes.Status202Accepted,
             _ => StatusCodes.Status500InternalServerError,
         };
     }
@@ -51,6 +52,10 @@ public static class ApiResultExtensions
             if (result.Action == UnitAction.Add || result.Action == UnitAction.Update)
             {
                 apiResult.AddHeader("Location", $"{location}/{result.Result}");
+            }
+            else if(result.Action == UnitAction.Pending)
+            {
+                apiResult.AddHeader("Status-Location", $"{location}/{result.Result}/status");
             }
         }
 

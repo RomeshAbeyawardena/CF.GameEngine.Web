@@ -3,8 +3,9 @@
 public enum UnitAction
 {
     None = 0,
-    Add,
-    Get,
-    Update,
-    Delete
+    Add = 1,
+    Get = 2,
+    Update = 3,
+    Delete = 4,
+    Pending = 5
 }
