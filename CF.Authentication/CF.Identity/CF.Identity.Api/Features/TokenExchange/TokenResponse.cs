@@ -3,7 +3,7 @@
 public record TokenResponse(
     string AccessToken,
     string TokenType,
-    string ExpiresIn,
+    int ExpiresIn,
     string RefreshToken,
     string Scope
 );

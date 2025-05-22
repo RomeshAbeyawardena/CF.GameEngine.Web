@@ -103,7 +103,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         //TODO: Generate token
         var result = new UnitResult<TokenResponse>(new TokenResponse(referenceToken,
                 "Bearer",
-                TimeSpan.FromHours(1).Seconds.ToString(),
+                Convert.ToInt32(TimeSpan.FromHours(1).TotalSeconds),
                 refreshToken,
                 request.TokenRequest.Scope
             ));
