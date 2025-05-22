@@ -2,6 +2,7 @@
 using IDFCR.Http.Authentication;
 using IDFCR.Shared.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.Connect;
@@ -28,10 +29,12 @@ public static class IntrospectEndpoint
     public static IEndpointRouteBuilder AddIntrospectTokenEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost("/connect/introspect", IntrospectTokenAsync)
+
             .Accepts<IntrospectQuery>("application/x-www-form-urlencoded")
             .Produces<IntrospectResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
-            .RequireRateLimiting("authentication-rate-limits");
+            .RequireAuthorization(new AuthorizeAttribute());
+            //.RequireRateLimiting("authentication-rate-limits");
         return builder;
     }
 }
