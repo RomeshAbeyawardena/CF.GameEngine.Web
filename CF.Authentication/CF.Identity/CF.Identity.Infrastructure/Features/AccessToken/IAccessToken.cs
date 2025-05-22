@@ -6,7 +6,7 @@ public interface IAccessToken : IEditableAccessToken
 {
 }
 
-public interface IEditableAccessToken : IMappable<IAccessToken>, IAccessTokenSummary, IIdentifer
+public interface IEditableAccessToken : IMappable<IAccessToken>, IAccessTokenDetail, IIdentifer
 {
     string ReferenceToken { get; }
     string AccessToken { get; }
@@ -19,4 +19,10 @@ public interface IAccessTokenSummary : IValidity
     Guid UserId { get; }
     Guid ClientId { get; }
     string Type { get; }
+}
+
+public interface IAccessTokenDetail : IAccessTokenSummary
+{
+    string? RevokeReason { get; }
+    string? RevokedBy { get; }
 }

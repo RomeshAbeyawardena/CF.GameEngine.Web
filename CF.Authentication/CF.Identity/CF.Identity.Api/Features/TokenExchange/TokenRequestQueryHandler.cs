@@ -88,7 +88,8 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
 
         if (existingAccessTokens.HasValue)
         {
-            await mediator.Send(new BulkExpireAccessTokenCommand(existingAccessTokens.Result.Select(x => x.Id), true), cancellationToken);
+            await mediator.Send(new BulkExpireAccessTokenCommand(existingAccessTokens.Result.Select(x => x.Id), 
+                "Replaced by new token", "System", true), cancellationToken);
         }
 
         var accessToken = GenerateJwt(clientDetail, request.TokenRequest.Scope);

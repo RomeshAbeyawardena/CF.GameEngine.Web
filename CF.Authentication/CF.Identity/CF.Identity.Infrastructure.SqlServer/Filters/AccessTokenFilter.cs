@@ -15,11 +15,13 @@ internal class AccessTokenFilter(IAccessTokenFilter filter) : FilterBase<IAccess
     public DateTimeOffset? ValidFrom { get; set; }
     public DateTimeOffset? ValidTo { get; set; }
     public bool ShowAll { get; set; }
+    public Guid? UserId { get; set; }
 
     public override void Map(IAccessTokenFilter source)
     {
         ReferenceToken = source.ReferenceToken;
         ClientId = source.ClientId;
+        UserId = source.UserId;
         Type = source.Type;
         ValidFrom = source.ValidFrom;
         ValidTo = source.ValidTo;
@@ -40,7 +42,12 @@ internal class AccessTokenFilter(IAccessTokenFilter filter) : FilterBase<IAccess
 
         if (filter.ClientId.HasValue)
         {
-            query = query.And(x => x.ClientId == filter.ClientId.Value);
+            query = query.And(x => x.ClientId == filter.ClientId);
+        }
+
+        if (filter.UserId.HasValue)
+        {
+            query = query.And(x => x.UserId == filter.UserId);
         }
 
         if (!string.IsNullOrWhiteSpace(filter.Type))

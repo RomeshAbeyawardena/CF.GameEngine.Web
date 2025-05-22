@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Api.Features.TokenExchange;
 using IDFCR.Shared.Extensions;
+using IDFCR.Shared.Http;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,9 +8,10 @@ namespace CF.Identity.Api.Endpoints.Connect;
 
 public static class TokenEndpoint
 {
-    private static async Task<IResult> RequestTokenAsync([FromForm]TokenRequest tokenRequest, 
+    private static async Task<IResult> RequestTokenAsync([FromForm]TokenRequest tokenRequest, IHttpContextAccessor contextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
+        //contextAccessor.HttpContext!.User.rol)
 
         var response = await mediator.Send(new TokenRequestQuery(tokenRequest), cancellationToken);
         var result = response.GetResultOrDefault();

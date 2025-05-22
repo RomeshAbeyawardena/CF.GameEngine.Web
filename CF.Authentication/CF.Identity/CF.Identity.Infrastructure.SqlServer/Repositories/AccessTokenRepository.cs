@@ -9,7 +9,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 internal class AccessTokenRepository(TimeProvider timeProvider, CFIdentityDbContext context)
     : RepositoryBase<IAccessToken, DbAccessToken, AccessTokenDto>(timeProvider, context), IAccessTokenRepository
 {
-    public async Task<IUnitResultCollection<Guid>> BulkExpireAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
+    public async Task<IUnitResultCollection<Guid>> BulkExpireAsync(IEnumerable<Guid> ids, string? revokeReason, string? revokedBy, CancellationToken cancellationToken)
     {
         List<Guid> updatedIds = [];
         foreach(var id in ids)
@@ -22,6 +22,8 @@ internal class AccessTokenRepository(TimeProvider timeProvider, CFIdentityDbCont
                 continue;
             }
 
+            accessToken.RevokeReason = revokeReason;
+            accessToken.RevokedBy = revokedBy;
             accessToken.ValidTo = TimeProvider.GetUtcNow();
             updatedIds.Add(id);
         }

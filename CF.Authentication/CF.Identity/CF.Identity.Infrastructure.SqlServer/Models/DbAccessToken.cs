@@ -16,6 +16,8 @@ public class DbAccessToken : MappableBase<IAccessToken>, IAccessToken
     public DateTimeOffset? SuspendedTimestampUtc { get; set; }
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
+    public string? RevokeReason { get; set; }
+    public string? RevokedBy { get; set; }
 
     public virtual DbClient Client { get; set; } = null!;
 
@@ -33,5 +35,7 @@ public class DbAccessToken : MappableBase<IAccessToken>, IAccessToken
         Id = source.Id;
         UserId = source.UserId;
         SuspendedTimestampUtc = source.SuspendedTimestampUtc;
+        RevokedBy = source.RevokedBy;
+        RevokeReason = source.RevokeReason;
     }
 }

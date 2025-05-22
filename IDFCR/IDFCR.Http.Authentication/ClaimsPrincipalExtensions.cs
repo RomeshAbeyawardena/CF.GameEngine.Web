@@ -4,6 +4,9 @@ namespace CF.Identity.Api.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
+    public static IEnumerable<string> GetScopes(this ClaimsPrincipal user) =>
+        user.FindAll(ClaimTypes.Role).Select(x => x.Value);
+
     public static string? GetUserId(this ClaimsPrincipal user) =>
     user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
