@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="IDFCR.Shared.EntityFramework" Version="1.0.0.7" />
+    <PackageReference Include="IDFCR.Shared.EntityFramework" Version="1.0.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
   </ItemGroup>
   <ItemGroup>

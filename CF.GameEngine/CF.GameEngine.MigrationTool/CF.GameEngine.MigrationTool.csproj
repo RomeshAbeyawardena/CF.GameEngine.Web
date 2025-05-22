@@ -8,7 +8,7 @@
     <UserSecretsId>9315e900-337b-4d8c-9599-6b6a66b9af5e</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="IDFCR.Utility.Shared" Version="1.0.0.7" />
+    <PackageReference Include="IDFCR.Utility.Shared" Version="1.0.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

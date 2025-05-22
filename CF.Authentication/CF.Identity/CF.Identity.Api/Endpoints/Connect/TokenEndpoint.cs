@@ -32,6 +32,7 @@ public static class TokenEndpoint
         builder.MapPost("/connect/token", RequestTokenAsync)
             .Accepts<TokenRequest>("application/x-www-form-urlencoded")
             .DisableAntiforgery()
+            .AllowAnonymous()
             .Produces<TokenResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized);
             //.RequireRateLimiting("authentication-rate-limits");

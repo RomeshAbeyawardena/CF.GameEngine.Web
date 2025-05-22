@@ -5,6 +5,8 @@ public record TokenRequest(
     string ClientId,
     string ClientSecret,
     string Scope,
-    string RedirectUri,
     string Username
-);
+)
+{
+    public string? RedirectUri { get; init; }
+}

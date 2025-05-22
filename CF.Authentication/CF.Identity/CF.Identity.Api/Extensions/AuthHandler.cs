@@ -36,7 +36,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
     }
 
     protected async Task<AuthenticateResult?> ExtractAndValidateClientHeaderAsync()
-    {
+    {        
         var auth = Context.Request.Headers["x-auth"].FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(auth))
@@ -145,6 +145,13 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        if(Request.Headers.Authorization.Count < 1)
+        {
+            return AuthenticateResult.NoResult();
+        }
+
+        Logger.LogInformation("Path: {Path}",Request.Path);
+
         var result = await ExtractAndValidateClientHeaderAsync();
         if(result is not null)
         {
