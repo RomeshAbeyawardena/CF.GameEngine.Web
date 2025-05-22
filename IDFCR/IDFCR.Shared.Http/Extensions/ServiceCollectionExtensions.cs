@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddRoleRequirementServices(this IServiceCollection services)
     {
         return services
+            .AddScoped<IHttpContextWrapper, HttpContextWrapper>()
             .AddScoped<IScopedStateFactory, ScopedStateFactory>()
             .AddScoped<IScopedStateReader>(s => s.GetRequiredService<IScopedStateFactory>())
             .AddScoped<IScopedStateWriter>(s => s.GetRequiredService<IScopedStateFactory>())
