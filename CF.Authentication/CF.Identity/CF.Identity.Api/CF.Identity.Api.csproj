@@ -19,6 +19,8 @@
     <PackageReference Include="IDFCR.Shared.Http" Version="1.0.0.7" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="MediatR" Version="12.5.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+      <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CF.Identity.Infrastructure.SqlServer\CF.Identity.Infrastructure.SqlServer.csproj" />

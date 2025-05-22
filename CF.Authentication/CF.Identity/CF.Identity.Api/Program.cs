@@ -21,6 +21,22 @@ builder.Services.AddBackendDependencies("CFIdentity")
     .AddRoleRequirementServices()
     .AddLinkDependencies<Program>()
     .AddValidatorsFromAssemblyContaining<Program>()
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen(options =>
+    {
+        options.EnableAnnotations(); // If using [SwaggerOperation] etc.
+        options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+        {
+            Title = "Identity API",
+            Version = "v1",
+            Description = "Identity API"
+        });
+
+        options
+            .UseRuntimeServer()
+            .UseOpenApiVersionFromConfig()
+            .UseOpenApiContactDocumentFilter();
+    })
     //.AddRateLimiter(opt => opt.AddPolicy("",))
     .AddScopeBasedAuthorization(SystemAuthenticationScheme.Name, Roles.AccessTokenRead)
     .AddScheme<AuthenticationSchemeOptions, AuthHandler>(SystemAuthenticationScheme.Name, options => {

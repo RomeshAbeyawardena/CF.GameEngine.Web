@@ -12,27 +12,26 @@ var services = builder.Services
     .AddGenericExceptionHandler()
     .AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>()
         .AddFluentValidationRequestPreProcessor())
-    .AddValidatorsFromAssemblyContaining<Program>()
+    .AddRoleRequirementServices()
     .AddLinkDependencies<Program>()
+    .AddValidatorsFromAssemblyContaining<Program>()
     .AddBackendDependencies("GameEngineDb")
     .AddEndpointsApiExplorer()
-    .AddHttpContextAccessor();
-
-services.AddSwaggerGen(options =>
-{
-    options.EnableAnnotations(); // If using [SwaggerOperation] etc.
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    .AddSwaggerGen(options =>
     {
-        Title = "GameEngine API",
-        Version = "v1",
-        Description = "GameEngine API"
-    });
+        options.EnableAnnotations(); // If using [SwaggerOperation] etc.
+        options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+        {
+            Title = "GameEngine API",
+            Version = "v1",
+            Description = "GameEngine API"
+        });
 
-    options
-        .UseRuntimeServer()
-        .UseOpenApiVersionFromConfig()
-        .UseOpenApiContactDocumentFilter();
-});
+        options
+            .UseRuntimeServer()
+            .UseOpenApiVersionFromConfig()
+            .UseOpenApiContactDocumentFilter();
+    });
 
 var app = builder.Build();
 app.UseStaticFiles();
