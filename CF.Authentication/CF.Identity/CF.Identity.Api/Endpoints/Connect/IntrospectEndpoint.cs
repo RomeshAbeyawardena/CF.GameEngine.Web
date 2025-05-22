@@ -7,25 +7,19 @@ namespace CF.Identity.Api.Endpoints.Connect;
 
 public static class IntrospectEndpoint
 {
-    public static async Task<IResult> IntrospectTokenAsync([FromForm]string token, 
+    public static async Task<IResult> IntrospectTokenAsync([FromForm] string token,
         IHttpContextAccessor contextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
-        var (success, client) = await contextAccessor.TryAuthenticateAsync(cancellationToken);
-        if (success && client is not null)
+        var result = (await mediator.Send(new IntrospectQuery(token, client), cancellationToken))
+            .GetResultOrDefault();
+
+        if (result is null)
         {
-            var result = (await mediator.Send(new IntrospectQuery(token, client), cancellationToken))
-                .GetResultOrDefault();
-
-            if (result is null)
-            {
-                return Results.Ok(new IntrospectBaseResponse(false));
-            }
-
-            return Results.Ok(result);
+            return Results.Ok(new IntrospectBaseResponse(false));
         }
 
-        return Results.Unauthorized();
+        return Results.Ok(result);
     }
 
     public static IEndpointRouteBuilder AddIntrospectTokenEndpoint(this IEndpointRouteBuilder builder)
