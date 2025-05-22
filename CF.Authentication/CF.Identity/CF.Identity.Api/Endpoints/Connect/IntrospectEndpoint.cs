@@ -1,4 +1,5 @@
 ﻿using CF.Identity.Api.Features.Introspect;
+using IDFCR.Http.Authentication;
 using IDFCR.Shared.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,8 @@ public static class IntrospectEndpoint
         IHttpContextAccessor contextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
-        var result = (await mediator.Send(new IntrospectQuery(token, client), cancellationToken))
+        var client = contextAccessor.HttpContext!.User.GetClient();
+        var result = (await mediator.Send(new IntrospectQuery(token, client.Id.GetValueOrDefault()), cancellationToken))
             .GetResultOrDefault();
 
         if (result is null)

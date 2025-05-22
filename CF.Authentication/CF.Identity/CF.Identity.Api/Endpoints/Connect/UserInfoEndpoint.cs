@@ -1,6 +1,6 @@
-﻿using CF.Identity.Api.Extensions;
-using CF.Identity.Api.Features.User.Info;
+﻿using CF.Identity.Api.Features.User.Info;
 using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Http.Authentication;
 using Microsoft.AspNetCore.Authorization;
 
 namespace CF.Identity.Api.Endpoints.Connect;
