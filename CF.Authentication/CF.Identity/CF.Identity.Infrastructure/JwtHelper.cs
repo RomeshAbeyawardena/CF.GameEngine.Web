@@ -16,7 +16,7 @@ public static class JwtHelper
         return Convert.ToBase64String(buffer);
     }
 
-    public static string GenerateJwt(IClient client, string scope, IJwtSettings jwtSettings)
+    public static string GenerateJwt(IClient client, string scope, IJwtSettings jwtSettings, DateTime? customExpiry = null)
     {
         //TODO come from configuration shared with consumer. /jwks.json
         var claims = new[]
@@ -33,7 +33,7 @@ public static class JwtHelper
             issuer: jwtSettings.Issuer,
             audience: jwtSettings.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
+            expires: customExpiry ?? DateTime.UtcNow.AddHours(1),
             signingCredentials: creds
         );
 

@@ -35,16 +35,17 @@ internal static partial class Seed
             var refreshToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 16);
             var hashedRefreshToken = clientCredentialHasher.Hash(refreshToken, client);
 
+            var validity = DateTimeOffset.UtcNow.AddYears(1);
             var newApiKey = new DbAccessToken
             {
                 Id = Guid.NewGuid(),
                 ReferenceToken = hashedReferenceToken,
                 RefreshToken = hashedRefreshToken,
                 AccessToken = JwtHelper.GenerateJwt(client, string.Join(' ', DefaultScopes)
-                , jwtSettings),
+                , jwtSettings, validity.DateTime),
                 Type = "api_key",
                 ValidFrom = DateTimeOffset.UtcNow,
-                ValidTo = DateTimeOffset.UtcNow.AddYears(1)
+                ValidTo = validity
             };
 
             if (isSystemClientInFlight)
