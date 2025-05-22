@@ -9,13 +9,10 @@ namespace CF.Identity.Api.Endpoints.Connect;
 
 public static class TokenEndpoint
 {
-    private static async Task<IResult> RequestTokenAsync([FromForm]TokenRequest tokenRequest, IHttpContextAccessor contextAccessor,
+    private static async Task<IResult> RequestTokenAsync([FromForm]TokenRequest tokenRequest,
         IMediator mediator, CancellationToken cancellationToken)
     {
-        //Scopes the current user has access to:
-        var scopes = contextAccessor.HttpContext!.User.GetScopes();
-
-        var response = await mediator.Send(new TokenRequestQuery(tokenRequest, scopes), cancellationToken);
+        var response = await mediator.Send(new TokenRequestQuery(tokenRequest), cancellationToken);
         var result = response.GetResultOrDefault();
 
         if(result is not null)

@@ -56,20 +56,6 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             return new UnitResult(new UnauthorizedAccessException("Scope not provided")).As<TokenResponse>();
         }
 
-        var requestedScopes = request.TokenRequest.Scope.Split();
-        var scopesResponse = await mediator.Send(new FindScopeQuery(clientDetail.Id, Keys: requestedScopes, Bypass: true), cancellationToken);
-        var scopes = scopesResponse.AsList();
-
-        if (request.PermissibleScopes != null && !requestedScopes.All(y => request.PermissibleScopes.Any(x => x.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
-        {
-            return new UnitResult(new Exception("Invalid scope requested, can not assign scopes you are not authorised to access")).As<TokenResponse>();
-        }
-
-        if (!requestedScopes.All(y => scopes.Any(x => x.Key.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
-        {
-            return new UnitResult(new Exception("Invalid scope requested")).As<TokenResponse>();
-        }
-
         var isSystemUser = string.IsNullOrEmpty(request.TokenRequest.Username);
 
         string? username = null;
@@ -86,6 +72,15 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         {
             var prefix = isSystemUser ? "System u" : "U";
             return new UnitResult(new UnauthorizedAccessException($"{prefix}ser not found")).As<TokenResponse>();
+        }
+
+        var requestedScopes = request.TokenRequest.Scope.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var scopesResponse = await mediator.Send(new FindScopeQuery(clientDetail.Id, Keys: requestedScopes, Bypass: true), cancellationToken);
+        var scopes = scopesResponse.AsList();
+
+        if (!requestedScopes.All(y => scopes.Any(x => x.Key.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
+        {
+            return new UnitResult(new Exception("Invalid scope requested")).As<TokenResponse>();
         }
 
         var existingAccessTokens = await mediator.Send(new FindAccessTokenQuery(ClientId: clientDetail.Id, UserId: systemUser.Id,
