@@ -19,6 +19,9 @@ public static class ClaimsPrincipalExtensions
     public static (string?, string?) GetClientInfo(this ClaimsPrincipal user) =>
         (user.FindFirst(ClaimTypes.GroupSid)?.Value, user.FindFirst(ClaimTypes.Sid)?.Value);
 
+    public static string GetAccessToken(this ClaimsPrincipal user) =>
+        user.FindFirst(ClaimTypes.Authentication)?.Value ?? string.Empty;
+
     public static IEnumerable<string> GetScopes(this ClaimsPrincipal user) =>
         user.FindAll(ClaimTypes.Role).Select(x => x.Value);
 

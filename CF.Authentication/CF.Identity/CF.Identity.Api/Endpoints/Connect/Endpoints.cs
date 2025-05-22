@@ -5,7 +5,7 @@ public static class Endpoints
     public static IEndpointRouteBuilder AddConnectEndpoints(this IEndpointRouteBuilder builder)
     {
         return builder
-            //.AddIntrospectTokenEndpoint()
+            .AddIntrospectTokenEndpoint()
             .AddTokenRequestEndpoint()
             .AddUserInfoEndpoint();
     }

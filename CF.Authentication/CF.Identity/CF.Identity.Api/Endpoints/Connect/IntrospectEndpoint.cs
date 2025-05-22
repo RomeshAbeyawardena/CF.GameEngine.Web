@@ -8,11 +8,12 @@ namespace CF.Identity.Api.Endpoints.Connect;
 
 public static class IntrospectEndpoint
 {
-    public static async Task<IResult> IntrospectTokenAsync([FromForm] string token,
+    public static async Task<IResult> IntrospectTokenAsync(
         IHttpContextAccessor contextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
         var client = contextAccessor.HttpContext!.User.GetClient();
+        var token = contextAccessor.HttpContext.User.GetAccessToken();
         var result = (await mediator.Send(new IntrospectQuery(token, client.Id.GetValueOrDefault()), cancellationToken))
             .GetResultOrDefault();
 

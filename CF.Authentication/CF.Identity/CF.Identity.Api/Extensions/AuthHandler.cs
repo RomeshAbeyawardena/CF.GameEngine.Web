@@ -118,7 +118,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         const string Bearer = "Bearer";
         var claims = new List<Claim>
         {
-            new(ClaimTypes.GroupSid, client.ClientId),
+            new(ClaimTypes.GroupSid, client.ClientDetails.Id.ToString()),
             new(ClaimTypes.Sid, client.ClientDetails.Name),
             new(ClaimTypes.Authentication, accessToken)
         };
