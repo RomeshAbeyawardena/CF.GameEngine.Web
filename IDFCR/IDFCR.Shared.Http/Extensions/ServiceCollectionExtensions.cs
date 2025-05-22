@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddCustomRoleRequirementHandlerInterceptor(this IServiceCollection services, Type serviceType)
     {
-        if (!serviceType.IsGenericType || serviceType.GenericTypeArguments.Length != 2)
+        if (!serviceType.IsGenericType || serviceType.GetGenericArguments().Length != 1)
         {
             throw new InvalidCastException($"Service type {serviceType} is not a generic type.");
         }

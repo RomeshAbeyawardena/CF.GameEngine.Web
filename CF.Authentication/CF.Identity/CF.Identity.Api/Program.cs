@@ -8,7 +8,6 @@ using FluentValidation;
 using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
-
 using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,7 +37,7 @@ builder.Services.AddBackendDependencies("CFIdentity")
             .UseOpenApiContactDocumentFilter();
     })
     //.AddRateLimiter(opt => opt.AddPolicy("",))
-    .AddScopeBasedAuthorization(SystemAuthenticationScheme.Name, Roles.AccessTokenRead)
+    .AddScopeBasedAuthorization(SystemAuthenticationScheme.Name, Roles.GlobalRead)
     .AddScheme<AuthenticationSchemeOptions, AuthHandler>(SystemAuthenticationScheme.Name, options => {
     });
     
