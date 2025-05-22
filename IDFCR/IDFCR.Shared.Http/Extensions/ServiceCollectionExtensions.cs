@@ -16,12 +16,23 @@ public static class ServiceCollectionExtensions
             .AddOpenBehavior(typeof(RoleRequirementPrequestHandler<,>));
     }
 
+    public static IServiceCollection AddCustomRoleRequirementHandlerInterceptor(this IServiceCollection services, Type serviceType)
+    {
+        if (!serviceType.IsGenericType || serviceType.GenericTypeArguments.Length != 2)
+        {
+            throw new InvalidCastException($"Service type {serviceType} is not a generic type.");
+        }
+
+        return services.AddScoped(typeof(IRoleRequirementHandlerInterceptor<>), serviceType);
+    }
+
     public static IServiceCollection AddRoleRequirementServices(this IServiceCollection services)
     {
         return services
             .AddScoped<IScopedStateFactory, ScopedStateFactory>()
             .AddScoped<IScopedStateReader>(s => s.GetRequiredService<IScopedStateFactory>())
-            .AddScoped<IScopedStateWriter>(s => s.GetRequiredService<IScopedStateFactory>());
+            .AddScoped<IScopedStateWriter>(s => s.GetRequiredService<IScopedStateFactory>())
+            .AddCustomRoleRequirementHandlerInterceptor(typeof(ScopeStateRoleRequirementInterceptor<>));
     }
 
     public static IServiceCollection AddLinkDependencies<TTargetAssemblyClass>(this IServiceCollection services)
