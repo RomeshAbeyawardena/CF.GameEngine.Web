@@ -18,7 +18,12 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
         {
             if (await interceptor.CanInterceptAsync(context, request, cancellationToken))
             {
-                interceptorResults.Add(await interceptor.InterceptAsync(context, request, cancellationToken));
+                var interceptorType = interceptor.GetType();
+                logger.LogTrace("[{type}]: Interceptor of type {interceptorType} executed", interceptor.Type, interceptorType);
+                bool result;
+                interceptorResults.Add(result = await interceptor.InterceptAsync(context, request, cancellationToken));
+
+                logger.LogTrace("Interceptor of type {type}: Validation {result}", interceptor.GetType(), result ? "passed" : "failed");
             }
         }
 
