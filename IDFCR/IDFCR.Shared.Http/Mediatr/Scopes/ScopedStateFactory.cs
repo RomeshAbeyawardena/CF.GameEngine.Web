@@ -9,6 +9,12 @@ namespace IDFCR.Shared.Http.Mediatr.Scopes
     {
         private readonly ConcurrentDictionary<string, IScopedState> state = [];
 
+        public async Task<bool> Contains(string key)
+        {
+            await Task.CompletedTask;
+            return state.ContainsKey(key);
+        }
+
         public async Task<IUnitResult<IScopedState>> ReadAsync(string key, CancellationToken cancellationToken)
         {
             await Task.CompletedTask;

@@ -1,27 +1,43 @@
 ﻿using IDFCR.Shared.Abstractions;
-using IDFCR.Shared.Http.Extensions;
-using IDFCR.Shared.Http.Mediatr.Scopes;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace IDFCR.Shared.Http.Mediatr;
 
-public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleRequirementPrequestHandler<TRequest, TResponse>> logger, 
-    IHttpContextAccessor contextAccessor, IScopedStateReader scopedStateReader) : IPipelineBehavior<TRequest, TResponse>
+public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleRequirementPrequestHandler<TRequest, TResponse>> logger,
+    IHttpContextAccessor contextAccessor, IEnumerable<IRoleRequirementHandlerInterceptor<TRequest>> roleRequirementHandlerInterceptors) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull, IRequest<TResponse>, IRoleRequirement
     where TResponse : class
 {
+    private async Task<bool> RunAllAsync(HttpContext context,
+        IEnumerable<IRoleRequirementHandlerInterceptor<TRequest>> interceptors, TRequest request, CancellationToken cancellationToken)
+    {
+        List<bool> interceptorResults = [];
+        foreach (var interceptor in interceptors)
+        {
+            if (await interceptor.CanInterceptAsync(context, request, cancellationToken))
+            {
+                interceptorResults.Add(await interceptor.InterceptAsync(context, request, cancellationToken));
+            }
+        }
+
+        return interceptorResults.TrueForAll(x => x);
+    }
+
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (await scopedStateReader.IsScopedBypassInvokedAsync(cancellationToken) || request.Bypass)
+        var context = contextAccessor.HttpContext ?? throw new InvalidOperationException("This is not running in a valid HttpContext");
+
+        var byPassInterceptors = roleRequirementHandlerInterceptors
+            .Where(x => x.Type == RoleRequirementHandlerInterceptorType.Bypass);
+
+        if (await RunAllAsync(context, byPassInterceptors, request, cancellationToken) || request.Bypass)
         {
             logger.LogWarning("Bypassing role requirement for request {RequestType}, ensure this was not used by a front-end facing endpoint that required authorisation",
                 request.GetType().Name);
             return await next(cancellationToken);
         }
-
-        var context = contextAccessor.HttpContext ?? throw new InvalidOperationException("This is not running in a valid HttpContext");
 
         var user = context.User;
         var identity = user.Identity;
@@ -48,7 +64,14 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
             throw new UnauthorizedAccessException("User is not authorised");
         }
 
-        return await next(cancellationToken);
+        var interceptInterceptors = roleRequirementHandlerInterceptors
+            .Where(x => x.Type == RoleRequirementHandlerInterceptorType.Extension);
+
+        if (await RunAllAsync(context, interceptInterceptors, request, cancellationToken))
+        {
+            return await next(cancellationToken);
+        }
+
+        throw new UnauthorizedAccessException("User is not authorised");
     }
 }
-
