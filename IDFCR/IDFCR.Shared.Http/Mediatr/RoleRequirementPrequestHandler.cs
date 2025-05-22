@@ -14,14 +14,15 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
         IEnumerable<IRoleRequirementHandlerInterceptor<TRequest>> interceptors, TRequest request, CancellationToken cancellationToken)
     {
         List<bool> interceptorResults = [];
+        var httpContextWrapper = new HttpContextWrapper(contextAccessor);
         foreach (var interceptor in interceptors)
         {
-            if (await interceptor.CanInterceptAsync(context, request, cancellationToken))
+            if (await interceptor.CanInterceptAsync(httpContextWrapper, request, cancellationToken))
             {
                 var interceptorType = interceptor.GetType();
                 logger.LogTrace("[{type}]: Interceptor of type {interceptorType} executed", interceptor.Type, interceptorType);
                 bool result;
-                interceptorResults.Add(result = await interceptor.InterceptAsync(context, request, cancellationToken));
+                interceptorResults.Add(result = await interceptor.InterceptAsync(httpContextWrapper, request, cancellationToken));
 
                 logger.LogTrace("Interceptor of type {type}: Validation {result}", interceptor.GetType(), result ? "passed" : "failed");
             }

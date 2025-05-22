@@ -13,8 +13,8 @@ public enum RoleRequirementHandlerInterceptorType
 public interface IRoleRequirementHandlerInterceptor<TRequest>
 {
     RoleRequirementHandlerInterceptorType Type { get; }
-    Task<bool> CanInterceptAsync(HttpContext context, TRequest request, CancellationToken cancellationToken);
-    Task<bool> InterceptAsync(HttpContext context, TRequest request, CancellationToken cancellationToken);
+    Task<bool> CanInterceptAsync(IHttpContextWrapper context, TRequest request, CancellationToken cancellationToken);
+    Task<bool> InterceptAsync(IHttpContextWrapper context, TRequest request, CancellationToken cancellationToken);
 }
 
 
@@ -23,12 +23,12 @@ public class ScopeStateRoleRequirementInterceptor<TRequest>(IScopedStateReader s
 {
     public RoleRequirementHandlerInterceptorType Type => RoleRequirementHandlerInterceptorType.Bypass;
 
-    public async Task<bool> CanInterceptAsync(HttpContext context, TRequest request, CancellationToken cancellationToken)
+    public async Task<bool> CanInterceptAsync(IHttpContextWrapper context, TRequest request, CancellationToken cancellationToken)
     {
         return await scopedStateReader.Contains(ScopeConstants.ScopedBypassKey);
     }
 
-    public async Task<bool> InterceptAsync(HttpContext context, TRequest request, CancellationToken cancellationToken)
+    public async Task<bool> InterceptAsync(IHttpContextWrapper context, TRequest request, CancellationToken cancellationToken)
     {
         return await scopedStateReader.IsScopedBypassInvokedAsync(cancellationToken);
     }
