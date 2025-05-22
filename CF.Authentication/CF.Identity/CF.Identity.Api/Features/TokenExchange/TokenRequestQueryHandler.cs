@@ -59,6 +59,12 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         var requestedScopes = request.TokenRequest.Scope.Split();
         var scopesResponse = await mediator.Send(new FindScopeQuery(clientDetail.Id, Keys: requestedScopes, Bypass: true), cancellationToken);
         var scopes = scopesResponse.AsList();
+
+        if (request.PermissibleScopes != null && !requestedScopes.All(y => request.PermissibleScopes.Any(x => x.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
+        {
+            return new UnitResult(new Exception("Invalid scope requested, can not assign scopes you are not authorised to access")).As<TokenResponse>();
+        }
+
         if (!requestedScopes.All(y => scopes.Any(x => x.Key.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
         {
             return new UnitResult(new Exception("Invalid scope requested")).As<TokenResponse>();
