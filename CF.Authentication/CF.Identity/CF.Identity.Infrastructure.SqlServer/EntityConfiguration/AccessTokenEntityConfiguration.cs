@@ -20,6 +20,8 @@ internal class AccessTokenEntityConfiguration : IEntityTypeConfiguration<DbAcces
         builder.Property(x => x.ValidFrom).IsRequired().HasColumnType("datetimeoffset(7)");
         builder.Property(x => x.ValidTo).HasColumnType("datetimeoffset(7)");
         builder.Property(x => x.SuspendedTimestampUtc).HasColumnType("datetimeoffset(7)");
+        builder.Property(x => x.RevokedBy).HasMaxLength(250);
+        builder.Property(x => x.RevokeReason).HasMaxLength(600);
         builder.HasOne(x => x.Client)
             .WithMany()
             .HasForeignKey(x => x.ClientId)

@@ -9,3 +9,4 @@ if (-not $migrationName) {
 
 cd "CF.Identity.Infrastructure.SqlServer"
 iex "dotnet ef migrations add '$migrationName' --startup-project '..\CF.Identity.MigrationUtility'"
+cd ..
