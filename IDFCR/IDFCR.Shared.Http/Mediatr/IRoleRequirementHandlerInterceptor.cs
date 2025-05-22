@@ -17,8 +17,6 @@ public interface IRoleRequirementHandlerInterceptor<TRequest>
     Task<bool> InterceptAsync(IHttpContextWrapper context, TRequest request, CancellationToken cancellationToken);
 }
 
-
-        
 public class ScopeStateRoleRequirementInterceptor<TRequest>(IScopedStateReader scopedStateReader) : IRoleRequirementHandlerInterceptor<TRequest>
 {
     public RoleRequirementHandlerInterceptorType Type => RoleRequirementHandlerInterceptorType.Bypass;
