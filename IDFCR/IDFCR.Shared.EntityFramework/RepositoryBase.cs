@@ -19,7 +19,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     where TDbContext : DbContext
 {
     private DbSet<TDb> DbSet => Context.Set<TDb>();
-
+    protected TimeProvider TimeProvider => timeProvider;
     protected ExpressionStarter<TDb> Builder => PredicateBuilder.New<TDb>(true);
     protected virtual Func<T, TDb> Map => x => x.Map<TDb>();
     protected virtual  Func<TDb, T> MapDto => x => x.Map<T>();

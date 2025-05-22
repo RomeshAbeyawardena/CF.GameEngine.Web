@@ -6,6 +6,7 @@ public interface IAccessTokenFilter : IFilter<IAccessTokenFilter>, IValidityFilt
 {
     bool ShowAll { get; }
     string? ReferenceToken { get; }
+    Guid? UserId { get; }
     Guid? ClientId { get; }
     string? Type { get; }
 }

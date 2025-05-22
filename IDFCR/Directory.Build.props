@@ -1,13 +1,13 @@
 <Project>
   <PropertyGroup>
     <Company>Rho Incorporated</Company>
-    <Version>1.0.0.9</Version>
+    <Version>1.0.0.10</Version>
     <!-- Used for NuGet packages and general versioning -->
-    <AssemblyVersion>1.0.0.9</AssemblyVersion>
+    <AssemblyVersion>1.0.0.10</AssemblyVersion>
     <!-- Major.Minor.Build.Revision -->
-    <FileVersion>1.0.0.9</FileVersion>
+    <FileVersion>1.0.0.10</FileVersion>
     <!-- Optional: what shows in Explorer file properties -->
-    <InformationalVersion>1.0.0.9</InformationalVersion>
+    <InformationalVersion>1.0.0.10</InformationalVersion>
     <!-- Rich Git/hash metadata -->
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>

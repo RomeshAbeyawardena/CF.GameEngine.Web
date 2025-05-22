@@ -1,4 +1,6 @@
 ﻿using CF.Identity.Api.Features.AccessTokens;
+using CF.Identity.Api.Features.AccessTokens.Delete;
+using CF.Identity.Api.Features.AccessTokens.Get;
 using CF.Identity.Api.Features.Clients;
 using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.Scopes.Get;
@@ -80,6 +82,15 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             return new UnitResult(new UnauthorizedAccessException($"{prefix}ser not found")).As<TokenResponse>();
         }
 
+        var existingAccessTokens = await mediator.Send(new FindAccessTokenQuery(ClientId: clientDetail.Id, UserId: systemUser.Id,
+            Type: request.TokenRequest.GrantType, ValidFrom: dateRange.FromValue, ValidTo: dateRange.ToValue,
+            Bypass: true), cancellationToken);
+
+        if (existingAccessTokens.HasValue)
+        {
+            await mediator.Send(new BulkExpireAccessTokenCommand(existingAccessTokens.Result.Select(x => x.Id), true), cancellationToken);
+        }
+
         var accessToken = GenerateJwt(clientDetail, request.TokenRequest.Scope);
 
         var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
@@ -100,7 +111,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             UserId = systemUser.Id,
         }, true), cancellationToken);
 
-        //TODO: Generate token
+        
         var result = new UnitResult<TokenResponse>(new TokenResponse(referenceToken,
                 "Bearer",
                 Convert.ToInt32(TimeSpan.FromHours(1).TotalSeconds),
