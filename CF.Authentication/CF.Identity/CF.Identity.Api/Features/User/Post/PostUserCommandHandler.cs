@@ -11,6 +11,7 @@ public class PostUserCommandHandler(IMediator mediator, ITransactionalUnitOfWork
     public async Task<IUnitResult<Guid>> Handle(PostUserCommand request, CancellationToken cancellationToken)
     { 
         var result = await mediator.Send(new UpsertUserCommand(request.User), cancellationToken);
+
         await transactionalUnitOfWork.SaveChangesAsync(cancellationToken);
         return result;
     }

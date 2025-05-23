@@ -21,6 +21,8 @@ public class EditableUserDto : MappableBase<IUser>, IEditableUser, IUser
     public string? Metadata { get; set; }
     public string PrimaryTelephoneNumber { get; set; } = null!;
 
+    public string? Scope { get; set; }
+
     public override void Map(IUser source)
     {
         EmailAddress = source.EmailAddress;

@@ -8,6 +8,7 @@ public record PostRequest(string Username, string EmailAddress, string Password,
 {
     public string? Client { get; set; } 
     public Guid? ClientId { get; set; }
+    public string? Scope { get; set; }
 
     protected override IUser Source => new Features.User.EditableUserDto
     {
@@ -20,7 +21,8 @@ public record PostRequest(string Username, string EmailAddress, string Password,
         Middlename = Middlename,
         Lastname = Lastname,
         PrimaryTelephoneNumber = PrimaryTelephoneNumber,
-        PreferredUsername = PreferredUsername ?? Username
+        PreferredUsername = PreferredUsername ?? Username,
+        Scope = Scope
     };
 
 
