@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Api.Features.Clients.Upsert;
-using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.EntityFramework;
