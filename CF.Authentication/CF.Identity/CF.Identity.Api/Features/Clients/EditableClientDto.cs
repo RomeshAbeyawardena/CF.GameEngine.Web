@@ -8,8 +8,8 @@ public class EditableClientDto : MappableBase<IClient>, IEditableClient, IClient
     protected override IClient Source => this;
     public string? SecretHash { get; set; }
     public DateTimeOffset? SuspendedTimestampUtc { get; set; }
-    public string Reference { get; set; }
-    public string Name { get; set; }
+    public string Reference { get; set; } = null!;
+    public string Name { get; set; } = null!;
     public string? DisplayName { get; set; }
     public bool IsSystem { get; set; }
     public Guid Id { get; set; }
@@ -18,6 +18,14 @@ public class EditableClientDto : MappableBase<IClient>, IEditableClient, IClient
 
     public override void Map(IClient source)
     {
-        throw new NotImplementedException();
+        SecretHash = source.SecretHash;
+        SuspendedTimestampUtc = source.SuspendedTimestampUtc;
+        Reference = source.Reference;
+        Name = source.Name;
+        DisplayName = source.DisplayName;
+        IsSystem = source.IsSystem;
+        Id = source.Id;
+        ValidFrom = source.ValidFrom;
+        ValidTo = source.ValidTo;
     }
 }

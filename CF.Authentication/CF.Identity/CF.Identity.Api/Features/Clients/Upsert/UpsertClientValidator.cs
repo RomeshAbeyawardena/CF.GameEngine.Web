@@ -30,7 +30,7 @@ public class UpsertClientValidator : AbstractValidator<PostClientCommand>
 
     public async Task<bool> BeUnique(EditableClientDto client, CancellationToken cancellationToken)
     {
-        var result = (await _mediator.Send(new FindClientQuery(client.Reference), cancellationToken)).GetResultOrDefault();
+        var result = (await _mediator.Send(new FindClientQuery(client.Reference), cancellationToken)).GetOneOrDefault();
         
         return result is null;
     }

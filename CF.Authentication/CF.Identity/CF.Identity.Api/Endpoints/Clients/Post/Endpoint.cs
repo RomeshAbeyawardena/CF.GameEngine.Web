@@ -21,6 +21,7 @@ public static class Endpoint
     public static IEndpointRouteBuilder AddPostClientEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost(Route.BaseUrl, SaveClientAsync)
+            .DisableAntiforgery()
             .Produces<Guid>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status403Forbidden)
