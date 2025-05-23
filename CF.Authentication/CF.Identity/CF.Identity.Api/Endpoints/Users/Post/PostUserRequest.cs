@@ -3,7 +3,7 @@ using IDFCR.Shared.Abstractions.Records;
 
 namespace CF.Identity.Api.Endpoints.Users.Post;
 
-public record PostRequest(string Username, string EmailAddress, string Password, string Firstname, string? Middlename, string Lastname, 
+public record PostUserRequest(string Username, string EmailAddress, string Password, string Firstname, string? Middlename, string Lastname, 
     string PrimaryTelephoneNumber, string? PreferredUsername = null) : MappableBase<IUser>
 {
     public string? Client { get; set; } 

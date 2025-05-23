@@ -8,7 +8,7 @@ namespace CF.Identity.Api.Endpoints.Clients.Post;
 
 public static class Endpoint
 {
-    public static async Task<IResult> SaveClientAsync([FromForm] PostRequest request, 
+    public static async Task<IResult> SaveClientAsync([FromForm] PostClientRequest request, 
         IMediator mediator, IHttpContextAccessor httpContextAccessor,
         CancellationToken cancellationToken)
     {

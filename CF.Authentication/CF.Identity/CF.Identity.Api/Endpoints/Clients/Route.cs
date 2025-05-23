@@ -2,6 +2,6 @@
 
 public static class Route
 {
-    public const string BaseUrl = "/api/clients";
+    public const string BaseUrl = "/api/client";
     public const string Tag = "Clients";
 }

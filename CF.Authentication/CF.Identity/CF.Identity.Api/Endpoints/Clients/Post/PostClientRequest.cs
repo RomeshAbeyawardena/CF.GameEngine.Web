@@ -4,7 +4,7 @@ using IDFCR.Shared.Abstractions.Records;
 
 namespace CF.Identity.Api.Endpoints.Clients.Post;
 
-public record PostRequest(string Reference, string Name, string? Secret, DateTimeOffset ValidFrom)
+public record PostClientRequest(string Reference, string Name, string? Secret, DateTimeOffset ValidFrom)
     : MappableBase<IClient>
 {
     protected override IClient Source => new EditableClientDto {

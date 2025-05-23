@@ -1,4 +1,4 @@
-﻿using CF.Identity.Api.Endpoints.Clients.Get;
+﻿using CF.Identity.Api.Endpoints.Clients;
 using CF.Identity.Api.Endpoints.Connect;
 using CF.Identity.Api.Endpoints.Users;
 

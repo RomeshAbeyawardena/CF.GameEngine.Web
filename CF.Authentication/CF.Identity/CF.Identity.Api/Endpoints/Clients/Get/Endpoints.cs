@@ -18,7 +18,7 @@ public static class Endpoints
 
     //public static async Task<IResult> GetPagedClientsAsync()
 
-    public static IEndpointRouteBuilder AddClientEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder AddGetClientEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), GetClientAsync)
             .WithName(nameof(GetClientAsync))
