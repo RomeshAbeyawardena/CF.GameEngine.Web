@@ -6,8 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class ClientRepository(TimeProvider timeProvider, CFIdentityDbContext context) : RepositoryBase<IClient, DbClient, ClientDto>(timeProvider, context), IClientRepository
+internal class ClientRepository(IClientCredentialHasher clientCredentialHasher,
+    TimeProvider timeProvider, CFIdentityDbContext context) : RepositoryBase<IClient, DbClient, ClientDto>(timeProvider, context), IClientRepository
 {
+    protected override void OnAdd(DbClient db, ClientDto source)
+    {
+        if (!string.IsNullOrWhiteSpace(source.SecretHash))
+        {
+            db.SecretHash = clientCredentialHasher.Hash(source.SecretHash, db);
+        }
+
+        base.OnAdd(db, source);
+    }
+
     public async Task<IUnitResult<ClientDto>> GetByClientId(Guid clientId, CancellationToken cancellationToken)
     {
         var client = await FindAsync(cancellationToken, [clientId]);
