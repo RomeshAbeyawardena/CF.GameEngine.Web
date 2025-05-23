@@ -8,12 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.Clients.Post;
 
-public record PostRequest(string Reference, string Name, string? SecretHash, DateTimeOffset ValidFrom)
+public record PostRequest(string Reference, string Name, string? Secret, DateTimeOffset ValidFrom)
     : MappableBase<IClient>
 {
-    protected override IClient Source => throw new NotImplementedException();
+    protected override IClient Source => new EditableClientDto {
+        Reference = Reference,
+        Name = Name,
+        SecretHash = Secret,
+        ValidFrom = ValidFrom,
+        DisplayName = DisplayName,
+        ValidTo = ValidTo,
+    };
     public string? DisplayName { get; init; }
-    public bool IsSystem { get; init; }
     public DateTimeOffset? ValidTo { get; init; }
 
     public override void Map(IClient source)
