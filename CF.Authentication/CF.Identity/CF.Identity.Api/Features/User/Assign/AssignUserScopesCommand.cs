@@ -2,6 +2,7 @@
 using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Infrastructure.Features.Users;
 using IDFCR.Http.Authentication;
+using IDFCR.Http.Authentication.Abstractions;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
@@ -16,11 +17,12 @@ public record AssignUserScopesCommand(Guid ClientId, Guid UserId, IEnumerable<st
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }
 
-public class AssignUserScopesCommandHandler(IHttpContextAccessor httpContextAccessor, IMediator mediator, IUserRepository userRepository) : IUnitRequestHandler<AssignUserScopesCommand>
+public class AssignUserScopesCommandHandler(IAuthenticatedUserContext authenticatedUserContext, 
+    IMediator mediator, IUserRepository userRepository) : IUnitRequestHandler<AssignUserScopesCommand>
 {
     public async Task<IUnitResult> Handle(AssignUserScopesCommand request, CancellationToken cancellationToken)
     {
-        var client = httpContextAccessor.HttpContext?.User.GetClient();
+        var client = authenticatedUserContext.Client;
         if(client is null || !client.UserId.HasValue)
         {
             return UnitResult.NotFound<ScopeDto>(request.ClientId);

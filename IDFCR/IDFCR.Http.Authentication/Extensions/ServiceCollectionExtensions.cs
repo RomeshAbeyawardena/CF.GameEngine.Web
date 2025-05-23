@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using IDFCR.Http.Authentication.Abstractions;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,7 +9,9 @@ public static class ServiceCollectionExtensions
 {
     public static AuthenticationBuilder AddScopeBasedAuthorization(this IServiceCollection services, string defaultScheme, params string[] defaultScopes)
     {
-        return services.AddSingleton<IDefaultScopeClaimPolicy>(new DefaultScopeClaimPolicy(defaultScheme, defaultScopes))
+        return services
+            .AddScoped<IAuthenticatedUserContext, AuthenticatedUserContext>()
+            .AddSingleton<IDefaultScopeClaimPolicy>(new DefaultScopeClaimPolicy(defaultScheme, defaultScopes))
             .AddSingleton<IAuthorizationPolicyProvider, ScopeClaimPolicyProvider>()
             .AddSingleton<IAuthorizationHandler, ScopeClaimPolicyHandler>()
             .AddAuthentication(defaultScheme);

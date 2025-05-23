@@ -1,25 +1,24 @@
 ﻿using CF.Identity.Api.Features.User.Info;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Http.Authentication;
+using IDFCR.Http.Authentication.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace CF.Identity.Api.Endpoints.Connect;
 
 public static class UserInfoEndpoint
 {
-    public static async Task<IResult> GetUserInfoAsync(IHttpContextAccessor httpContextAccessor, IClientCredentialHasher clientCredentialHasher, CancellationToken cancellationToken)
+    public static async Task<IResult> GetUserInfoAsync(IAuthenticatedUserContext authenticatedUserContext, IClientCredentialHasher clientCredentialHasher, CancellationToken cancellationToken)
     {
         await Task.CompletedTask;
-        var context = httpContextAccessor.HttpContext
-            ?? throw new NullReferenceException("HttpContext not available in this context");
-
-        var userId = context.User.GetUserId() 
+        
+        var userId = authenticatedUserContext.User?.GetUserId() 
             ?? throw new NullReferenceException();
-        var name = context.User.GetUserDisplayName() 
+        var name = authenticatedUserContext.User?.GetUserDisplayName() 
             ?? throw new NullReferenceException();
-        var username = context.User.GetUserName() 
+        var username = authenticatedUserContext.User?.GetUserName() 
             ?? throw new NullReferenceException();
-        var email = context.User.GetUserEmail() 
+        var email = authenticatedUserContext.User?.GetUserEmail() 
             ?? throw new NullReferenceException();
         
         return Results.Ok(
