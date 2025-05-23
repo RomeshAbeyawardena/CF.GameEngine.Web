@@ -13,7 +13,7 @@ public class ScopeClaimPolicyProvider(IDefaultScopeClaimPolicy defaultScopeClaim
     public async Task<AuthorizationPolicy?> GetFallbackPolicyAsync()
     {
         await Task.CompletedTask;
-        return Default;
+        return null;
     }
 
     public async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
@@ -25,7 +25,7 @@ public class ScopeClaimPolicyProvider(IDefaultScopeClaimPolicy defaultScopeClaim
             //allow a maximum of five scopes, because anything beyond would be exessive, might as well call it god user and be done with it.
             scopes = policyName.Split(',', 6, StringSplitOptions.RemoveEmptyEntries);
         }
-
+        
         return new ([new ScopeClaimPolicy(policyName, scopes)], [defaultScopeClaimPolicy.DefaultScheme]);
     }
 }

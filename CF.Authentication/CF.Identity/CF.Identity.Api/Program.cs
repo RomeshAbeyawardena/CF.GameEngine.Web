@@ -39,15 +39,16 @@ builder.Services.AddBackendDependencies("CFIdentity")
     //.AddRateLimiter(opt => opt.AddPolicy("",))
     .AddScopeBasedAuthorization(SystemAuthenticationScheme.Name, Roles.GlobalRead)
     .AddScheme<AuthenticationSchemeOptions, AuthHandler>(SystemAuthenticationScheme.Name, (opt) => { });
-    
-builder.Services.AddAuthorization()
-    .AddAuthentication(options =>
-{
-    //options.DefaultAuthenticateScheme = SystemAuthenticationScheme.Name;
-    //options.DefaultChallengeScheme = SystemAuthenticationScheme.Name;
-});
+
+builder.Services.AddAuthorization();
+//    .AddAuthentication(options =>
+//{
+//    //options.DefaultAuthenticateScheme = SystemAuthenticationScheme.Name;
+//    //options.DefaultChallengeScheme = SystemAuthenticationScheme.Name;
+//});
 
 var app = builder.Build();
+
 app
     .UseAuthentication()
     .UseAuthorization();
@@ -64,11 +65,11 @@ if (app.Environment.IsDevelopment())
         await Task.CompletedTask;
         HttpContext.Response.Redirect("swagger");
     }).AllowAnonymous();
+
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "GameEngine API v1");
-        //options.InjectStylesheet("/swagger-ui/swagger-dark.css");
     });
 }
 

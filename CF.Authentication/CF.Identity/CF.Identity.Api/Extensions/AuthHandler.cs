@@ -8,6 +8,7 @@ using IDFCR.Shared.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using System.IO;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -145,13 +146,6 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if(Request.Headers.Authorization.Count < 1)
-        {
-            return AuthenticateResult.NoResult();
-        }
-
-        Logger.LogInformation("Path: {Path}",Request.Path);
-
         var result = await ExtractAndValidateClientHeaderAsync();
         if(result is not null)
         {
