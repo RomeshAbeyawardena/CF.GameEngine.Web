@@ -6,6 +6,11 @@ public static class UnitResultCollection
     {
         return new UnitResultCollection<T>(result, action, isSuccess);
     }
+
+    public static IUnitResultCollection<T> Failed<T>(Exception exception, UnitAction action = UnitAction.None)
+    {
+        return new UnitResultCollection<T>(null, action, false, exception);
+    }
 }
 
 

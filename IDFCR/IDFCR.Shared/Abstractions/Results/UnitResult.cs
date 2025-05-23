@@ -3,7 +3,6 @@ using IDFCR.Shared.Exceptions;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Policy;
 
 namespace IDFCR.Shared.Abstractions.Results;
 
@@ -11,7 +10,10 @@ public record UnitResult(Exception? Exception = null, UnitAction Action = UnitAc
     bool IsSuccess = false) : IUnitResult
 {
     public static IUnitResult<T> NotFound<T>(object id, Exception? innerException = null) 
-        => new UnitResult(new EntityNotFoundException(typeof(T), id, innerException), UnitAction.None).As<T>();
+        => Failed<T>(new EntityNotFoundException(typeof(T), id, innerException), UnitAction.None);
+
+    public static IUnitResult<T> Failed<T>(Exception exception, UnitAction action = UnitAction.None)
+        => new UnitResult<T>(default, action, false, exception);
 
     public static IUnitResult<T> FromResult<T>(T? result, UnitAction action = UnitAction.Get,
         bool isSuccess = true, Exception? exception = null)
