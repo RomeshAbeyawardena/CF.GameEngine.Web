@@ -2,10 +2,12 @@
 
 namespace IDFCR.Http.Authentication;
 
-public record ClientInfo(string? ClientId, string? ClientName)
+public record ClientInfo(string? ClientId, string? ClientName, string? UserIdentifier)
 {
     public Guid? Id => !string.IsNullOrWhiteSpace(ClientId) 
         && Guid.TryParse(ClientId, out var id) ? id : null;
+    public Guid? UserId => !string.IsNullOrWhiteSpace(UserIdentifier)
+        && Guid.TryParse(UserIdentifier, out var id) ? id : null;
 }
 
 public static class ClaimsPrincipalExtensions
@@ -13,7 +15,7 @@ public static class ClaimsPrincipalExtensions
     public static ClientInfo GetClient(this ClaimsPrincipal user)
     {
         var (clientId, clientName) = user.GetClientInfo();
-        return new ClientInfo(clientId, clientName);
+        return new ClientInfo(clientId, clientName, user.GetUserId());
     }
 
     public static (string?, string?) GetClientInfo(this ClaimsPrincipal user) =>

@@ -21,14 +21,13 @@ public class AssignUserScopesCommandHandler(IHttpContextAccessor httpContextAcce
     public async Task<IUnitResult> Handle(AssignUserScopesCommand request, CancellationToken cancellationToken)
     {
         var client = httpContextAccessor.HttpContext?.User.GetClient();
-        
-        if(client is null)
+        if(client is null || !client.UserId.HasValue)
         {
             return UnitResult.NotFound<ScopeDto>(request.ClientId);
         }
 
-        //ensure scopes not belonging to the request user get added!
-        var scopes = (await mediator.Send(new FindScopeQuery(client.Id, request.UserId, Keys: request.Scopes), cancellationToken))
+        //ensure scopes not belonging to the request user don't get added!
+        var scopes = (await mediator.Send(new FindScopeQuery(client.Id, client.UserId, Keys: request.Scopes), cancellationToken))
             .GetResultOrDefault();
 
         if(scopes is null)
@@ -36,6 +35,14 @@ public class AssignUserScopesCommandHandler(IHttpContextAccessor httpContextAcce
             return UnitResult.NotFound<ScopeDto>(request.Scopes);
         }
 
-        return await userRepository.SynchroniseScopesAsync(request.UserId, scopes.Select(x => x.Id), cancellationToken);
+        var scopesToAdd = scopes.Where(x => request.Scopes.Any(y => y.Equals(x.Key, StringComparison.InvariantCultureIgnoreCase)))
+            .Select(x => x.Id);
+
+        if (!scopesToAdd.Any())
+        {
+            return UnitResult.NotFound<ScopeDto>("No valid scopes matched the request.");
+        }
+
+        return await userRepository.SynchroniseScopesAsync(request.UserId, scopesToAdd, cancellationToken);
     }
 }
