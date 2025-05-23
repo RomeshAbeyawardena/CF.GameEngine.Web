@@ -84,7 +84,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
 
         if(foundUser is null)
         {
-            return new UnitResultCollection<Guid>(IsSuccess: false, Action: UnitAction.None, Exception: new EntityNotFoundException(typeof(UserDto), userId));
+            return UnitResultCollection.Failed<Guid>(new EntityNotFoundException(typeof(UserDto), userId));
         }
 
         var existingScopeIds = foundUser.UserScopes.Select(us => us.ScopeId).ToHashSet();
