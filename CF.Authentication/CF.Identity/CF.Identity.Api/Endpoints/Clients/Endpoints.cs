@@ -9,6 +9,6 @@ public static class Endpoints
     public static IEndpointRouteBuilder AddClientEndpoints(this IEndpointRouteBuilder builder)
     {
         return builder
-            .AddPostClientEndpoint();       
+            .AddPostClientEndpoint();
     }
 }

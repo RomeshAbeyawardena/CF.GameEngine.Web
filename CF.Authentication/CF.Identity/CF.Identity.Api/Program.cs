@@ -1,6 +1,5 @@
 using CF.Identity.Api;
-using CF.Identity.Api.Endpoints.Connect;
-using CF.Identity.Api.Endpoints.Users;
+using CF.Identity.Api.Endpoints;
 using CF.Identity.Api.Extensions;
 using CF.Identity.Api.Features;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
@@ -41,11 +40,7 @@ builder.Services.AddBackendDependencies("CFIdentity")
     .AddScheme<AuthenticationSchemeOptions, AuthHandler>(SystemAuthenticationScheme.Name, (opt) => { });
 
 builder.Services.AddAuthorization();
-//    .AddAuthentication(options =>
-//{
-//    //options.DefaultAuthenticateScheme = SystemAuthenticationScheme.Name;
-//    //options.DefaultChallengeScheme = SystemAuthenticationScheme.Name;
-//});
+
 
 var app = builder.Build();
 
@@ -53,9 +48,7 @@ app
     .UseAuthentication()
     .UseAuthorization();
 
-app
-    .AddConnectEndpoints()
-    .AddUserEndpoints();
+app.AddEndpoints();
 //app.UseRateLimiter();
 
 if (app.Environment.IsDevelopment())

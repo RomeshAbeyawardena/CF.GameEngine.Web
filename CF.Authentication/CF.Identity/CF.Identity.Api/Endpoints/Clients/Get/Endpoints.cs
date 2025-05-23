@@ -3,6 +3,7 @@ using CF.Identity.Api.Features.Clients.Get;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
+using System.Runtime.CompilerServices;
 
 namespace CF.Identity.Api.Endpoints.Clients.Get;
 
@@ -17,12 +18,13 @@ public static class Endpoints
 
     //public static async Task<IResult> GetPagedClientsAsync()
 
-    public static void AddClientEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder AddClientEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), GetClientAsync)
             .WithName(nameof(GetClientAsync))
             .Produces<ClientDetailResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithTags(Route.Tag);
+        return app;
     }
 }
