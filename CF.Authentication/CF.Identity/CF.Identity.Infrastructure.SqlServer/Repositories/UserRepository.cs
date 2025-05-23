@@ -76,4 +76,28 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
 
         return UnitResultCollection.FromResult(mappedResult);
     }
+
+    public async Task<IUnitResultCollection<Guid>> SynchroniseScopesAsync(Guid userId, IEnumerable<Guid> scopeIds, CancellationToken cancellationToken)
+    {
+        var foundUser = await Context.Users
+            .Include(x => x.UserScopes).FirstOrDefaultAsync(x => x.Id == userId);
+
+        if(foundUser is null)
+        {
+            return new UnitResultCollection<Guid>(IsSuccess: false, Action: UnitAction.None, Exception: new EntityNotFoundException(typeof(UserDto), userId));
+        }
+
+        var existingScopeIds = foundUser.UserScopes.Select(us => us.ScopeId).ToHashSet();
+        var scopesToAdd = scopeIds
+            .Where(id => !existingScopeIds.Contains(id))
+            .Select(id => new DbUserScope { UserId = userId, ScopeId = id })
+            .ToList();
+
+        foreach (var scope in scopesToAdd)
+        {
+            foundUser.UserScopes.Add(scope);
+        }
+
+        return UnitResultCollection.FromResult(scopesToAdd.Select(x => x.Id), UnitAction.Update);
+    }
 }
