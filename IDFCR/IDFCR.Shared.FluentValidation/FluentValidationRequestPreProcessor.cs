@@ -2,10 +2,12 @@
 using FluentValidation.Results;
 using IDFCR.Shared.FluentValidation.Constants;
 using MediatR.Pipeline;
+using Microsoft.Extensions.Logging;
 
 namespace IDFCR.Shared.FluentValidation;
 
-internal class FluentValidationRequestPreProcessor<TRequest>(IEnumerable<IValidator<TRequest>> validators) 
+internal class FluentValidationRequestPreProcessor<TRequest>(ILogger<FluentValidationRequestPreProcessor<TRequest>> logger,
+    IEnumerable<IValidator<TRequest>> validators) 
     : IRequestPreProcessor<TRequest>
     where TRequest : notnull
 {
@@ -18,11 +20,13 @@ internal class FluentValidationRequestPreProcessor<TRequest>(IEnumerable<IValida
         {
             var result = await validator.ValidateAsync(validationContext, cancellationToken);
             isConflict = result.Errors.Any(x => x.ErrorCode == Errorcodes.Conflict);
-            
+            logger.LogInformation($"Is {(isConflict ? string.Empty : "not a ")}Conflict");
             errors.AddRange(result.Errors);
         }
 
-        if(errors.Count > 0)
+        
+
+        if (errors.Count > 0)
         {
             var validationException = new ValidationException(errors);
 
