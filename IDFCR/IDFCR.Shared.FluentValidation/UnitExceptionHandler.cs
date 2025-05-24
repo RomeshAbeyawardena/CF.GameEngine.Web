@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IDFCR.Shared.FluentValidation;
 
-public class UnitExceptionHandler<TRequest, TResponse, TException>(ILogger<UnitExceptionHandler<TRequest, TResponse, TException>> logger) : IRequestExceptionHandler<TRequest, TResponse, TException>
+public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExceptionHandler<TRequest, TResponse, TException>
     where TRequest : notnull
     where TException : Exception
 {
@@ -46,11 +46,9 @@ public class UnitExceptionHandler<TRequest, TResponse, TException>(ILogger<UnitE
                     .ToDictionary(x => x.PropertyName, x => (object?)x.ErrorMessage);
 
                 var conflictErrorCode = validationException.Data[Errorcodes.Conflict];
-                logger.LogInformation("Validation exception occurred with conflict code: {ConflictErrorCode}", conflictErrorCode);
-
+                
                 if (conflictErrorCode is not null && conflictErrorCode is bool isConflict && isConflict)
                 {
-                    logger.LogInformation("Unit action has been written");
                     unitAction = UnitAction.Conflict;
                 }
             }

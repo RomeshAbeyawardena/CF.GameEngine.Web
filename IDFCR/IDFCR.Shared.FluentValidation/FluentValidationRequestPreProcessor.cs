@@ -6,8 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IDFCR.Shared.FluentValidation;
 
-internal class FluentValidationRequestPreProcessor<TRequest>(ILogger<FluentValidationRequestPreProcessor<TRequest>> logger,
-    IEnumerable<IValidator<TRequest>> validators) 
+internal class FluentValidationRequestPreProcessor<TRequest>(IEnumerable<IValidator<TRequest>> validators) 
     : IRequestPreProcessor<TRequest>
     where TRequest : notnull
 {
@@ -20,7 +19,7 @@ internal class FluentValidationRequestPreProcessor<TRequest>(ILogger<FluentValid
         {
             var result = await validator.ValidateAsync(validationContext, cancellationToken);
             isConflict = result.Errors.Any(x => x.ErrorCode == Errorcodes.Conflict);
-            logger.LogInformation($"Is {(isConflict ? string.Empty : "not a ")}Conflict");
+            
             errors.AddRange(result.Errors);
         }
 
