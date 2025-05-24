@@ -11,9 +11,9 @@ internal class ScopeEntityConfiguration : IEntityTypeConfiguration<DbScope>
         builder.ToTable("Scope", "dbo");
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd().HasColumnName("ScopeId").IsRequired();
-        builder.Property(x => x.Name).IsRequired().HasMaxLength(40);
+        builder.Property(x => x.Name).IsRequired().HasMaxLength(80);
         builder.Property(x => x.Description).HasMaxLength(250);
-        builder.Property(x => x.Key).IsRequired().HasMaxLength(20);
+        builder.Property(x => x.Key).IsRequired().HasMaxLength(40);
         builder.Property(x => x.ClientId).HasColumnName("ClientId").IsRequired(false);
         builder.HasMany(x => x.UserScopes)
             .WithOne(x => x.Scope)
