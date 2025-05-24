@@ -19,7 +19,7 @@ public record PostScopeRequest(string Key, string Name) : MappableBase<IScope>
 
     public override void Map(IScope source)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public EditableScopeDto ConvertToEditable()
