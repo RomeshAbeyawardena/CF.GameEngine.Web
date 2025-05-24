@@ -8,7 +8,7 @@ namespace CF.Identity.Api.Endpoints.Roles.Post;
 
 public static class Endpoint
 {
-    public static async Task<IResult> SaveScopeAsync([FromForm] PostScopeRequest request,
+    public static async Task<IResult> SaveScopeAsync([FromForm] PostRoleRequest request,
         IMediator mediator, IHttpContextAccessor httpContextAccessor,
         CancellationToken cancellationToken)
     {

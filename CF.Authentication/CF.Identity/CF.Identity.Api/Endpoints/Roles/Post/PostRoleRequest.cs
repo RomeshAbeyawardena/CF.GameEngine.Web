@@ -1,23 +1,22 @@
 ﻿using CF.Identity.Api.Features.Scopes.Post;
-using CF.Identity.Infrastructure.Features.Scope;
+using CF.Identity.Infrastructure.Features.Roles;
 using IDFCR.Shared.Abstractions.Records;
 
 namespace CF.Identity.Api.Endpoints.Roles.Post;
 
-public record PostScopeRequest(string Key, string Name) : MappableBase<IScope>
+public record PostRoleRequest(string Key, string Name) : MappableBase<IRole>
 {
     public string? Client { get; init; }
     public Guid? ClientId { get; init; }
     public string? Description { get; init; }
-    protected override IScope Source => new ScopeDto
+    protected override IRole Source => new RoleDto
     {
-        ClientId = ClientId,
-        Name = Name,
-        Description = Description,
-        Key = Key
+        ClientId = ClientId.GetValueOrDefault(),
+        Key = Key,
+        DisplayName = Name,
     };
 
-    public override void Map(IScope source)
+    public override void Map(IRole source)
     {
         throw new NotSupportedException();
     }
