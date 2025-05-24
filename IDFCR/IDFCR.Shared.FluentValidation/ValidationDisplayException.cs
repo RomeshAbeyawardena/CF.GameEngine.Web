@@ -14,7 +14,7 @@ public class ValidationDisplayException(ValidationException validationException)
 
             foreach(var error in validationException.Errors)
             {
-                stringBuilder.AppendLine($"Code: {error.ErrorCode}\t{error.PropertyName}: {error.ErrorMessage}. (Actual hour: {error.AttemptedValue})");
+                stringBuilder.AppendLine($"Code: {error.ErrorCode}\t{error.PropertyName}: {error.ErrorMessage}.");
             }
 
             return stringBuilder.ToString();
