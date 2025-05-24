@@ -8,7 +8,7 @@ public class EditableScopeDto : MappableBase<IScope>, IEditableScope, IScope
     protected override IScope Source => this;
     public string Key { get; set; } = null!;
     public bool IsPrivileged { get; set; }
-    public string? Client { get; set; };
+    public string? Client { get; set; }
     public Guid? ClientId { get; set; }
     public string Name { get; set; } = null!;
     public string? Description { get; set; }

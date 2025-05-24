@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace IDFCR.Http.Authentication.Abstractions;
+namespace IDFCR.Shared.Abstractions;
 
 public abstract class RoleRegistrarBase : IRoleRegistrar
 {

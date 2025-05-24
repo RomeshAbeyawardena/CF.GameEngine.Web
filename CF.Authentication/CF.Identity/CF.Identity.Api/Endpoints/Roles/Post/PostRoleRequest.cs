@@ -23,8 +23,9 @@ public record PostRoleRequest(string Key, string Name) : MappableBase<IRole>
 
     public EditableScopeDto ConvertToEditable()
     {
-        var scope = this.Map<EditableScopeDto>();
-        scope.Client = Client;
-        return scope;
+        return new EditableScopeDto();
+        //var scope = this.Map<EditableScopeDto>();
+        //scope.Client = Client;
+        //return scope;
     }
 }
