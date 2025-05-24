@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <Company>Rho Incorporated</Company>
-    <Version>1.1.0.3</Version>
+    <Version>1.1.1.0</Version>
     <!-- Used for NuGet packages and general versioning -->
     <AssemblyVersion>1.1.1.0</AssemblyVersion>
     <!-- Major.Minor.Build.Revision -->
