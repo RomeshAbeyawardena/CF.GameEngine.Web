@@ -17,7 +17,7 @@ internal class FluentValidationRequestPreProcessor<TRequest>(IEnumerable<IValida
         foreach(var validator in validators)
         {
             var result = await validator.ValidateAsync(validationContext, cancellationToken);
-            isConflict = result.Errors.Any(x => x.ErrorCode == Errorcodes.Conflict))
+            isConflict = result.Errors.Any(x => x.ErrorCode == Errorcodes.Conflict);
             
             errors.AddRange(result.Errors);
         }

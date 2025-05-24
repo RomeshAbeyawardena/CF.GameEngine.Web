@@ -36,11 +36,12 @@ switch ([TargetPath]$targetPath) {
             $deploymentPath = "C:\dev\packages\IDFCR\Feature"
         } else {
             $deploymentPath = "C:\dev\packages\IDFCR"
-        })
+        }
 
         if ($skipVersionIncrement -eq $false) {
             $versionComponent = 4
         }
+
         $includeSymbols = $true
         break;
     }
