@@ -1,6 +1,29 @@
-﻿namespace CF.Identity.Api.Endpoints.Roles.Post
+﻿using CF.Identity.Api.Features.Scopes.Post;
+using IDFCR.Shared.Http.Extensions;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CF.Identity.Api.Endpoints.Roles.Post;
+
+public static class Endpoint
 {
-    public class Endpoint
+    public static async Task<IResult> SaveScopeAsync([FromForm] PostScopeRequest request,
+        IMediator mediator, IHttpContextAccessor httpContextAccessor,
+        CancellationToken cancellationToken)
     {
+        var data = request.ConvertToEditable();
+        var result = await mediator.Send(new PostScopeCommand(data), cancellationToken);
+        return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
+    }
+
+    public static IEndpointRouteBuilder AddPostEndpoint(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPost(Endpoints.BaseUrl, SaveScopeAsync)
+            .DisableAntiforgery()
+            .RequireAuthorization(new AuthorizeAttribute(Features.Roles.ConcatenateRoles(
+                Features.Roles.GlobalWrite,
+                Features.Roles.ScopeWrite)));
+        return builder;
     }
 }

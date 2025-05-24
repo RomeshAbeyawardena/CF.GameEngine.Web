@@ -1,6 +1,6 @@
-﻿namespace CF.Identity.Api.Endpoints.Roles
+﻿namespace CF.Identity.Api.Endpoints.Roles;
+
+public static class Endpoints
 {
-    public class Endpoints
-    {
-    }
+    public const string BaseUrl = "api/role";
 }

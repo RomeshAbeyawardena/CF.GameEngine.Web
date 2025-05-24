@@ -20,6 +20,7 @@ public record PostClientRequest(string Reference, string Name, string? Secret, D
 
     public override void Map(IClient source)
     {
-        throw new NotImplementedException();
+        //this is the top level mapping method, so we don't need to do anything here
+        throw new NotSupportedException();
     }
 }
