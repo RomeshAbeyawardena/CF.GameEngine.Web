@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace CF.Identity.Infrastructure.Features;
 
-namespace CF.Identity.Infrastructure.Features
+public partial class RoleRegistrar : RoleRegistrarBase
 {
-    internal class RoleRegistrar
-    {
-    }
 }
