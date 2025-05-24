@@ -2,7 +2,7 @@
 
 namespace CF.Identity.Infrastructure.Features;
 
-public partial class SystemRoles : RoleRegistrarBase
+public class SystemRoles : RoleRegistrarBase
 {
     public const string GlobalRead = "api:read";
     public const string GlobalWrite = "api:write";

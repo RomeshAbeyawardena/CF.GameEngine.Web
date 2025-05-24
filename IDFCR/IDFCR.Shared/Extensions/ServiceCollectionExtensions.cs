@@ -11,8 +11,8 @@ public static class ServiceCollectionExtensions
     {
         return services
             .Scan(c => c
-                .FromAssemblyOf<IRoleRegistrar>()
-                .AddClasses(i => i.AssignableTo<TTargetAssemblyClass>())
+                .FromAssemblyOf<TTargetAssemblyClass>()
+                .AddClasses(i => i.AssignableTo<IRoleRegistrar>())
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime()
             )
