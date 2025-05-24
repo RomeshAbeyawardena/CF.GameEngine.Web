@@ -2,7 +2,6 @@
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.FluentValidation.Constants;
 using MediatR.Pipeline;
-using Microsoft.Extensions.Logging;
 
 namespace IDFCR.Shared.FluentValidation;
 
@@ -35,6 +34,7 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
     public Task Handle(TRequest request, TException exception, RequestExceptionHandlerState<TResponse> state, CancellationToken cancellationToken)
     {
         bool isHandled = exception is UnauthorizedAccessException || exception is ValidationException;
+        Exception finalException = exception;
         var unitAction = UnitAction.None;
         if (isHandled && typeof(TResponse).IsAssignableTo(typeof(IUnitResult)))
         {
@@ -51,6 +51,8 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
                 {
                     unitAction = UnitAction.Conflict;
                 }
+
+                finalException = new ValidationDisplayException(validationException);
             }
 
             var baseResponseType = typeof(TResponse);
@@ -66,8 +68,8 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
 
             if ((baseResponseType.IsGenericType
                 ? Activator.CreateInstance(implementationType.MakeGenericType(genericArguments),
-                null, unitAction, false, exception)
-                : Activator.CreateInstance(implementationType, exception, unitAction, false)) is not IUnitResult response)
+                null, unitAction, false, finalException)
+                : Activator.CreateInstance(implementationType, finalException, unitAction, false)) is not IUnitResult response)
             {
                 return Task.CompletedTask;
             }
