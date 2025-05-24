@@ -1,6 +1,7 @@
 param (
     [int]$targetPath,
-    [bool]$skipVersionIncrement = $false
+    [bool]$skipVersionIncrement = $false,
+    [bool]$useFeatureFolder = $false
 )
 
 enum TargetPath {
@@ -31,10 +32,16 @@ $versionComponent = 0
 $includeSymbols = $false
 switch ([TargetPath]$targetPath) {
     "Local" {
-        $deploymentPath = "C:\dev\packages\IDFCR"
+        if ($useFeatureFolder) {
+            $deploymentPath = "C:\dev\packages\IDFCR\Feature"
+        } else {
+            $deploymentPath = "C:\dev\packages\IDFCR"
+        }
+
         if ($skipVersionIncrement -eq $false) {
             $versionComponent = 4
         }
+
         $includeSymbols = $true
         break;
     }

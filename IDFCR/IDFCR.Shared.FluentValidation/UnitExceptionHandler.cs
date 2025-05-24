@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using IDFCR.Shared.Abstractions.Results;
+using IDFCR.Shared.FluentValidation.Constants;
 using MediatR.Pipeline;
+using Microsoft.Extensions.Logging;
 
 namespace IDFCR.Shared.FluentValidation;
 
@@ -33,12 +35,24 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
     public Task Handle(TRequest request, TException exception, RequestExceptionHandlerState<TResponse> state, CancellationToken cancellationToken)
     {
         bool isHandled = exception is UnauthorizedAccessException || exception is ValidationException;
-
+        var unitAction = UnitAction.None;
         if (isHandled && typeof(TResponse).IsAssignableTo(typeof(IUnitResult)))
         {
-            var errors = (exception is ValidationException validationException) ? validationException.Errors
-                    .ToDictionary(x => x.PropertyName, x => (object?)x.ErrorMessage) : [];
-            
+            Dictionary<string, object?> errors = [];
+
+            if (exception is ValidationException validationException)
+            {
+                errors = validationException.Errors
+                    .ToDictionary(x => x.PropertyName, x => (object?)x.ErrorMessage);
+
+                var conflictErrorCode = validationException.Data[Errorcodes.Conflict];
+                
+                if (conflictErrorCode is not null && conflictErrorCode is bool isConflict && isConflict)
+                {
+                    unitAction = UnitAction.Conflict;
+                }
+            }
+
             var baseResponseType = typeof(TResponse);
             
             var mayBeGenericResponseType = baseResponseType.IsGenericType ? baseResponseType.GetGenericTypeDefinition() : baseResponseType;
@@ -52,8 +66,8 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
 
             if ((baseResponseType.IsGenericType
                 ? Activator.CreateInstance(implementationType.MakeGenericType(genericArguments),
-                null, UnitAction.None, false, exception)
-                : Activator.CreateInstance(implementationType, exception, UnitAction.None, false)) is not IUnitResult response)
+                null, unitAction, false, exception)
+                : Activator.CreateInstance(implementationType, exception, unitAction, false)) is not IUnitResult response)
             {
                 return Task.CompletedTask;
             }

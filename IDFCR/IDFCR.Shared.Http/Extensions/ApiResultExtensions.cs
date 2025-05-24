@@ -9,7 +9,7 @@ public static class ApiResultExtensions
 {
     private static int GetStatusCode(this UnitAction action, Exception? exception)
     {
-        if(exception is ValidationException)
+        if(action != UnitAction.Conflict && exception is ValidationException)
         {
             return StatusCodes.Status400BadRequest;
         }
@@ -21,6 +21,7 @@ public static class ApiResultExtensions
             UnitAction.Get => StatusCodes.Status200OK,
             UnitAction.Delete => StatusCodes.Status204NoContent,
             UnitAction.Pending => StatusCodes.Status202Accepted,
+            UnitAction.Conflict => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status500InternalServerError,
         };
     }

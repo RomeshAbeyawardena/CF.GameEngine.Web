@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
 using MediatR.Pipeline;
+using Microsoft.Extensions.Logging;
 
 namespace IDFCR.Shared.FluentValidation.Tests;
 
@@ -22,6 +23,7 @@ public class Tests
     [Test]
     public void Test1()
     {
+
         var sut_0 = new UnitExceptionHandler<TestEmptyUnitRequest,
             IUnitResult, ValidationException>();
 
@@ -30,7 +32,6 @@ public class Tests
         sut_0.Handle(new TestEmptyUnitRequest(), new ValidationException(""), stateMachine_0, CancellationToken.None);
 
         Assert.That(stateMachine_0.Handled, Is.True);
-
         var sut0 = new UnitExceptionHandler<TestUnitRequest, IUnitResult<Customer>, ValidationException>();
 
         var stateMachine0 = new RequestExceptionHandlerState<IUnitResult<Customer>>();
