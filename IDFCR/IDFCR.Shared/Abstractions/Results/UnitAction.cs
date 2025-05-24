@@ -7,5 +7,6 @@ public enum UnitAction
     Get = 2,
     Update = 3,
     Delete = 4,
-    Pending = 5
+    Pending = 5,
+    Conflict = 6
 }

@@ -21,6 +21,7 @@ public static class ApiResultExtensions
             UnitAction.Get => StatusCodes.Status200OK,
             UnitAction.Delete => StatusCodes.Status204NoContent,
             UnitAction.Pending => StatusCodes.Status202Accepted,
+            UnitAction.Conflict => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status500InternalServerError,
         };
     }
