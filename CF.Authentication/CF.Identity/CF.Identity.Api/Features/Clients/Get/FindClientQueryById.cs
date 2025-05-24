@@ -1,11 +1,13 @@
-﻿using IDFCR.Shared.Abstractions;
+﻿using CF.Identity.Infrastructure.Features;
+using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.Clients.Get;
 
 public record FindClientQueryById(Guid Id, bool Bypass = false) : IUnitRequest<ClientDetailResponse>, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => [Roles.GlobalRead, Roles.ClientRead];
+    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalRead, ClientRoles.ClientRead];
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }
 

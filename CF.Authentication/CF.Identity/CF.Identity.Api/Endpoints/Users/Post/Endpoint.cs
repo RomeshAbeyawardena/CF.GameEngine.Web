@@ -1,5 +1,7 @@
 ﻿using CF.Identity.Api.Features.User;
 using CF.Identity.Api.Features.User.Post;
+using CF.Identity.Infrastructure.Features;
+using CF.Identity.Infrastructure.Features.Users;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -23,9 +25,9 @@ public static class Endpoint
     {
         builder.MapPost(Endpoints.Url, SaveUserAsync)
             .DisableAntiforgery()
-            .RequireAuthorization(new AuthorizeAttribute(Features.Roles.ConcatenateRoles(
-                Features.Roles.GlobalWrite,
-                Features.Roles.UserWrite)));
+            .RequireAuthorization(new AuthorizeAttribute(SystemRoles.ConcatenateRoles(
+                SystemRoles.GlobalWrite,
+                UserRoles.UserWrite)));
         return builder;
     }
 }

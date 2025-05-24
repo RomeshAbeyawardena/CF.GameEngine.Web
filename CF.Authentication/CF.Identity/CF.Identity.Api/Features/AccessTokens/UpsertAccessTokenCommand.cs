@@ -1,4 +1,5 @@
-﻿using CF.Identity.Infrastructure.Features.AccessToken;
+﻿using CF.Identity.Infrastructure.Features;
+using CF.Identity.Infrastructure.Features.AccessToken;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
@@ -7,7 +8,7 @@ namespace CF.Identity.Api.Features.AccessTokens;
 
 public record UpsertAccessTokenCommand(AccessTokenDto AccessToken, bool Bypass = false) : IUnitRequest<Guid>, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => [Roles.GlobalWrite, Roles.AccessTokenWrite];
+    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalWrite, AccessTokenRoles.AccessTokenWrite];
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }
 

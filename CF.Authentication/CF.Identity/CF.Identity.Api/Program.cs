@@ -2,6 +2,7 @@ using CF.Identity.Api;
 using CF.Identity.Api.Endpoints;
 using CF.Identity.Api.Extensions;
 using CF.Identity.Api.Features;
+using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
 using FluentValidation;
 using IDFCR.Http.Authentication.Extensions;
@@ -36,7 +37,7 @@ builder.Services.AddBackendDependencies("CFIdentity")
             .UseOpenApiContactDocumentFilter();
     })
     //.AddRateLimiter(opt => opt.AddPolicy("",))
-    .AddScopeBasedAuthorization(SystemAuthenticationScheme.Name, Roles.GlobalRead)
+    .AddScopeBasedAuthorization(SystemAuthenticationScheme.Name, SystemRoles.GlobalRead)
     .AddScheme<AuthenticationSchemeOptions, AuthHandler>(SystemAuthenticationScheme.Name, (opt) => { });
 
 builder.Services.AddAuthorization();

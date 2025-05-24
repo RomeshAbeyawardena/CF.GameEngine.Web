@@ -7,12 +7,12 @@ namespace IDFCR.Shared.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDynamicRoles(this IServiceCollection services)
+    public static IServiceCollection AddDynamicRoles<TTargetAssemblyClass>(this IServiceCollection services)
     {
         return services
             .Scan(c => c
                 .FromAssemblyOf<IRoleRegistrar>()
-                .AddClasses(i => i.AssignableTo<IRoleRegistrar>())
+                .AddClasses(i => i.AssignableTo<TTargetAssemblyClass>())
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime()
             )
