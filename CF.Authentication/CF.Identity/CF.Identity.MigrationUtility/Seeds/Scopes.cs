@@ -23,6 +23,7 @@ internal static partial class Seed
         {
             var newScope = new DbScope
             {
+                IsPrivileged = true,
                 Key = scope,
                 Name = scope,
                 Description = scope

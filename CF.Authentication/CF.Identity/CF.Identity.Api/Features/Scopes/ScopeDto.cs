@@ -11,6 +11,7 @@ public class ScopeDto : MappableBase<IScope>, IScope
     public string? Description { get; set; }
     public Guid Id { get; set; }
     public Guid? ClientId { get; set; }
+    public bool IsPrivileged { get; set; }
 
     public override void Map(IScope source)
     {
