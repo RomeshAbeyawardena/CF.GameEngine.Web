@@ -17,7 +17,9 @@ using var migrationUtility = EFMigrationUtility
         .AddBackendDependencies("CFIdentity")
         .EnumerateRoles())
     .Extend("--seed*", "Seed basic data required for the database to operate correctly", Seed.SeedAsync)
-    .Extend("--verify-seed-data", "Verify seeded data can be decrypted or used to verify security data", VerifySeedData);
+    .Extend("--verify-seed-data", "Verify seeded data can be decrypted or used to verify security data", VerifySeedData)
+    .Extend("--flush-seed-data", "Flushes seeded data, only touches tables the seed touches, if there are additional relational bindings this will fail.",
+        Flush.FlushSeedAsync);
 
 static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
     IServiceProvider serviceProvider, CancellationToken cancellationToken)

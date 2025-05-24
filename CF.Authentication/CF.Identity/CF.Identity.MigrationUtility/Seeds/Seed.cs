@@ -18,7 +18,7 @@ internal static partial class Seed
         var roleRegistrarCollector = serviceProvider.GetRequiredService<IRoleRegistrarCollector>();
 
         Roles = roleRegistrarCollector.Roles;
-        logger.LogInformation("Registered scopes:\r\n{Roles}", string.Join(Environment.NewLine, roleRegistrarCollector.Roles.Select(x => x.Key)));
+        logger.LogInformation("Application registered scopes:\r\n{Roles}", string.Join(Environment.NewLine, roleRegistrarCollector.Roles.Select(x => x.Key)));
 
         await TrySeedScopesAsync(logger, context, cancellationToken);
 

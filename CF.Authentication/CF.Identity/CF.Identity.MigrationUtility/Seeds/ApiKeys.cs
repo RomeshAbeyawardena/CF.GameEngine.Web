@@ -46,7 +46,7 @@ internal static partial class Seed
                 Id = Guid.NewGuid(),
                 ReferenceToken = hashedReferenceToken,
                 RefreshToken = hashedRefreshToken,
-                AccessToken = JwtHelper.GenerateJwt(client, string.Join(' ', Roles.Select(x => x.Key))
+                AccessToken = JwtHelper.GenerateJwt(client, string.Join(' ', Roles.Where(x => x.IsPrivileged).Select(x => x.Key))
                 , jwtSettings, validity.DateTime),
                 Type = "api_key",
                 ValidFrom = DateTimeOffset.UtcNow,
