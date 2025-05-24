@@ -7,6 +7,11 @@ namespace IDFCR.Shared.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    public static IServiceCollection AddEasterEgg(this IServiceCollection services)
+    {
+        return services.AddSingleton<IMathChallenge, MathChallenge>();
+    }
+
     public static IServiceCollection AddDynamicRoles<TTargetAssemblyClass>(this IServiceCollection services)
     {
         return services

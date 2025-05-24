@@ -1,13 +1,6 @@
 ﻿namespace IDFCR.Shared.Abstractions;
 
-internal enum Sign
-{
-    Addition = 1,
-    Subtraction = 2,
-    Multiplication = 3
-}
-
-internal class MathChallenge(Random random)
+internal sealed class MathChallenge(Random random) : IMathChallenge
 {
     public int FirstElement { get; private set; }
     public int SecondElement { get; private set; }
