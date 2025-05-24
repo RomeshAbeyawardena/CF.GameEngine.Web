@@ -10,6 +10,7 @@ public static class ServiceCollectionExtensions
     public static AuthenticationBuilder AddScopeBasedAuthorization(this IServiceCollection services, string defaultScheme, params string[] defaultScopes)
     {
         return services
+            .AddSingleton<IRoleRegistrarCollector, RoleRegistrarCollector>()
             .AddScoped<IAuthenticatedUserContext, AuthenticatedUserContext>()
             .AddSingleton<IDefaultScopeClaimPolicy>(new DefaultScopeClaimPolicy(defaultScheme, defaultScopes))
             .AddSingleton<IAuthorizationPolicyProvider, ScopeClaimPolicyProvider>()
