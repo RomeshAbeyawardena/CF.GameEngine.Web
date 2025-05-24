@@ -1,4 +1,4 @@
-﻿namespace IDFCR.Http.Authentication.Abstractions;
+﻿namespace IDFCR.Shared.Abstractions;
 
 public interface IRoleRegistrarCollector
 {

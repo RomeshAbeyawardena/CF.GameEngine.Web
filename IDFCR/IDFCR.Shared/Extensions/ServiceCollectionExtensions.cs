@@ -1,4 +1,5 @@
-﻿using IDFCR.Shared.Abstractions.Filters;
+﻿using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 
@@ -6,6 +7,18 @@ namespace IDFCR.Shared.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    public static IServiceCollection AddDynamicRoles(this IServiceCollection services)
+    {
+        return services
+            .Scan(c => c
+                .FromAssemblyOf<IRoleRegistrar>()
+                .AddClasses(i => i.AssignableTo<IRoleRegistrar>())
+                .AsImplementedInterfaces()
+                .WithSingletonLifetime()
+            )
+            .AddSingleton<IRoleRegistrarCollector, RoleRegistrarCollector>();
+    }
+
     public static IServiceCollection AddInjectableFilters<TTargetAssemblyClass>(this IServiceCollection services)
     {
         services.AddSingleton(typeof(IFilterProvider<,>), typeof(FilterProvider<,>));

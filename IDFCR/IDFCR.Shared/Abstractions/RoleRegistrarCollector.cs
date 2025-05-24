@@ -1,6 +1,4 @@
-﻿using IDFCR.Shared.Abstractions;
-
-namespace IDFCR.Http.Authentication.Abstractions;
+﻿namespace IDFCR.Shared.Abstractions;
 
 public class RoleRegistrarCollector(IEnumerable<IRoleRegistrar> roleRegistrars) : IRoleRegistrarCollector
 {
