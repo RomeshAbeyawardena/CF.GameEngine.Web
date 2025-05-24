@@ -9,9 +9,14 @@ namespace CF.Identity.MigrationUtility.Seeds;
 
 internal static partial class Seed
 {
-    internal static async Task TrySeedScopesAsync(ILogger logger, IEnumerable<IRoleDescriptor> discoveredScopes, CFIdentityDbContext context, CancellationToken cancellationToken)
+    internal static async Task TrySeedScopesAsync(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToken)
     {
-        var scopesToAdd = discoveredScopes.Select(x => x.Key);
+        if(Roles is null)
+        {
+            return;
+        }
+
+        var scopesToAdd = Roles.Select(x => x.Key);
         var scopes = await context.Scopes.Where(x => !x.ClientId.HasValue && scopesToAdd.Contains(x.Key)).ToListAsync(cancellationToken);
 
         var missingScopes = scopesToAdd.Except(scopes.Select(s => s.Key)).ToList();

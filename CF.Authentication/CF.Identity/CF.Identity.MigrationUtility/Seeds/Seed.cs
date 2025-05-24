@@ -9,6 +9,7 @@ namespace CF.Identity.MigrationUtility.Seeds;
 
 internal static partial class Seed
 {
+    static IEnumerable<IRoleDescriptor>? Roles { get; set; }
     public static async Task<MigrationResult> SeedAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
         IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
@@ -16,7 +17,7 @@ internal static partial class Seed
         logger.LogInformation("Seeding data...");
         var roleRegistrarCollector = serviceProvider.GetRequiredService<IRoleRegistrarCollector>();
 
-        var roles = roleRegistrarCollector.Roles;
+        Roles = roleRegistrarCollector.Roles;
         logger.LogInformation("Registered scopes:\r\n{Roles}", string.Join(Environment.NewLine, roleRegistrarCollector.Roles.Select(x => x.Key)));
 
         await TrySeedScopesAsync(logger, context, cancellationToken);

@@ -13,6 +13,11 @@ internal static partial class Seed
 {
     internal static async Task TrySeedApiKeyAsync(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
+        if(Roles is null)
+        {
+            return;
+        }
+
         //check if client is in-flight
         var client = context.Clients.Local.FirstOrDefault(x => x.IsSystem);
 
@@ -26,7 +31,7 @@ internal static partial class Seed
         {
             var randomNumberGenerator = serviceProvider.GetRequiredService<RandomNumberGenerator>();
             var jwtSettings = serviceProvider.GetRequiredService<IJwtSettings>();
-            logger.LogInformation(jwtSettings.GetType().FullName);
+            logger.LogInformation("{fullName}", jwtSettings.GetType().FullName);
             var clientCredentialHasher = serviceProvider.GetRequiredService<IClientCredentialHasher>();
 
             var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
@@ -41,7 +46,7 @@ internal static partial class Seed
                 Id = Guid.NewGuid(),
                 ReferenceToken = hashedReferenceToken,
                 RefreshToken = hashedRefreshToken,
-                AccessToken = JwtHelper.GenerateJwt(client, string.Join(' ', DefaultScopes)
+                AccessToken = JwtHelper.GenerateJwt(client, string.Join(' ', Roles.Select(x => x.Key))
                 , jwtSettings, validity.DateTime),
                 Type = "api_key",
                 ValidFrom = DateTimeOffset.UtcNow,
