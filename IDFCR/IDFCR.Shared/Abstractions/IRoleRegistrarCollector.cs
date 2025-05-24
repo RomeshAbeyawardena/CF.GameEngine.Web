@@ -2,5 +2,5 @@
 
 public interface IRoleRegistrarCollector
 {
-    IEnumerable<string> Roles { get; }
+    IEnumerable<IRoleDescriptor> Roles { get; }
 }

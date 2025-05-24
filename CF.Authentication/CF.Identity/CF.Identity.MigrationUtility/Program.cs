@@ -22,11 +22,6 @@ using var migrationUtility = EFMigrationUtility
 static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
     IServiceProvider serviceProvider, CancellationToken cancellationToken)
 {
-    var roleRegistrarCollector = serviceProvider.GetRequiredService<IRoleRegistrarCollector>();
-
-    var roles = roleRegistrarCollector.Roles;
-    logger.LogInformation("Registered roles:\r\n{Roles}", string.Join(Environment.NewLine, roleRegistrarCollector.Roles));
-
     var isSuccessful = await Verify
         .VerifyUserSeedData(logger, context, serviceProvider, cancellationToken);
 

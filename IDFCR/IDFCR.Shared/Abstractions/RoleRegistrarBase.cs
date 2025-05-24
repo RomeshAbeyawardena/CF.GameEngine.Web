@@ -1,24 +1,24 @@
-﻿using System.Collections.Concurrent;
-
+﻿
 namespace IDFCR.Shared.Abstractions;
 
 public abstract class RoleRegistrarBase : IRoleRegistrar
 {
-    protected readonly ConcurrentBag<string> _roles = [];
+    protected readonly Dictionary<string, IRoleDescriptor> _roles = [];
 
     public string? Prefix { get; set; }
 
-    public bool TryRegisterRole(string roleName)
+    public bool TryRegisterRole(string roleName, bool isPrivileged = false)
     {
-        if (string.IsNullOrWhiteSpace(roleName) || _roles.Contains(roleName))
+        if (string.IsNullOrWhiteSpace(roleName) || _roles.ContainsKey(roleName))
         {
             return false;
         }
-
-        _roles.Add($"{Prefix}{roleName}");
+        var key = $"{Prefix}{roleName}";
+        _roles.TryAdd(key, new DefaultRoleDescriptor(key, isPrivileged) { Prefix = Prefix});
         return true;
     }
-    public IEnumerator<string> GetEnumerator() => _roles.GetEnumerator();
+
+    public IEnumerator<IRoleDescriptor> GetEnumerator() => _roles.Values.GetEnumerator();
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 
     public IEnumerable<string> RegisterRoles(params string[] roleNames)

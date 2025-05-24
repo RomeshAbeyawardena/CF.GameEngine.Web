@@ -2,5 +2,5 @@
 
 public class RoleRegistrarCollector(IEnumerable<IRoleRegistrar> roleRegistrars) : IRoleRegistrarCollector
 {
-    public IEnumerable<string> Roles => [.. roleRegistrars.SelectMany(x => x)];
+    public IEnumerable<IRoleDescriptor> Roles => [.. roleRegistrars.SelectMany(x => x)];
 }
