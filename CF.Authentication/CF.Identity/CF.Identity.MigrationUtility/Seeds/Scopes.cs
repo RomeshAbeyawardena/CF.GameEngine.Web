@@ -26,7 +26,7 @@ internal static partial class Seed
             return;
         }
 
-        var scopeDictionary = scopes.ToDictionary(x => x.Key, x => x);
+        var scopeDictionary = Roles.ToDictionary(x => x.Key, x => x);
 
         foreach (var scope in missingScopes)
         {

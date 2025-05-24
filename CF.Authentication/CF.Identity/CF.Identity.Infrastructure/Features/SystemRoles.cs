@@ -9,6 +9,7 @@ public class SystemRoles : RoleRegistrarBase
 
     public SystemRoles()
     {
-        base.RegisterRoles(GlobalRead, GlobalWrite);
+        base.TryRegisterRole(GlobalRead, true);
+        base.TryRegisterRole(GlobalWrite, true);
     }
 }
