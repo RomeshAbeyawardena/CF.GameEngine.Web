@@ -8,6 +8,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Filters;
 internal class ScopeFilter(IScopeFilter filter) : FilterBase<IScopeFilter, DbScope>(filter), IScopeFilter
 {
     protected override IScopeFilter Source => this;
+    public bool IncludePrivilegedScoped { get; set; }
     public IEnumerable<string>? Keys { get; set; }
     public Guid? UserId { get; set; }
     public Guid? ClientId { get; set; }
@@ -23,7 +24,6 @@ internal class ScopeFilter(IScopeFilter filter) : FilterBase<IScopeFilter, DbSco
 
     public override ExpressionStarter<DbScope> ApplyFilter(ExpressionStarter<DbScope> query, IScopeFilter filter)
     {
-
         if (!string.IsNullOrWhiteSpace(filter.Key) && filter.Keys?.Any() == true)
         {
             throw new InvalidOperationException("Cannot filter by both Key and Keys simultaneously.");
@@ -49,6 +49,11 @@ internal class ScopeFilter(IScopeFilter filter) : FilterBase<IScopeFilter, DbSco
         if (filter.Keys != null && (scopeKeys = [.. filter.Keys.Take(50)]).Count > 0)
         {
             query = query.And(x => scopeKeys.Contains(x.Key));
+        }
+
+        if (!filter.IncludePrivilegedScoped)
+        {
+            query = query.And(x => !x.IsPrivileged);
         }
 
         return query;

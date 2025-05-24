@@ -20,9 +20,9 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 {
     private AuthenticatedClient? authenticatedClient;
 
-    private async Task AttachScopes(Guid clientId, Guid userId, List<Claim> claims)
+    private async Task AttachScopes(IClientDetails client, Guid userId, List<Claim> claims)
     {
-        var scopes = (await mediator.Send(new FindScopeQuery(clientId, userId, Bypass: true))).GetResultOrDefault();
+        var scopes = (await mediator.Send(new FindScopeQuery(client.Id, userId, IncludePrivilegedScoped: client.IsSystem, Bypass: true))).GetResultOrDefault();
 
         if(scopes is null || !scopes.Any())
         {
@@ -42,7 +42,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
         if (string.IsNullOrWhiteSpace(auth))
         {
-            return AuthenticateResult.Fail("Authenication header missing");
+            return AuthenticateResult.Fail("Authentication header missing");
         }
 
         var raw = encoding.GetString(Convert.FromBase64String(auth));
@@ -121,6 +121,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         {
             new(ClaimTypes.GroupSid, client.ClientDetails.Id.ToString()),
             new(ClaimTypes.Sid, client.ClientDetails.Name),
+            new(ClaimTypes.System, client.ClientDetails.IsSystem.ToString()),
             new(ClaimTypes.Authentication, accessToken)
         };
 
@@ -136,7 +137,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         claims.Add(new(ClaimTypes.Email, user.EmailAddress));
         claims.Add(new(ClaimTypes.GivenName, user.FormatName()));
 
-        await AttachScopes(client.ClientDetails.Id, user.Id, claims);
+        await AttachScopes(client.ClientDetails, user.Id, claims);
 
         var identity = new ClaimsIdentity(claims, Bearer);
         var principal = new ClaimsPrincipal(identity);

@@ -11,9 +11,11 @@ public class DbScope : MappableBase<IScope>, IScope
     public Guid Id { get; set; }
     public string Key { get; set; } = null!;
     public Guid? ClientId { get; set; }
+    public bool IsPrivileged { get; set; }
 
     public virtual DbClient? Client { get; set; }
     public virtual ICollection<DbUserScope> UserScopes { get; set; } = [];
+    
 
     public override void Map(IScope source)
     {

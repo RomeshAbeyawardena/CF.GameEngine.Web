@@ -2,7 +2,7 @@
 
 namespace IDFCR.Http.Authentication;
 
-public record ClientInfo(string? ClientId, string? ClientName, string? UserIdentifier)
+public record ClientInfo(string? ClientId, string? ClientName, string? UserIdentifier, bool IsSystem)
 {
     public Guid? Id => !string.IsNullOrWhiteSpace(ClientId) 
         && Guid.TryParse(ClientId, out var id) ? id : null;
@@ -15,7 +15,10 @@ public static class ClaimsPrincipalExtensions
     public static ClientInfo GetClient(this ClaimsPrincipal user)
     {
         var (clientId, clientName) = user.GetClientInfo();
-        return new ClientInfo(clientId, clientName, user.GetUserId());
+        var systemClaim = user.FindFirst(ClaimTypes.System);
+        var isSystem = bool.TryParse(systemClaim?.Value, out var isSys) && isSys;
+
+        return new ClientInfo(clientId, clientName, user.GetUserId(), isSystem);
     }
 
     public static (string?, string?) GetClientInfo(this ClaimsPrincipal user) =>
