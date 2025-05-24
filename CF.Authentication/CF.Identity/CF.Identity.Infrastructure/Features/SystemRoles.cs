@@ -11,9 +11,4 @@ public partial class SystemRoles : RoleRegistrarBase
     {
         base.RegisterRoles(GlobalRead, GlobalWrite);
     }
-
-    public static string ConcatenateRoles(params string[] roles)
-    {
-        return string.Join(',', roles);
-    }
 }
