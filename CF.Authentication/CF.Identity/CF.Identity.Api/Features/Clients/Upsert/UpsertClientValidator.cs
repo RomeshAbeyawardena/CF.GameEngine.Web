@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Api.Features.Clients.Get;
 using FluentValidation;
 using IDFCR.Shared.Extensions;
+using IDFCR.Shared.FluentValidation.Constants;
 using MediatR;
 
 namespace CF.Identity.Api.Features.Clients.Post;
@@ -25,7 +26,8 @@ public class UpsertClientValidator : AbstractValidator<PostClientCommand>
 
         RuleFor(x => x.Client).MustAsync(BeUnique)
             .WithName("Client_not_unique")
-            .WithMessage("Client must have a unique name");
+            .WithMessage("Client must have a unique name")
+            .WithErrorCode(Errorcodes.Conflict);
     }
 
     public async Task<bool> BeUnique(EditableClientDto client, CancellationToken cancellationToken)
