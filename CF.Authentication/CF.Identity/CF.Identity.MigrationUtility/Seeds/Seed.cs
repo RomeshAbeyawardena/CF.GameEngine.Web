@@ -1,4 +1,5 @@
 ﻿using CF.Identity.Infrastructure.SqlServer;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +14,10 @@ internal static partial class Seed
     {
         bool hasWarnings = false;
         logger.LogInformation("Seeding data...");
+        var roleRegistrarCollector = serviceProvider.GetRequiredService<IRoleRegistrarCollector>();
+
+        var roles = roleRegistrarCollector.Roles;
+        logger.LogInformation("Registered scopes:\r\n{Roles}", string.Join(Environment.NewLine, roleRegistrarCollector.Roles.Select(x => x.Key)));
 
         await TrySeedScopesAsync(logger, context, cancellationToken);
 
