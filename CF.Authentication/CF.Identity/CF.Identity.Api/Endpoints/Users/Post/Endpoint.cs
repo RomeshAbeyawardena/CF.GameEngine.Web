@@ -13,8 +13,8 @@ public static class Endpoint
         IHttpContextAccessor httpContextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
-        var data = request.Map<EditableUserDto>();
-        data.Client = request.Client;
+        var data = request.MapToEditable();
+        
         var result = await mediator.Send(new PostUserCommand(data), cancellationToken);
         return result.NegotiateResult(httpContextAccessor, Endpoints.Url);
     }

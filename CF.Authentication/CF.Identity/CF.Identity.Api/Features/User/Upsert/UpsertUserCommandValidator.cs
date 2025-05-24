@@ -2,6 +2,7 @@
 using CF.Identity.Api.Features.User.Get;
 using FluentValidation;
 using IDFCR.Shared.Extensions;
+using IDFCR.Shared.FluentValidation.Constants;
 using MediatR;
 
 namespace CF.Identity.Api.Features.User.Upsert;
@@ -20,9 +21,12 @@ public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
         RuleFor(x => x.User.Lastname).NotEmpty().WithMessage("Lastname is required.");
         RuleFor(x => x.User.PrimaryTelephoneNumber).NotEmpty().WithMessage("Primary telephone number is required.");
         RuleFor(x => x).MustAsync(HaveValidClientAsync).WithName("Existing_Client")
-            .WithMessage("Unable to find client by id or name required for user enrollment");
+            .WithMessage("Unable to find client by id or name required for user enrollment")
+            .WithErrorCode(Errorcodes.Conflict);
+
         RuleFor(x => x).MustAsync(BeUnique).WithName("Unique_Username")
-            .WithMessage("Username and email must be unique for a given client/realm");
+            .WithMessage("Username and email must be unique for a given client/realm")
+            .WithErrorCode(Errorcodes.Conflict);
     }
 
     public async Task<bool> BeUnique(UpsertUserCommand request, CancellationToken cancellationToken)

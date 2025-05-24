@@ -12,7 +12,10 @@ public class PostUserCommandHandler(IMediator mediator, ITransactionalUnitOfWork
     { 
         var result = await mediator.Send(new UpsertUserCommand(request.User), cancellationToken);
 
-        await transactionalUnitOfWork.SaveChangesAsync(cancellationToken);
+        if (result.IsSuccess)
+        {
+            await transactionalUnitOfWork.SaveChangesAsync(cancellationToken);
+        }
         return result;
     }
 }

@@ -80,11 +80,16 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
     public async Task<IUnitResultCollection<Guid>> SynchroniseScopesAsync(Guid userId, IEnumerable<Guid> scopeIds, CancellationToken cancellationToken)
     {
         var foundUser = await Context.Users
-            .Include(x => x.UserScopes).FirstOrDefaultAsync(x => x.Id == userId);
+            .Include(x => x.UserScopes).FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
         if(foundUser is null)
         {
-            return UnitResultCollection.Failed<Guid>(new EntityNotFoundException(typeof(UserDto), userId));
+            foundUser = Context.Users.Local.FirstOrDefault(x => x.Id == userId);
+
+            if (foundUser is null)
+            {
+                return UnitResultCollection.Failed<Guid>(new EntityNotFoundException(typeof(UserDto), userId));
+            }
         }
 
         var existingScopeIds = foundUser.UserScopes.Select(us => us.ScopeId).ToHashSet();
