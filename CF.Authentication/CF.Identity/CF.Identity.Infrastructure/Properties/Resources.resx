@@ -174,4 +174,16 @@
   <data name="UserWriteRoleDescription" xml:space="preserve">
     <value>User can add, update or delete other users</value>
   </data>
+  <data name="GlobalWriteRoleName" xml:space="preserve">
+    <value>Global read (privileged)</value>
+  </data>
+  <data name="GlobalReadRoleName" xml:space="preserve">
+    <value>Global write (privileged)</value>
+  </data>
+  <data name="GlobalWriteRoleDescription" xml:space="preserve">
+    <value>User can add, update or delete everything</value>
+  </data>
+  <data name="GlobalReadRoleDescription" xml:space="preserve">
+    <value>User can read everything</value>
+  </data>
 </root>

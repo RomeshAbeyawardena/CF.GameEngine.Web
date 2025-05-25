@@ -160,6 +160,42 @@ namespace CF.Identity.Infrastructure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User can read everything.
+        /// </summary>
+        internal static string GlobalReadRoleDescription {
+            get {
+                return ResourceManager.GetString("GlobalReadRoleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global write (privileged).
+        /// </summary>
+        internal static string GlobalReadRoleName {
+            get {
+                return ResourceManager.GetString("GlobalReadRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User can add, update or delete everything.
+        /// </summary>
+        internal static string GlobalWriteRoleDescription {
+            get {
+                return ResourceManager.GetString("GlobalWriteRoleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global read (privileged).
+        /// </summary>
+        internal static string GlobalWriteRoleName {
+            get {
+                return ResourceManager.GetString("GlobalWriteRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User can read scopes.
         /// </summary>
         internal static string ScopeReadRoleDescription {
