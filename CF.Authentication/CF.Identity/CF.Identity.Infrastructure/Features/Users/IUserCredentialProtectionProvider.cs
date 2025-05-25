@@ -81,17 +81,17 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
 
         userHmac = new UserHmac
         {
-            EmailAddressHmac = HashUsingHmac(user, client, x => x.EmailAddress),
-            PreferredUsernameHmac = HashUsingHmac(user, client, x => x.Username),
-            UsernameHmac = HashUsingHmac(user, client, x => x.Username),
+            EmailAddressHmac = HashUsingHmac(user, client, x => x.EmailAddress.ToUpperInvariant()),
+            PreferredUsernameHmac = HashUsingHmac(user, client, x => x.Username.ToUpperInvariant()),
+            UsernameHmac = HashUsingHmac(user, client, x => x.Username.ToUpperInvariant()),
             PrimaryTelephoneNumberHmac = HashUsingHmac(user, client, x => x.PrimaryTelephoneNumber)
         };
 
-        user.EmailAddress = Encrypt(user.EmailAddress, aes)!;
-        user.Username = Encrypt(user.Username, aes)!;
+        user.EmailAddress = Encrypt(user.EmailAddress.ToUpperInvariant(), aes)!;
+        user.Username = Encrypt(user.Username.ToUpperInvariant(), aes)!;
         if (!string.IsNullOrWhiteSpace(user.PreferredUsername))
         {
-            user.PreferredUsername = Encrypt(user.PreferredUsername, aes);
+            user.PreferredUsername = Encrypt(user.PreferredUsername.ToUpperInvariant(), aes);
         }
 
         user.PrimaryTelephoneNumber = Encrypt(user.PrimaryTelephoneNumber, aes)!;
