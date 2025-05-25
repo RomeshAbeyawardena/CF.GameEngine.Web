@@ -20,6 +20,11 @@ internal class CasingImpressionTests
     public void Test_with_extremely_long_string()
     {
         var tooLongToSupportCasingRestoration = "ThisIsFarTooLongAndTooComplicatedToCalculateAndStoreWhyEvenBotherWhoTheHellHasTimeToRememberThatWellIdontYouObviouslyhaveFarTooMuchTimeOnYourhandsToHaveAUsernameThislongAndItsTakingMeForeverToTypeInHereAmIDoneYetItsTakingTooLongToReachtwo-hundred-and-fifty-six-characters";
+        
         Assert.Throws<NotSupportedException>(() => CasingImpression.Calculate(tooLongToSupportCasingRestoration));
+
+        tooLongToSupportCasingRestoration = new string('A', 256);
+
+        Assert.DoesNotThrow(() => CasingImpression.Calculate(tooLongToSupportCasingRestoration));
     }
 }
