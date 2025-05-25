@@ -3,7 +3,7 @@ using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Infrastructure.SqlServer.Models;
 
-public class DbUser : MappableBase<IUser>, IUser, IUserHmac
+public class DbUser : MappableBase<IUser>, IUser, IUserHmac, IUserCasingImpression
 {
     protected override IUser Source => this;
     string IUserDetail.Firstname => FirstCommonName.ValueNormalised;
@@ -12,10 +12,12 @@ public class DbUser : MappableBase<IUser>, IUser, IUserHmac
 
     public string EmailAddress { get; set; } = null!;
     public string EmailAddressHmac { get; set; } = null!;
+    public string EmailAddressCI { get; set; } = null!;
     public string HashedPassword { get; set; } = null!;
     
     public string Username { get; set; } = null!;
     public string UsernameHmac { get; set; } = null!;
+    public string UsernameCI { get; set; } = null!;
 
     public Guid FirstCommonNameId { get; set; }
     public Guid? MiddleCommonNameId { get; set; }
@@ -24,6 +26,8 @@ public class DbUser : MappableBase<IUser>, IUser, IUserHmac
     public Guid ClientId { get; set; }
     public string? PreferredUsername { get; set; }
     public string PreferredUsernameHmac { get; set; } = null!;
+    public string? PreferredUsernameCI { get; set; } = null!;
+
     public Guid Id { get; set; }
     public bool IsSystem { get; set; }
     public string RowVersion { get; set; } = null!;

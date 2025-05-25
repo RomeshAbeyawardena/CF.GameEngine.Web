@@ -6,11 +6,19 @@ using System.Text;
 
 namespace CF.Identity.Infrastructure.Features.Users;
 
+public interface IProtectionInfo
+{
+    IUserHmac UserHmac { get; }
+    IUserCasingImpression CasingImpressions { get; }
+}
+
+public record DefaultProtectionInfo(IUserHmac UserHmac, IUserCasingImpression CasingImpressions) : IProtectionInfo;
+
 public interface IUserCredentialProtectionProvider
 {
     string Hash(string secret, IUser user, IClient? client = null);
     bool Verify(string secret, string hash, IUser user);
-    void Protect(UserDto user, IClient client, out IUserHmac userHmac, bool regenerativeIv = false);
+    void Protect(UserDto user, IClient client, out IProtectionInfo userHmac, bool regenerativeIv = false);
     void Unprotect(UserDto user, IClient client);
     string HashUsingHmac(UserDto user, IClient client, Func<UserDto, string> target);
     string HashUsingHmac(IClient client, string value);
@@ -64,7 +72,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         return HashUsingHmac(client, target(user));
     }
 
-    public void Protect(UserDto user, IClient client, out IUserHmac userHmac, bool regenerativeIv = false)
+    public void Protect(UserDto user, IClient client, out IProtectionInfo protectionInfo, bool regenerativeIv = false)
     {
         using Aes? aes = Aes.Create();
 
@@ -79,7 +87,9 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
             aes.IV = Convert.FromBase64String(user.RowVersion);
         }
 
-        userHmac = new UserHmac
+        var userCasingImpressions = new UserCasingImpression(user);
+
+        var userHmac = new UserHmac
         {
             EmailAddressHmac = HashUsingHmac(user, client, x => x.EmailAddress.ToUpperInvariant()),
             PreferredUsernameHmac = HashUsingHmac(user, client, x => x.Username.ToUpperInvariant()),
@@ -96,6 +106,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
 
         user.PrimaryTelephoneNumber = Encrypt(user.PrimaryTelephoneNumber, aes)!;
         user.HashedPassword = Hash(user.HashedPassword, user, client);
+        protectionInfo = new DefaultProtectionInfo(userHmac, userCasingImpressions);
     }
 
     public void Unprotect(UserDto user, IClient client)

@@ -1,4 +1,21 @@
-﻿namespace CF.Identity.Infrastructure.Features.Users;
+﻿using IDFCR.Shared.Abstractions;
+
+namespace CF.Identity.Infrastructure.Features.Users;
+
+public interface IUserCasingImpression
+{
+    string EmailAddressCI { get; }
+    string UsernameCI { get; }
+    string? PreferredUsernameCI { get; }
+}
+
+public class UserCasingImpression(IUser user) : IUserCasingImpression
+{
+
+    public string EmailAddressCI => CasingImpression.Calculate(user.EmailAddress);
+    public string UsernameCI => CasingImpression.Calculate(user.Username);
+    public string? PreferredUsernameCI => string.IsNullOrWhiteSpace(user.PreferredUsername) ? null : CasingImpression.Calculate(user.PreferredUsername);
+}
 
 public interface IUserHmac
 {
