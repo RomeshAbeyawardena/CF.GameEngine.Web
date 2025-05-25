@@ -31,7 +31,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
         foreach(var scope in scopes)
         {
-            claims.Add(new(ClaimTypes.Role, scope.Name));
+            claims.Add(new(ClaimTypes.Role, scope.Key));
         }
         
     }
