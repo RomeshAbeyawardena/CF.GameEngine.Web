@@ -6,8 +6,15 @@ public record UnitPagedResult<TResult> : UnitResult<IEnumerable<TResult>>, IUnit
 {
     public IPagedQuery PagedQuery { get; }
     public int TotalRows { get; }
-    public UnitPagedResult(IEnumerable<TResult>? result, int totalRows, IPagedQuery pagedQuery, UnitAction action = UnitAction.None,
-    bool isSuccess = true, Exception? exception = null) : base(result, action, isSuccess, exception)
+    public UnitPagedResult(
+        IEnumerable<TResult>? result, 
+        int totalRows, 
+        IPagedQuery pagedQuery, 
+        UnitAction action = UnitAction.None,
+        bool isSuccess = true, 
+        Exception? exception = null, 
+        FailureReason? failureReason = null) 
+        : base(result, action, isSuccess, exception, failureReason)
     {
         PagedQuery = pagedQuery;
         if (pagedQuery is not null)
@@ -23,7 +30,9 @@ public record UnitPagedResult<TResult> : UnitResult<IEnumerable<TResult>>, IUnit
         }
     }
 
-    public UnitPagedResult(IEnumerable<TResult>? result, UnitAction action = UnitAction.None, bool isSuccess = true, Exception? exception = null) : this(result, 0, null!, action, isSuccess, exception)
+    public UnitPagedResult(IEnumerable<TResult>? result, UnitAction action = UnitAction.None, bool isSuccess = true, Exception? exception = null,
+        FailureReason? failureReason = null) 
+        : this(result, 0, null!, action, isSuccess, exception, failureReason)
     {
 
     }

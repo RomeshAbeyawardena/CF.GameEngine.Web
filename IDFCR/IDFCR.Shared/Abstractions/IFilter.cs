@@ -19,5 +19,6 @@ public interface IFilter<TFilter, TDb> : IMappable<TFilter>, IFilter
 {
     TFilter Filter { set; }
     ExpressionStarter<TDb> ApplyFilter(ExpressionStarter<TDb> query, TFilter filter);
+    Task<ExpressionStarter<TDb>> ApplyFilterAsync(ExpressionStarter<TDb> query, TFilter filter, CancellationToken cancellationToken);
     Task<ExpressionStarter<TDb>> ApplyFilterAsync(ExpressionStarter<TDb> query, CancellationToken cancellationToken);
 }

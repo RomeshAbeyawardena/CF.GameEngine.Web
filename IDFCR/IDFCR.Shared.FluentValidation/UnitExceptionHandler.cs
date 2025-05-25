@@ -36,6 +36,8 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
         bool isHandled = exception is UnauthorizedAccessException || exception is ValidationException;
         Exception finalException = exception;
         var unitAction = UnitAction.None;
+        var failureReason = FailureReason.InternalError;
+
         if (isHandled && typeof(TResponse).IsAssignableTo(typeof(IUnitResult)))
         {
             Dictionary<string, object?> errors = [];
@@ -51,7 +53,7 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
                 {
                     unitAction = UnitAction.Conflict;
                 }
-
+                failureReason = FailureReason.ValidationError;
                 finalException = new ValidationDisplayException(validationException);
             }
 
@@ -68,8 +70,8 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
 
             if ((baseResponseType.IsGenericType
                 ? Activator.CreateInstance(implementationType.MakeGenericType(genericArguments),
-                null, unitAction, false, finalException)
-                : Activator.CreateInstance(implementationType, finalException, unitAction, false)) is not IUnitResult response)
+                null, unitAction, false, finalException, failureReason)
+                : Activator.CreateInstance(implementationType, finalException, unitAction, false, failureReason)) is not IUnitResult response)
             {
                 return Task.CompletedTask;
             }

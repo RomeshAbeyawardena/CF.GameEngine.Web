@@ -19,11 +19,12 @@ public static class ApiResultExtensions
             return StatusCodes.Status400BadRequest;
         }
 
-        if (failureReason.HasValue)
+        if (action != UnitAction.Conflict && failureReason.HasValue)
         {
             return failureReason switch
             {
                 FailureReason.NotFound => StatusCodes.Status404NotFound,
+                FailureReason.Conflict => StatusCodes.Status409Conflict,
                 FailureReason.ValidationError => StatusCodes.Status422UnprocessableEntity,
                 FailureReason.Unauthorized => StatusCodes.Status401Unauthorized,
                 FailureReason.Forbidden => StatusCodes.Status403Forbidden,

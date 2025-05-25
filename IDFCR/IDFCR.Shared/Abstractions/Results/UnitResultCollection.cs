@@ -15,7 +15,7 @@ public static class UnitResultCollection
 
 
 public record UnitResultCollection<TResult>(IEnumerable<TResult>? Result = null, UnitAction Action = UnitAction.Get,
-    bool IsSuccess = true, Exception? Exception = null) : UnitResult<IEnumerable<TResult>>(Result, Action, IsSuccess, Exception), IUnitResultCollection<TResult>
+    bool IsSuccess = true, Exception? Exception = null, FailureReason? FailureReason = null) : UnitResult<IEnumerable<TResult>>(Result, Action, IsSuccess, Exception, FailureReason), IUnitResultCollection<TResult>
 {
     
 }
