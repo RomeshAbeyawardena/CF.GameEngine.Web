@@ -31,27 +31,26 @@ public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
 
         RuleFor(x => x).MustAsync(BeUnique).WithName("Unique_Username")
             .WithMessage("Username and email must be unique for a given client/realm")
-            .WithErrorCode(Errorcodes.Conflict)
-            .DependentRules(() =>
-                RuleFor(x => x).MustAsync(EnsureNonSystemClientAuthenticatedUserCantAddUsersForSystemClients)
-                    .WithName("Non_System_Client_User_Cant__Add_System_Users")
-                    .WithMessage("System-client, system-user can only add system users.")
-                    .WithErrorCode(Errorcodes.Conflict));
+            .WithErrorCode(Errorcodes.Conflict);
+        RuleFor(x => x).MustAsync(EnsureNonSystemClientAuthenticatedUserCantAddUsersForSystemClients)
+            .WithName("Non_System_Client_User_Cant__Add_System_Users")
+            .WithMessage("System-client, system-user can only add system users.")
+            .WithErrorCode(Errorcodes.Conflict);
     }
 
     public async Task<bool> EnsureNonSystemClientAuthenticatedUserCantAddUsersForSystemClients(UpsertUserCommand request, CancellationToken cancellationToken)
     {
         var authenticatedClient = _userContext.Client;
-        
-        if(authenticatedClient is null)
+
+        if (authenticatedClient is null)
         {
             //fail-fast : We should not be here, whose been exposing secure entry points as free-for-all?
             return false;
         }
 
         var authenticatedUser = (await _mediator
-            .Send(new FindUsersQuery(authenticatedClient.UserId.GetValueOrDefault(), Bypass: true), cancellationToken))
-            .GetOneOrDefault();
+            .Send(new FindUserByIdQuery(authenticatedClient.UserId.GetValueOrDefault(), Bypass: true), cancellationToken))
+            .GetResultOrDefault();
 
         if (authenticatedUser is null)
         {
@@ -60,8 +59,8 @@ public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
         }
 
         var isSystemClient = authenticatedClient?.IsSystem ?? false;
-        
-        if(client is null)
+
+        if (client is null)
         {
             //fail-fast : The last validation failed so this will fail too as its a dependency!
             return false;
@@ -104,14 +103,14 @@ public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
             return false;
         }
 
-        var result = (await _mediator.Send(new FindClientQuery(user.Client), cancellationToken)).GetOneOrDefault();
+        client = (await _mediator.Send(new FindClientQuery(user.Client), cancellationToken)).GetOneOrDefault();
 
-        if(result is null)
+        if (client is null)
         {
             return false;
         }
 
-        request.User.ClientId = result.Id;
+        request.User.ClientId = client.Id;
         return true;
     }
 }
