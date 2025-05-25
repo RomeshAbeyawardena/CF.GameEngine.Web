@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace CF.Identity.MigrationUtility.Seeds;
@@ -27,22 +28,28 @@ internal static partial class Seed
             }
 
             var scope = await context.Scopes.FirstOrDefaultAsync(s => 
-            s.Key == key && (s.Name != info.DisplayName || s.Description != info.Description), 
+            s.Key == key && (s.Name != info.DisplayName 
+                || s.Description != info.Description), 
             cancellationToken);
 
             if (scope is null)
             {
                 continue;
             }
+
+            logger.LogInformation("Updating scope: {key}...", key);
+
             //only touch fields that need updating!
             if (hasDisplayName) 
             {
                 scope.Name = info.DisplayName!;
+                logger.LogTrace("Updated display name");
             }
 
             if (hasDescription)
             {
                 scope.Description = info.Description!;
+                logger.LogTrace("Updated description ");
             }
         }
 
