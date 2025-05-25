@@ -1,37 +1,29 @@
-﻿
-namespace IDFCR.Shared.Abstractions;
+﻿namespace IDFCR.Shared.Abstractions;
 
 public abstract class RoleRegistrarBase : IRoleRegistrar
 {
     protected readonly Dictionary<string, IRoleDescriptor> _roles = [];
-
     public string? Prefix { get; set; }
 
-    public bool TryRegisterRole(string roleName, bool isPrivileged = false)
+    public bool TryRegisterRole(string roleName, IRoleDescriptor roleDescriptor, out string key)
     {
-        if (string.IsNullOrWhiteSpace(roleName) || _roles.ContainsKey(roleName))
+        key = $"{Prefix}{roleName}";
+        if (string.IsNullOrWhiteSpace(roleName) || _roles.ContainsKey(key))
         {
             return false;
         }
-        var key = $"{Prefix}{roleName}";
-        _roles.TryAdd(key, new DefaultRoleDescriptor(key, isPrivileged) { Prefix = Prefix});
-        return true;
+        
+        return _roles.TryAdd(key, roleDescriptor);
     }
 
     public IEnumerator<IRoleDescriptor> GetEnumerator() => _roles.Values.GetEnumerator();
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public IEnumerable<string> RegisterRoles(params string[] roleNames)
+    public bool TryRegisterRole(string roleName, Action<IRoleDescriptorBuilder> buildRole)
     {
-        var failedRoles = new List<string>();
-        foreach (var roleName in roleNames)
-        {
-            if (!TryRegisterRole(roleName))
-            {
-                failedRoles.Add(roleName);
-            }
-        }
+        var builder = new RoleDescriptorBuilder(roleName);
+        buildRole(builder);
 
-        return failedRoles;
+        return TryRegisterRole(roleName, builder.Build(), out _);
     }
 }
