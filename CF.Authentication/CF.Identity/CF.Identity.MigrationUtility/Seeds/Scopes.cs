@@ -14,16 +14,6 @@ internal static partial class Seed
             return;
         }
 
-        var scopesToAdd = Roles.Select(x => x.Key);
-        var scopes = await context.Scopes.Where(x => !x.ClientId.HasValue && scopesToAdd.Contains(x.Key)).ToListAsync(cancellationToken);
-
-        var missingScopes = scopesToAdd.Except(scopes.Select(s => s.Key)).ToList();
-        if (missingScopes.Count < 1)
-        {
-            logger.LogInformation("No scopes to seed, skipping seeding.");
-            return;
-        }
-
         var scopeDictionary = Roles.ToDictionary(x => x.Key, x => x);
         //update any existing scopes with display names or descriptions that have been updated by the model
         foreach (var (key, info) in scopeDictionary)
@@ -54,6 +44,16 @@ internal static partial class Seed
             {
                 scope.Description = info.Description!;
             }
+        }
+
+        var scopesToAdd = Roles.Select(x => x.Key);
+        var scopes = await context.Scopes.Where(x => !x.ClientId.HasValue && scopesToAdd.Contains(x.Key)).ToListAsync(cancellationToken);
+
+        var missingScopes = scopesToAdd.Except(scopes.Select(s => s.Key)).ToList();
+        if (missingScopes.Count < 1)
+        {
+            logger.LogInformation("No scopes to seed, skipping seeding.");
+            return;
         }
 
 
