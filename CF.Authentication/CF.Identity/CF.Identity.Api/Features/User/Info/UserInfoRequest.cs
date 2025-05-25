@@ -13,7 +13,7 @@ public class UserInfoRequestHandler(IMediator mediator) : IUnitRequestHandler<Us
 {
     public async Task<IUnitResult<UserInfoResponse>> Handle(UserInfoRequest request, CancellationToken cancellationToken)
     {
-        var usersResult = await mediator.Send(new GetUserByIdQuery(request.AccessToken!.UserId), cancellationToken);
+        var usersResult = await mediator.Send(new FindUserByIdQuery(request.AccessToken!.UserId), cancellationToken);
 
         var user = usersResult.GetResultOrDefault();
         

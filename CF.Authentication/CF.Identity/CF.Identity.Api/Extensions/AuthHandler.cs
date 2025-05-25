@@ -125,7 +125,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
             new(ClaimTypes.Authentication, accessToken)
         };
 
-        var user = (await mediator.Send(new GetUserByIdQuery(validAccessToken.UserId, Bypass: true))).GetResultOrDefault();
+        var user = (await mediator.Send(new FindUserByIdQuery(validAccessToken.UserId, Bypass: true))).GetResultOrDefault();
 
         if(user is null)
         {

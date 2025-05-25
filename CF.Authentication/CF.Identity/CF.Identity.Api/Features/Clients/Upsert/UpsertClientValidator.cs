@@ -51,14 +51,13 @@ public class UpsertClientValidator : AbstractValidator<PostClientCommand>
         await Task.CompletedTask;
         var authenticatedClient = _userContext.Client;
 
-        if(authenticatedClient is null)
+        if(authenticatedClient is null || _userContext.Client is null)
         {
             return false;
         }
 
         var authenticatedUser = (await _mediator
-            .Send(new FindUsersQuery(authenticatedClient.UserId.GetValueOrDefault(), Bypass: true), cancellationToken))
-            .GetOneOrDefault();
+            .Send(new FindUserByIdQuery(authenticatedClient.UserId.GetValueOrDefault(), Bypass: true), cancellationToken)).GetResultOrDefault();
 
         if (authenticatedUser is null)
         {

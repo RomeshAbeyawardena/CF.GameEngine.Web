@@ -5,9 +5,9 @@ using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.User.Get;
 
-public class FindUserQueryHandler(IUserRepository userRepository) : IUnitRequestHandler<GetUserByIdQuery, UserDto>
+public class FindUserQueryHandler(IUserRepository userRepository) : IUnitRequestHandler<FindUserByIdQuery, UserDto>
 {
-    public async Task<IUnitResult<UserDto>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<IUnitResult<UserDto>> Handle(FindUserByIdQuery request, CancellationToken cancellationToken)
     {
         var result = await userRepository.FindUserByIdAsync(request.Id, cancellationToken);
         return result.Convert(x => x.Map<UserDto>());
