@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="RoleReadRoleDescription" xml:space="preserve">
+  <data name="AccessRoleReadRoleDescription" xml:space="preserve">
     <value>User can read roles</value>
   </data>
   <data name="AccessTokenReadRoleName" xml:space="preserve">
@@ -141,13 +141,37 @@
   <data name="ClientWriteRoleName" xml:space="preserve">
     <value>Client write</value>
   </data>
-  <data name="RoleReadRoleName" xml:space="preserve">
+  <data name="AccessRoleReadRoleName" xml:space="preserve">
     <value>Role read</value>
   </data>
-  <data name="RoleWriteRoleName" xml:space="preserve">
+  <data name="AccessRoleWriteRoleName" xml:space="preserve">
     <value>Role write</value>
   </data>
-  <data name="RoleWriteRoleDescription" xml:space="preserve">
+  <data name="AccessRoleWriteRoleDescription" xml:space="preserve">
     <value>User can add, update or delete roles</value>
+  </data>
+  <data name="ScopeReadRoleName" xml:space="preserve">
+    <value>Scope read</value>
+  </data>
+  <data name="UserReadRoleName" xml:space="preserve">
+    <value>User read</value>
+  </data>
+  <data name="ScopeReadRoleDescription" xml:space="preserve">
+    <value>User can read scopes</value>
+  </data>
+  <data name="UserReadRoleDescription" xml:space="preserve">
+    <value>User can read other user data</value>
+  </data>
+  <data name="ScopeWriteRoleName" xml:space="preserve">
+    <value>Scope write</value>
+  </data>
+  <data name="UserWriteRoleName" xml:space="preserve">
+    <value>User write</value>
+  </data>
+  <data name="ScopeWriteRoleDescription" xml:space="preserve">
+    <value>User can add, update or delete scopes</value>
+  </data>
+  <data name="UserWriteRoleDescription" xml:space="preserve">
+    <value>User can add, update or delete other users</value>
   </data>
 </root>

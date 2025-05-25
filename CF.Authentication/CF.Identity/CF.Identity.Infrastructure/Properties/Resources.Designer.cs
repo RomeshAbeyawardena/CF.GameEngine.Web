@@ -61,6 +61,42 @@ namespace CF.Identity.Infrastructure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User can read roles.
+        /// </summary>
+        internal static string AccessRoleReadRoleDescription {
+            get {
+                return ResourceManager.GetString("AccessRoleReadRoleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Role read.
+        /// </summary>
+        internal static string AccessRoleReadRoleName {
+            get {
+                return ResourceManager.GetString("AccessRoleReadRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User can add, update or delete roles.
+        /// </summary>
+        internal static string AccessRoleWriteRoleDescription {
+            get {
+                return ResourceManager.GetString("AccessRoleWriteRoleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Role write.
+        /// </summary>
+        internal static string AccessRoleWriteRoleName {
+            get {
+                return ResourceManager.GetString("AccessRoleWriteRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Access token read.
         /// </summary>
         internal static string AccessTokenReadRoleName {
@@ -124,38 +160,74 @@ namespace CF.Identity.Infrastructure.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User can read roles.
+        ///   Looks up a localized string similar to User can read scopes.
         /// </summary>
-        internal static string RoleReadRoleDescription {
+        internal static string ScopeReadRoleDescription {
             get {
-                return ResourceManager.GetString("RoleReadRoleDescription", resourceCulture);
+                return ResourceManager.GetString("ScopeReadRoleDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Role read.
+        ///   Looks up a localized string similar to Scope read.
         /// </summary>
-        internal static string RoleReadRoleName {
+        internal static string ScopeReadRoleName {
             get {
-                return ResourceManager.GetString("RoleReadRoleName", resourceCulture);
+                return ResourceManager.GetString("ScopeReadRoleName", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User can add, update or delete roles.
+        ///   Looks up a localized string similar to User can add, update or delete scopes.
         /// </summary>
-        internal static string RoleWriteRoleDescription {
+        internal static string ScopeWriteRoleDescription {
             get {
-                return ResourceManager.GetString("RoleWriteRoleDescription", resourceCulture);
+                return ResourceManager.GetString("ScopeWriteRoleDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Role write.
+        ///   Looks up a localized string similar to Scope write.
         /// </summary>
-        internal static string RoleWriteRoleName {
+        internal static string ScopeWriteRoleName {
             get {
-                return ResourceManager.GetString("RoleWriteRoleName", resourceCulture);
+                return ResourceManager.GetString("ScopeWriteRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User can read other user data.
+        /// </summary>
+        internal static string UserReadRoleDescription {
+            get {
+                return ResourceManager.GetString("UserReadRoleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User read.
+        /// </summary>
+        internal static string UserReadRoleName {
+            get {
+                return ResourceManager.GetString("UserReadRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User can add, update or delete other users.
+        /// </summary>
+        internal static string UserWriteRoleDescription {
+            get {
+                return ResourceManager.GetString("UserWriteRoleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User write.
+        /// </summary>
+        internal static string UserWriteRoleName {
+            get {
+                return ResourceManager.GetString("UserWriteRoleName", resourceCulture);
             }
         }
     }

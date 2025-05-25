@@ -10,11 +10,11 @@ public class AccessRoles : RoleRegistrarBase
     public AccessRoles()
     {
         TryRegisterRole(RoleRead, b => b
-            .AddDisplayName(Resources.RoleReadRoleName)
-            .AddDescription(Resources.RoleReadRoleDescription));
+            .AddDisplayName(Resources.AccessRoleReadRoleName)
+            .AddDescription(Resources.AccessRoleReadRoleDescription));
 
         TryRegisterRole(RoleWrite, b => b
-            .AddDisplayName(Resources.RoleWriteRoleName)
-            .AddDescription(Resources.RoleWriteRoleDescription));
+            .AddDisplayName(Resources.AccessRoleWriteRoleName)
+            .AddDescription(Resources.AccessRoleWriteRoleDescription));
     }
 }

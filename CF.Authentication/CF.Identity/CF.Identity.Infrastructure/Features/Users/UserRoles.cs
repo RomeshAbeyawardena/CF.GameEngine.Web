@@ -1,4 +1,5 @@
-﻿using IDFCR.Shared.Abstractions;
+﻿using CF.Identity.Infrastructure.Properties;
+using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Infrastructure.Features.Users;
 
@@ -8,6 +9,12 @@ public class UserRoles : RoleRegistrarBase
     public const string UserWrite = "user:api:write";
     public UserRoles()
     {
-        RegisterRoles(UserRead, UserWrite);
+        TryRegisterRole(UserRead, b => b
+            .AddDisplayName(Resources.UserReadRoleName)
+            .AddDescription(Resources.UserReadRoleDescription));
+
+        TryRegisterRole(UserWrite, b => b
+            .AddDisplayName(Resources.UserWriteRoleName)
+            .AddDescription(Resources.UserWriteRoleDescription));
     }
 }
