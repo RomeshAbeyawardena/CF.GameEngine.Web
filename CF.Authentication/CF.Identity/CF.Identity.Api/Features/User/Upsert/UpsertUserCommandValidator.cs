@@ -33,13 +33,13 @@ public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
             .WithMessage("Username and email must be unique for a given client/realm")
             .WithErrorCode(Errorcodes.Conflict)
             .DependentRules(() =>
-                RuleFor(x => x).MustAsync(EnsureNonSystemClientOrignatedUserCantAddUsersForSystemClients)
+                RuleFor(x => x).MustAsync(EnsureNonSystemClientAuthenticatedUserCantAddUsersForSystemClients)
                     .WithName("Non_System_Client_User_Cant__Add_System_Users")
                     .WithMessage("System-client, system-user can only add system users.")
                     .WithErrorCode(Errorcodes.Conflict));
     }
 
-    public async Task<bool> EnsureNonSystemClientOrignatedUserCantAddUsersForSystemClients(UpsertUserCommand request, CancellationToken cancellationToken)
+    public async Task<bool> EnsureNonSystemClientAuthenticatedUserCantAddUsersForSystemClients(UpsertUserCommand request, CancellationToken cancellationToken)
     {
         var authenticatedClient = _userContext.Client;
         
@@ -67,7 +67,14 @@ public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
             return false;
         }
 
-        return isSystemClient && client.IsSystem;
+        // User is not trying to add a user for a system client
+        if (!client.IsSystem && !request.User.IsSystem)
+        {
+            return true;
+        }
+
+        // User is a system user belonging to a system client.
+        return isSystemClient && client.IsSystem && authenticatedUser.IsSystem;
     }
 
     public async Task<bool> BeUnique(UpsertUserCommand request, CancellationToken cancellationToken)
