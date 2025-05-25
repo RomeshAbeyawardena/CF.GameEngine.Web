@@ -6,12 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace CF.Identity.MigrationUtility.Seeds;
 
 internal static partial class Seed
 {
-    internal static async Task TrySeedApiKeyAsync(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    internal static async Task TrySeedApiKeyAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
+        IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         if(Roles is null)
         {
@@ -75,12 +77,18 @@ internal static partial class Seed
             }
             
             context.AccessTokens.Add(newApiKey);
+            var outputBuilder = new StringBuilder();
+            outputBuilder.AppendLine($"✅ API key successfully seeded for system client.");
+            outputBuilder.AppendLine($"🔑 Reference Token: {referenceToken}");
+            outputBuilder.AppendLine($"♻️ Refresh Token: {refreshToken}");
+            outputBuilder.AppendLine("👉 Use the Reference Token in Postman or curl as the `Authorization: Bearer <token>` header.");
+            var output = outputBuilder.ToString();
+            logger.LogInformation("{output}", output);
 
-            logger.LogInformation("✅ API key successfully seeded for system client.");
-            logger.LogInformation("🔑 Reference Token: {referenceToken}", referenceToken);
-            logger.LogInformation("♻️ Refresh Token: {refreshToken}", refreshToken);
-            logger.LogInformation("👉 Use the Reference Token in Postman or curl as the `Authorization: Bearer <token>` header.");
-
+            if (args.Any(x => x.Equals("--output", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                await File.WriteAllTextAsync("ApiKey.txt", output, cancellationToken);
+            }
         }
         else
         {

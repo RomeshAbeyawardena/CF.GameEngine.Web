@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /.env
 /CF.Authentication/CF.Identity/.env
+/CF.Authentication/CF.Identity/CF.Identity.MigrationUtility/ApiKey.txt

@@ -44,7 +44,7 @@ internal static partial class Seed
 
         if (seedAll || args.Any(x => x.Equals("seed:api_key", StringComparison.InvariantCultureIgnoreCase)))
         {
-            await Seed.TrySeedApiKeyAsync(logger, context, serviceProvider, cancellationToken);
+            await Seed.TrySeedApiKeyAsync(logger, context, args, serviceProvider, cancellationToken);
         }
 
         await context.SaveChangesAsync(cancellationToken);
