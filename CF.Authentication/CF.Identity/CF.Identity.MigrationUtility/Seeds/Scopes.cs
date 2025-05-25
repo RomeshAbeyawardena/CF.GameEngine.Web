@@ -1,9 +1,8 @@
 ﻿using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
-using IDFCR.Shared.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 
 namespace CF.Identity.MigrationUtility.Seeds;
 
@@ -16,6 +15,44 @@ internal static partial class Seed
             return;
         }
 
+        var scopeDictionary = Roles.ToDictionary(x => x.Key, x => x);
+        //update any existing scopes with display names or descriptions that have been updated by the model
+        foreach (var (key, info) in scopeDictionary)
+        {
+            bool hasDisplayName = !string.IsNullOrWhiteSpace(info.DisplayName),
+                 hasDescription = !string.IsNullOrWhiteSpace(info.Description);
+
+            if(!hasDisplayName && !hasDescription)
+            {
+                continue; // no need to update if both are null or empty
+            }
+
+            var scope = await context.Scopes.FirstOrDefaultAsync(s => 
+            s.Key == key && (s.Name != info.DisplayName 
+                || s.Description != info.Description), 
+            cancellationToken);
+
+            if (scope is null)
+            {
+                continue;
+            }
+
+            logger.LogInformation("Updating scope: {key}...", key);
+
+            //only touch fields that need updating!
+            if (hasDisplayName) 
+            {
+                scope.Name = info.DisplayName!;
+                logger.LogTrace("Updated display name");
+            }
+
+            if (hasDescription)
+            {
+                scope.Description = info.Description!;
+                logger.LogTrace("Updated description ");
+            }
+        }
+
         var scopesToAdd = Roles.Select(x => x.Key);
         var scopes = await context.Scopes.Where(x => !x.ClientId.HasValue && scopesToAdd.Contains(x.Key)).ToListAsync(cancellationToken);
 
@@ -26,7 +63,6 @@ internal static partial class Seed
             return;
         }
 
-        var scopeDictionary = Roles.ToDictionary(x => x.Key, x => x);
 
         foreach (var scope in missingScopes)
         {
@@ -39,8 +75,8 @@ internal static partial class Seed
             {
                 IsPrivileged = existingScope.IsPrivileged,
                 Key = scope,
-                Name = scope,
-                Description = scope
+                Name = existingScope.DisplayName ?? scope,
+                Description = existingScope.Description ?? scope
             };
 
             context.Scopes.Add(newScope);

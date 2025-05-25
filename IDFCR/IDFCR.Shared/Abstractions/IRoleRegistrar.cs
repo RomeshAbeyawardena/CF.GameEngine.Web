@@ -4,6 +4,6 @@ public interface IRoleRegistrar : IEnumerable<IRoleDescriptor>
 {
     string? Prefix { get; set; }
 
-    bool TryRegisterRole(string roleName, bool isPrivileged = false);
-    IEnumerable<string> RegisterRoles(params string[] roleNames);
+    bool TryRegisterRole(string roleName, IRoleDescriptor roleDescriptor, out string key);
+    bool TryRegisterRole(string roleName, Action<IRoleDescriptorBuilder> buildRole);
 }

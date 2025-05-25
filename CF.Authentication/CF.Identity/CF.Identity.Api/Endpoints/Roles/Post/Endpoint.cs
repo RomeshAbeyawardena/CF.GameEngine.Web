@@ -2,6 +2,7 @@
 using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Shared;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
