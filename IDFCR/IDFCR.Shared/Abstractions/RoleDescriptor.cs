@@ -1,4 +1,4 @@
-﻿namespace IDFCR.Shared;
+﻿namespace IDFCR.Shared.Abstractions;
 
 public static class RoleDescriptor
 {
