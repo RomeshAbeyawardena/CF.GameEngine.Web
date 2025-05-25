@@ -7,11 +7,29 @@ namespace IDFCR.Shared.Http.Extensions;
 
 public static class ApiResultExtensions
 {
-    private static int GetStatusCode(this UnitAction action, Exception? exception)
+    private static int GetStatusCode(IUnitResult result)
+    {
+        return GetStatusCode(result.Action, result.Exception, result.FailureReason);
+    }
+
+    private static int GetStatusCode(this UnitAction action, Exception? exception, FailureReason? failureReason = null)
     {
         if(action != UnitAction.Conflict && exception is ValidationException)
         {
             return StatusCodes.Status400BadRequest;
+        }
+
+        if (failureReason.HasValue)
+        {
+            return failureReason switch
+            {
+                FailureReason.NotFound => StatusCodes.Status404NotFound,
+                FailureReason.ValidationError => StatusCodes.Status422UnprocessableEntity,
+                FailureReason.Unauthorized => StatusCodes.Status401Unauthorized,
+                FailureReason.Forbidden => StatusCodes.Status403Forbidden,
+                FailureReason.InternalError => StatusCodes.Status500InternalServerError,
+                _ => GetStatusCode(action, exception)
+            };
         }
 
         return action switch
@@ -28,7 +46,7 @@ public static class ApiResultExtensions
 
     public static IApiResult ToApiResult(this IUnitResult result)
     {
-        var statusCode = GetStatusCode(result.Action, result.Exception);
+        var statusCode = GetStatusCode(result);
 
         ApiResult? apiResult = null;
         if (result.IsSuccess)
@@ -42,7 +60,7 @@ public static class ApiResultExtensions
 
     public static IApiResult ToApiResult<T>(this IUnitResult<T> result, string location)
     {
-        var statusCode = GetStatusCode(result.Action, result.Exception);
+        var statusCode = GetStatusCode(result);
 
         ApiResult? apiResult = null;
 
@@ -89,7 +107,7 @@ public static class ApiResultExtensions
 
     internal static IApiResult ToHypermediaResultSingleton<T>(this IUnitResult<T> result, string? location = null)
     {
-        var statusCode = GetStatusCode(result.Action, result.Exception);
+        var statusCode = GetStatusCode(result);
         var singleResult = new HypermediaApiResult<T>(result.Result, statusCode);
         singleResult.AppendMeta(result.ToDictionary());
 
@@ -103,7 +121,7 @@ public static class ApiResultExtensions
 
     public static IApiResult ToHypermediaResult<T>(this IUnitResult<T> result, string? location = null)
     {
-        var statusCode = GetStatusCode(result.Action, result.Exception);
+        var statusCode = GetStatusCode(result);
 
         if (result.IsSuccess && result.Result is not null)
         {

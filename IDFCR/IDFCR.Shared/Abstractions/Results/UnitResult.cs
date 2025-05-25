@@ -7,13 +7,13 @@ using System.Diagnostics.CodeAnalysis;
 namespace IDFCR.Shared.Abstractions.Results;
 
 public record UnitResult(Exception? Exception = null, UnitAction Action = UnitAction.None,
-    bool IsSuccess = false) : IUnitResult
+    bool IsSuccess = false, FailureReason? FailureReason = null) : IUnitResult
 {
-    public static IUnitResult<T> NotFound<T>(object id, Exception? innerException = null) 
-        => Failed<T>(new EntityNotFoundException(typeof(T), id, innerException), UnitAction.None);
+    public static IUnitResult<T> NotFound<T>(object id, Exception? innerException = null, FailureReason? failureReason = Results.FailureReason.NotFound) 
+        => Failed<T>(new EntityNotFoundException(typeof(T), id, innerException), UnitAction.None, failureReason);
 
-    public static IUnitResult<T> Failed<T>(Exception exception, UnitAction action = UnitAction.None)
-        => new UnitResult<T>(default, action, false, exception);
+    public static IUnitResult<T> Failed<T>(Exception exception, UnitAction action = UnitAction.None, FailureReason? FailureReason = null)
+        => new UnitResult<T>(default, action, false, exception, FailureReason);
 
     public static IUnitResult<T> FromResult<T>(T? result, UnitAction action = UnitAction.Get,
         bool isSuccess = true, Exception? exception = null)
@@ -62,8 +62,8 @@ public record UnitResult(Exception? Exception = null, UnitAction Action = UnitAc
 }
 
 public record UnitResult<TResult>(TResult? Result = default, UnitAction Action = UnitAction.None,
-    bool IsSuccess = true, Exception? Exception = null)
-    : UnitResult(Exception, Action, IsSuccess), IUnitResult<TResult>
+    bool IsSuccess = true, Exception? Exception = null, FailureReason? FailureReason = null)
+    : UnitResult(Exception, Action, IsSuccess, FailureReason), IUnitResult<TResult>
 {
     [MemberNotNullWhen(true, nameof(Result))]
     public bool HasValue => IsSuccess && Result is not null;
