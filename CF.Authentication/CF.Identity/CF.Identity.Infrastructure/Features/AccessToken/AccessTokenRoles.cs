@@ -11,10 +11,10 @@ public class AccessTokenRoles : RoleRegistrarBase
     {
         TryRegisterRole(AccessTokenRead, b =>b
             .AddDisplayName(Resources.AccessTokenReadRoleName)
-            .AddDescription(Resources.`));
+            .AddDescription(Resources.AccessTokenWriteRoleDescription));
 
         TryRegisterRole(AccessTokenWrite, b => b
                 .AddDisplayName(Resources.AccessTokenWriteRoleName)
-               .AddDescription(Resources.`));
+               .AddDescription(Resources.AccessTokenWriteRoleDescription));
     }
 }
