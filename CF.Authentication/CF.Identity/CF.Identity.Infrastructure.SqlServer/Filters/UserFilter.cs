@@ -21,7 +21,7 @@ public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionPr
     {
         if (!string.IsNullOrWhiteSpace(filter.Username))
         {
-            var foundClient = await context.Clients.FindAsync([ClientId], cancellationToken) ?? throw new NullReferenceException("Client not found");
+            var foundClient = await context.Clients.FindAsync([filter.ClientId], cancellationToken) ?? throw new NullReferenceException("Client not found");
             UsernameHmac = userCredentialProtectionProvider.HashUsingHmac(foundClient, filter.Username);
         }
 
