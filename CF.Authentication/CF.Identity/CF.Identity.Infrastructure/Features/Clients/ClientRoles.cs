@@ -1,4 +1,5 @@
 ﻿using IDFCR.Shared.Abstractions;
+using CF.Identity.Infrastructure.Properties;
 
 namespace CF.Identity.Infrastructure.Features.Clients;
 
@@ -9,6 +10,12 @@ public class ClientRoles : RoleRegistrarBase
 
     public ClientRoles()
     {
-        RegisterRoles(ClientRead, ClientWrite);
+        TryRegisterRole(ClientRead, b => b
+            .AddDisplayName(Resources.ClientReadRoleName)
+            .AddDescription(Resources.ClientReadRoleDescription));
+
+        TryRegisterRole(ClientWrite, b => b
+            .AddDisplayName(Resources.ClientWriteRoleName)
+            .AddDescription(Resources.ClientWriteRoleDescription));
     }
 }
