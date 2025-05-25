@@ -39,8 +39,8 @@ internal static partial class Seed
             {
                 IsPrivileged = existingScope.IsPrivileged,
                 Key = scope,
-                Name = scope,
-                Description = scope
+                Name = existingScope.DisplayName ?? scope,
+                Description = existingScope.Description ?? scope
             };
 
             context.Scopes.Add(newScope);
