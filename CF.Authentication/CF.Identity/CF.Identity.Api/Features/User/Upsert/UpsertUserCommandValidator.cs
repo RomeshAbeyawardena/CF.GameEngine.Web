@@ -1,7 +1,6 @@
-﻿using CF.Identity.Api.Features.Clients.Get;
+﻿using CF.Identity.Api.Features.Clients;
+using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.User.Get;
-using CF.Identity.Infrastructure.Features.Clients;
-using CF.Identity.Infrastructure.Features.Users;
 using FluentValidation;
 using IDFCR.Http.Authentication.Abstractions;
 using IDFCR.Shared.Extensions;
@@ -14,7 +13,7 @@ public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
 {
     private readonly IMediator _mediator;
     private readonly IAuthenticatedUserContext _userContext;
-    private IClient? client;
+    private ClientDetailResponse? client;
 
     public UpsertUserCommandValidator(IMediator mediator, IAuthenticatedUserContext userContext)
     {
@@ -35,8 +34,8 @@ public class UpsertUserCommandValidator : AbstractValidator<UpsertUserCommand>
             .WithErrorCode(Errorcodes.Conflict)
             .DependentRules(() =>
                 RuleFor(x => x).MustAsync(EnsureNonSystemClientOrignatedUserCantAddUsersForSystemClients)
-                    .WithName("Non_System_Client_Can_Only_Add_Non_System_Users")
-                    .WithMessage("Non-system clients can only add non-system users.")
+                    .WithName("Non_System_Client_User_Cant__Add_System_Users")
+                    .WithMessage("System-client, system-user can only add system users.")
                     .WithErrorCode(Errorcodes.Conflict));
     }
 
