@@ -9,7 +9,6 @@ using IDFCR.Utility.Shared;
 using IDFCR.Utility.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using IDFCR.Shared.Abstractions;
 
 using var migrationUtility = EFMigrationUtility
     .MigrationUtility<CFIdentityDbContext>(new EFMigrationUtilityName("CF.Identity", "1.0"), args, "123dacb9-a24c-4c4d-b2c5-bf465343f8d8",
