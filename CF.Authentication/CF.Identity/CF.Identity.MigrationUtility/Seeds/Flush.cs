@@ -25,6 +25,7 @@ public static class Flush
             await context.Database.ExecuteSqlAsync(
                 $@"DELETE FROM [AccessToken]
                DELETE FROM [UserScope]
+               DELETE FROM [Scope]
                DELETE FROM [User]
                DELETE FROM [Client]", cancellationToken);
             await transaction.CommitAsync(cancellationToken);

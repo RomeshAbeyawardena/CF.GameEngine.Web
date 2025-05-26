@@ -122,8 +122,6 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         aes.Key = GetKey(user, client);
         aes.IV = Convert.FromBase64String(user.RowVersion);
 
-        var bytes = Convert.FromBase64String(userCasingImpressions.EmailAddressCI);
-
         var email = Decrypt(user.EmailAddress, aes)!;
         user.EmailAddress = CasingImpression.Restore(email, userCasingImpressions.EmailAddressCI);
 
