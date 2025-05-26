@@ -1,7 +1,7 @@
 ﻿using IDFCR.Shared.Http.Links;
 using System.Text.Json.Serialization;
 
-namespace IDFCR.Shared.Http;
+namespace IDFCR.Shared.Http.Results;
 
 public interface IHypermedia : IReadOnlyDictionary<string, object?>
 {

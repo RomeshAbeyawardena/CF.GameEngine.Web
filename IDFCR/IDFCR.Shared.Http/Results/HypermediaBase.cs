@@ -3,7 +3,7 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-namespace IDFCR.Shared.Http;
+namespace IDFCR.Shared.Http.Results;
 
 public abstract record HypermediaBase : IHypermedia
 {

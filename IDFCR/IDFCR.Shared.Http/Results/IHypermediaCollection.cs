@@ -1,4 +1,4 @@
-﻿namespace IDFCR.Shared.Http;
+﻿namespace IDFCR.Shared.Http.Results;
 
 public interface IHypermediaCollection<T> : IEnumerable<IHypermedia<T>>
 {

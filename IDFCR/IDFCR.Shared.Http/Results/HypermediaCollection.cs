@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace IDFCR.Shared.Http;
+namespace IDFCR.Shared.Http.Results;
 
 public class HypermediaCollection<T> : IHypermediaCollection<T>
 {

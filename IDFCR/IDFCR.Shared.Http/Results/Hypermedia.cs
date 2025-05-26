@@ -1,6 +1,6 @@
 ﻿using IDFCR.Shared.Http.Extensions;
 
-namespace IDFCR.Shared.Http;
+namespace IDFCR.Shared.Http.Results;
 
 public sealed record Hypermedia<T> : HypermediaBase, IHypermedia<T>
 {
