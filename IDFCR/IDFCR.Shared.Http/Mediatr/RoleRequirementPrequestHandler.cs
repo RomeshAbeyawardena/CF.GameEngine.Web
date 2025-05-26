@@ -10,7 +10,7 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
     where TRequest : notnull, IRequest<TResponse>, IRoleRequirement
     where TResponse : class
 {
-    private async Task<bool> RunAllAsync(IEnumerable<IRoleRequirementHandlerInterceptor<TRequest>> interceptors, TRequest request, CancellationToken cancellationToken)
+    private async Task<bool> RunAllAsync(bool isBypass, IEnumerable<IRoleRequirementHandlerInterceptor<TRequest>> interceptors, TRequest request, CancellationToken cancellationToken)
     {
         List<bool> interceptorResults = [];
         
@@ -27,12 +27,12 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
             }
         }
 
-        if(interceptorResults.Count == 0)
+        if(isBypass && interceptorResults.Count == 0)
         {
             return false;
         }
 
-        return interceptorResults.All(x => x);
+        return interceptorResults.TrueForAll(x => x);
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -47,9 +47,8 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
         var byPassInterceptors = roleRequirementHandlerInterceptors
             .Where(x => x.Type == RoleRequirementHandlerInterceptorType.Bypass);
 
-        var state = await RunAllAsync(byPassInterceptors, request, cancellationToken); ;
-        logger.LogInformation("Interceptor bypass state: {state}\r\nRequest is bypassed:{Bypass}", state, request.Bypass);
-
+        var state = await RunAllAsync(true, byPassInterceptors, request, cancellationToken); ;
+        
         if (state || request.Bypass)
         {
             logger.LogWarning("Bypassing role requirement for request {RequestType}, ensure this was not used by a front-end facing endpoint that required authorisation",
@@ -65,6 +64,7 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
         }
 
         var roles = request.Roles;
+
         if (roles is null || !roles.Any())
         {
             return await next(cancellationToken);
@@ -85,7 +85,7 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
         var interceptInterceptors = roleRequirementHandlerInterceptors
             .Where(x => x.Type == RoleRequirementHandlerInterceptorType.Extension);
 
-        if (await RunAllAsync(interceptInterceptors, request, cancellationToken))
+        if (await RunAllAsync(false, interceptInterceptors, request, cancellationToken))
         {
             return await next(cancellationToken);
         }
