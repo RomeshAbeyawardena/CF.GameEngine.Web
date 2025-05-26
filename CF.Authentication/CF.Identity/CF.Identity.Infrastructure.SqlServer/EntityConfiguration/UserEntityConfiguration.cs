@@ -14,11 +14,12 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         
         builder.Property(x => x.EmailAddress).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.EmailAddressHmac).IsRequired().HasMaxLength(2000);
-        
+        builder.Property(x => x.EmailAddressCI).IsRequired().HasMaxLength(344);
         builder.Property(x => x.HashedPassword).IsRequired().HasMaxLength(2000);
         
         builder.Property(x => x.Username).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.UsernameHmac).IsRequired().HasMaxLength(2000);
+        builder.Property(x => x.UsernameCI).IsRequired().HasMaxLength(344);
 
         builder.HasOne(x => x.FirstCommonName)
             .WithMany()
@@ -39,7 +40,8 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         
         builder.Property(x => x.PreferredUsername).HasMaxLength(2000);
         builder.Property(x => x.PreferredUsernameHmac).HasMaxLength(2000);
-        
+        builder.Property(x => x.PreferredUsernameCI).IsRequired().HasMaxLength(344);
+
         builder.Property(x => x.PrimaryTelephoneNumber).HasMaxLength(2000);
         builder.Property(x => x.PrimaryTelephoneNumberHmac).HasMaxLength(2000);
 

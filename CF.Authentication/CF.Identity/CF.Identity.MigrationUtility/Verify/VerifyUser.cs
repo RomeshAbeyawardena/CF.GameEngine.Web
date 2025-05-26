@@ -53,7 +53,7 @@ internal static partial class Verify
             }
 
             var mappedUser = user.Map<UserDto>();
-            userCredentialProtectionProvider.Unprotect(mappedUser, user.Client);
+            userCredentialProtectionProvider.Unprotect(mappedUser, user.Client, user);
 
             if (userInfo.EmailAddress != mappedUser.EmailAddress)
             {
