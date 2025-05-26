@@ -5,13 +5,25 @@ using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.Scopes.Get;
 
+public class MyModel
+{
+    public int PageSize { get; set; }
+    public int PageIndex { get; set; }
+}
+
 public static class Endpoint
 {
-    public static async Task<IResult> GetScopePagedAsync([AsParameters] GetScopesRequest request, IAuthenticatedUserContext userContext,
-       IMediator mediator, IHttpContextAccessor contextAccessor, CancellationToken cancellationToken)
+    //public static async Task<IResult> GetScopePagedAsync([AsParameters] MyModel model)
+    //{
+    //    return Results.Ok();
+    //}
+
+    public static async Task<IResult> GetScopePagedAsync([AsParameters] GetScopesRequest request, int? pageSize, int? pageIndex,
+        IAuthenticatedUserContext userContext, IMediator mediator, IHttpContextAccessor contextAccessor, CancellationToken cancellationToken)
     {
         //Non-system clients should not be accessing other tenant data!
         if (!userContext.Client?.IsSystem ?? false)

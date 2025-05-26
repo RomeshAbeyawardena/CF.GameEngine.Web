@@ -22,7 +22,7 @@ public record GetPagedScopesQuery
     public bool IncludePrivilegedScoped { get; set; }
     public IEnumerable<string>? Keys { get; set; }
     public bool NoTracking { get; set; }
-    public bool Bypass { get; set; }
+    public bool Bypass { get; set; } = false;
     public string? SortField { get; set; }
     public string? SortOrder { get; set; }
 
@@ -32,6 +32,8 @@ public record GetPagedScopesQuery
         UserId = source.UserId;
         Key = source.Key;
         Keys = source.Keys;
+        PageSize = source.PageSize;
+        PageIndex = source.PageIndex;
         IncludePrivilegedScoped = source.IncludePrivilegedScoped;
         NoTracking = source.NoTracking;
         SortField = source.SortField;
