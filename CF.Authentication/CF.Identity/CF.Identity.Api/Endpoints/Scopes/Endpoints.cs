@@ -1,6 +1,16 @@
-﻿namespace CF.Identity.Api.Endpoints.Scopes;
+﻿using CF.Identity.Api.Endpoints.Scopes.Get;
+using CF.Identity.Api.Endpoints.Scopes.Post;
 
-public class Endpoints
+namespace CF.Identity.Api.Endpoints.Scopes;
+
+public static class Endpoints
 {
     public const string BaseUrl = "api/scope";
+
+    public static IEndpointRouteBuilder AddScopeEndpoints(this IEndpointRouteBuilder builder)
+    {
+        return builder
+            .AddGetScopesEndpoint()
+            .AddPostScopeEndpoint();
+    }
 }

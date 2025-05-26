@@ -12,4 +12,4 @@ public interface IScopeFilter : IFilter<IScopeFilter>
     string? Key { get; }
 }
 
-public interface IPagedScopeFilter : IScopeFilter, IPagedQuery;
+public interface IPagedScopeFilter : IScopeFilter, IPagedQuery, IEntityOrder;

@@ -8,11 +8,11 @@ using RoleRequirementType = IDFCR.Shared.Abstractions.RoleRequirementType;
 namespace CF.Identity.Api.Features.Scopes.Get;
 
 public record GetPagedScopesQuery
-    : MappablePagedQuery<IScopeFilter>, IUnitPagedRequest<ScopeDto>,
+    : MappablePagedQuery<IPagedScopeFilter>, IUnitPagedRequest<ScopeDto>,
       IPagedScopeFilter, 
       IRoleRequirement
 {
-    protected override IScopeFilter Source => this;
+    protected override IPagedScopeFilter Source => this;
     IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalRead, ScopeRoles.ScopeRead];
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 
@@ -23,8 +23,10 @@ public record GetPagedScopesQuery
     public IEnumerable<string>? Keys { get; set; }
     public bool NoTracking { get; set; }
     public bool Bypass { get; set; }
+    public string? SortField { get; set; }
+    public string? SortOrder { get; set; }
 
-    public override void Map(IScopeFilter source)
+    public override void Map(IPagedScopeFilter source)
     {
         ClientId = source.ClientId;
         UserId = source.UserId;
@@ -32,5 +34,7 @@ public record GetPagedScopesQuery
         Keys = source.Keys;
         IncludePrivilegedScoped = source.IncludePrivilegedScoped;
         NoTracking = source.NoTracking;
+        SortField = source.SortField;
+        SortOrder = source.SortOrder;
     }
 }

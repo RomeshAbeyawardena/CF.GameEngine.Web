@@ -18,7 +18,7 @@ public static class Endpoint
         return result.NegotiateResult(contextAccessor, Endpoints.BaseUrl);
     }
 
-    public static IEndpointRouteBuilder AddScopePostEndpoint(IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder AddPostScopeEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost(Endpoints.BaseUrl, SaveScopeAsync)
             .RequireAuthorization(new AuthorizeAttribute(RoleDescriptor

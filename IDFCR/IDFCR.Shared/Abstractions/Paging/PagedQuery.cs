@@ -2,24 +2,24 @@
 
 public abstract record MappablePagedQuery<T> : Records.MappableBase<T>, IPagedQuery
 {
-    private Lazy<IPagedQuery> _calculatedPagedQuery;
-    private IPagedQuery pagedQuery => _calculatedPagedQuery.Value;
+    private readonly Lazy<IPagedQuery> _calculatedPagedQuery;
+    private IPagedQuery PagedQuery => _calculatedPagedQuery.Value;
     protected MappablePagedQuery()
     {
         _calculatedPagedQuery = new(() => new PagedQuery(PageSize, PageIndex));
     }
 
-    public int? PageSize => pagedQuery.PageSize;
-    public int? PageIndex => pagedQuery.PageIndex;
+    public int? PageSize { get; set; }
+    public int? PageIndex { get; set;}
 
     public void Map(IPagedQuery source)
     {
-        pagedQuery.Map(source);
+        PagedQuery.Map(source);
     }
 
     public void Map(IConventionalPagedQuery source)
     {
-        pagedQuery.Map(source);
+        PagedQuery.Map(source);
     }
 }
 

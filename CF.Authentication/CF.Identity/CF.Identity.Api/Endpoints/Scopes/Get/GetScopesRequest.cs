@@ -4,20 +4,24 @@ using IDFCR.Shared.Abstractions.Records;
 
 namespace CF.Identity.Api.Endpoints.Scopes.Get;
 
-public record GetScopesRequest(string? Key = null, IEnumerable<string>? Keys = null) : MappableBase<IScopeFilter>
+public record GetScopesRequest(string? Key = null, IEnumerable<string>? Keys = null) : MappableBase<IPagedScopeFilter>
 {
-    protected override IScopeFilter Source => new GetPagedScopesQuery
+    protected override IPagedScopeFilter Source => new GetPagedScopesQuery
     {
         Key = Key,
         Keys = Keys,
         UserId = UserId,
-        ClientId = ClientId
+        ClientId = ClientId,
+        SortField = SortField,
+        SortOrder = SortOrder
     };
 
     public Guid? UserId { get; init; }
     public Guid? ClientId { get; set; }
+    public string? SortField { get; init; }
+    public string? SortOrder { get; init; }
 
-    public override void Map(IScopeFilter source)
+    public override void Map(IPagedScopeFilter source)
     {
         ClientId = source.ClientId;
     }
