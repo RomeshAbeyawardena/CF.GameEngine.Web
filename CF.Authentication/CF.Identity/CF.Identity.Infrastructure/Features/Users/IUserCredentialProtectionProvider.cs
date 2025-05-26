@@ -19,7 +19,7 @@ public interface IUserCredentialProtectionProvider
     string Hash(string secret, IUser user, IClient? client = null);
     bool Verify(string secret, string hash, IUser user);
     void Protect(UserDto user, IClient client, out IProtectionInfo userHmac, bool regenerativeIv = false);
-    void Unprotect(UserDto user, IClient client);
+    void Unprotect(UserDto user, IClient client, IUserCasingImpression userCasingImpressions);
     string HashUsingHmac(UserDto user, IClient client, Func<UserDto, string> target);
     string HashUsingHmac(IClient client, string value);
 }
@@ -109,7 +109,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         protectionInfo = new DefaultProtectionInfo(userHmac, userCasingImpressions);
     }
 
-    public void Unprotect(UserDto user, IClient client)
+    public void Unprotect(UserDto user, IClient client, IUserCasingImpression userCasingImpressions)
     {
         if (string.IsNullOrWhiteSpace(user.RowVersion))
         {
@@ -121,11 +121,17 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         aes.Key = GetKey(user, client);
         aes.IV = Convert.FromBase64String(user.RowVersion);
 
-        user.EmailAddress = Decrypt(user.EmailAddress, aes)!;
-        user.Username = Decrypt(user.Username, aes)!;
+        user.EmailAddress = CasingImpression.Restore(Decrypt(user.EmailAddress, aes)!, userCasingImpressions.EmailAddressCI);
+
+        user.Username = CasingImpression.Restore(Decrypt(user.Username, aes)!, userCasingImpressions.UsernameCI);
         if (!string.IsNullOrWhiteSpace(user.PreferredUsername))
         {
             user.PreferredUsername = Decrypt(user.PreferredUsername, aes);
+
+            if (!string.IsNullOrWhiteSpace(userCasingImpressions.PreferredUsernameCI))
+            {
+                user.PreferredUsername = CasingImpression.Restore(user.PreferredUsername!, userCasingImpressions.PreferredUsernameCI);
+            }
         }
     }
 

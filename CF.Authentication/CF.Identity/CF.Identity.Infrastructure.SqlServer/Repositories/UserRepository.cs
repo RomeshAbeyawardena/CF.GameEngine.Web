@@ -55,7 +55,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
             return UnitResult.NotFound<UserDto>(user.ClientId);
         }
 
-        userCredentialProtectionProvider.Unprotect(user, client);
+        userCredentialProtectionProvider.Unprotect(user, client, foundUser);
 
         return UnitResult.FromResult(user);
     }
@@ -72,7 +72,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
             .Where(externalFilter)
             .ToListAsync(cancellationToken);
 
-        var mappedResult = MapTo(result, (db, x) => userCredentialProtectionProvider.Unprotect(x, db.Client));
+        var mappedResult = MapTo(result, (db, x) => userCredentialProtectionProvider.Unprotect(x, db.Client, db));
 
         return UnitResultCollection.FromResult(mappedResult);
     }
