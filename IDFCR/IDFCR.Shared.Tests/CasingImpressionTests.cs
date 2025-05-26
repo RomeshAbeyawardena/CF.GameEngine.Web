@@ -5,15 +5,17 @@ namespace IDFCR.Shared.Tests;
 [TestFixture]
 internal class CasingImpressionTests
 {
-    [Test]
-    public void CasingImpression_stores_impression_and_applies_it_correctly()
+    [TestCase("AlbertBohemianFedoraSAMsun")]
+    [TestCase("admin@identity.co")]
+    [TestCase("Admin@identity.co")]
+    [TestCase("admin@Identity.co")]
+    [TestCase("Admin@Identity.co")]
+    public void CasingImpression_stores_impression_and_applies_it_correctly(string expected)
     {
-        var myUniquelyCasedUsername = "AlbertBohemianFedoraSAMsun";
+        var impression = CasingImpression.Calculate(expected);
 
-        var impression = CasingImpression.Calculate(myUniquelyCasedUsername);
-
-        var result = CasingImpression.Restore(myUniquelyCasedUsername.ToUpperInvariant(), impression);
-        Assert.That(result, Is.EqualTo(myUniquelyCasedUsername));
+        var result = CasingImpression.Restore(expected.ToUpperInvariant(), impression);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]

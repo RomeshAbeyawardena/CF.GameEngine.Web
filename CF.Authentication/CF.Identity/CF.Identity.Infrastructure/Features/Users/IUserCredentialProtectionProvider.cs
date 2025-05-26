@@ -14,7 +14,7 @@ public interface IProtectionInfo
 
 public record DefaultProtectionInfo(IUserHmac UserHmac, IUserCasingImpression CasingImpressions) : IProtectionInfo;
 
-public interface IUserCredentialProtectionProvider
+public interface IUserCredentialProtectionProvider 
 {
     string Hash(string secret, IUser user, IClient? client = null);
     bool Verify(string secret, string hash, IUser user);
@@ -96,6 +96,8 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
             UsernameHmac = HashUsingHmac(user, client, x => x.Username.ToUpperInvariant()),
             PrimaryTelephoneNumberHmac = HashUsingHmac(user, client, x => x.PrimaryTelephoneNumber)
         };
+        
+        protectionInfo = new DefaultProtectionInfo(userHmac, userCasingImpressions);
 
         user.EmailAddress = Encrypt(user.EmailAddress.ToUpperInvariant(), aes)!;
         user.Username = Encrypt(user.Username.ToUpperInvariant(), aes)!;
@@ -106,7 +108,6 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
 
         user.PrimaryTelephoneNumber = Encrypt(user.PrimaryTelephoneNumber, aes)!;
         user.HashedPassword = Hash(user.HashedPassword, user, client);
-        protectionInfo = new DefaultProtectionInfo(userHmac, userCasingImpressions);
     }
 
     public void Unprotect(UserDto user, IClient client, IUserCasingImpression userCasingImpressions)
@@ -121,7 +122,10 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         aes.Key = GetKey(user, client);
         aes.IV = Convert.FromBase64String(user.RowVersion);
 
-        user.EmailAddress = CasingImpression.Restore(Decrypt(user.EmailAddress, aes)!, userCasingImpressions.EmailAddressCI);
+        var bytes = Convert.FromBase64String(userCasingImpressions.EmailAddressCI);
+
+        var email = Decrypt(user.EmailAddress, aes)!;
+        user.EmailAddress = CasingImpression.Restore(email, userCasingImpressions.EmailAddressCI);
 
         user.Username = CasingImpression.Restore(Decrypt(user.Username, aes)!, userCasingImpressions.UsernameCI);
         if (!string.IsNullOrWhiteSpace(user.PreferredUsername))
