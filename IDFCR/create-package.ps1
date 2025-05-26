@@ -1,7 +1,8 @@
 param (
     [int]$targetPath,
     [bool]$skipVersionIncrement = $false,
-    [bool]$useFeatureFolder = $false
+    [bool]$useFeatureFolder = $false,
+    [bool]$includeSymbols = $false
 )
 
 enum TargetPath {

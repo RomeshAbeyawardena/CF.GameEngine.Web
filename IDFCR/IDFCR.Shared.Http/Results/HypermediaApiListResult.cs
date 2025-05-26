@@ -26,19 +26,19 @@ public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode)
             {
                 var wrapper = entry as Hypermedia<T> ?? throw new InvalidCastException("Not a wrapper of Hypermedia");
 
-                if (entry.Data is not null)
-                {
-                    var links = firstBuilder.Build(
-                        services.GetRequiredService<LinkGenerator>()).GenerateLinks(entry.Data);
+                //if (entry.Data is not null)
+                //{
+                //    var links = firstBuilder.Build(
+                //        services.GetRequiredService<LinkGenerator>()).GenerateLinks(entry.Data);
 
-                    foreach (var (key, value) in links)
-                    {
-                        if (!wrapper.Links.TryAdd(key, value))
-                        {
-                            wrapper.Links[key] = value;
-                        }
-                    }
-                }
+                //    foreach (var (key, value) in links)
+                //    {
+                //        if (!wrapper.Links.TryAdd(key, value))
+                //        {
+                //            wrapper.Links[key] = value;
+                //        }
+                //    }
+                //}
             }
         }
         //if there are no builders processing continues without links
@@ -61,21 +61,21 @@ public record HypermediaApiResult<T>(T? RawData, int StatusCode) : ApiResult<IHy
                 firstBuilder.Merge(linkBuilders.Skip(1));
             }
 
-            if (Data.Data is not null)
-            {
-                var links = firstBuilder.Build(
-                    services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data.Data);
+            //if (Data.Data is not null)
+            //{
+            //    var links = firstBuilder.Build(
+            //        services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data.Data);
 
-                var wrapper = Data as Hypermedia<T> ?? throw new InvalidCastException("Not a wrapper of Hypermedia");
+            //    var wrapper = Data as Hypermedia<T> ?? throw new InvalidCastException("Not a wrapper of Hypermedia");
 
-                foreach (var (key, value) in links)
-                {
-                    if (!wrapper.Links.TryAdd(key, value))
-                    {
-                        wrapper.Links[key] = value;
-                    }
-                }
-            }
+            //    foreach (var (key, value) in links)
+            //    {
+            //        if (!wrapper.Links.TryAdd(key, value))
+            //        {
+            //            wrapper.Links[key] = value;
+            //        }
+            //    }
+            //}
         }
         //if there are no builders processing continues without links
     }

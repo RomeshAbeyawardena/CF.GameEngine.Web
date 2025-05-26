@@ -129,6 +129,7 @@ public static class ApiResultExtensions
             // Handle collection
             if (result.Result.GetType().IsCollection(out var t))
             {
+                Console.WriteLine($"Detected collection type: {t?.Name}");
                 var genericHyperMediaType = typeof(HypermediaApiListResult<>).MakeGenericType(t ?? throw new NullReferenceException("No generic type found"));
                 var instance = Activator.CreateInstance(genericHyperMediaType, [result.Result, statusCode]) 
                     ?? throw new InvalidOperationException($"Failed to create instance of {nameof(HypermediaApiListResult<T>)}");
@@ -137,6 +138,7 @@ public static class ApiResultExtensions
                 return listResult;
             }
 
+            Console.WriteLine("Is Singleton Result, creating HypermediaApiResult");
             return ToHypermediaResultSingleton(result, location);
         }
 
