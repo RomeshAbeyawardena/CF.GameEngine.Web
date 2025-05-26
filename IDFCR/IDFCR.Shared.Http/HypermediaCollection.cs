@@ -6,7 +6,7 @@ public class HypermediaCollection<T> : IHypermediaCollection<T>
 {
     private readonly List<IHypermedia<T>> _items = [];
 
-    public IEnumerable<T>? AsRawEnumerable() => []; //_items.Where(s => s is not null).Select(s => s!);
+    public IEnumerable<T>? AsRawEnumerable() => _items.Where(s => s is not null).Select(s => s.Value!);
 
     public HypermediaCollection(IEnumerable<T> values)
     {

@@ -1,13 +1,14 @@
 ﻿using IDFCR.Shared.Http.Extensions;
-using System.Dynamic;
 
 namespace IDFCR.Shared.Http;
 
-public record Hypermedia<T> : HypermediaBase, IHypermedia<T>
+public sealed record Hypermedia<T> : HypermediaBase, IHypermedia<T>
 {
     public Hypermedia(T? item)
     {
-        if(item is null)
+        Value = item;
+
+        if (item is null)
         {
             return;
         }
@@ -19,4 +20,6 @@ public record Hypermedia<T> : HypermediaBase, IHypermedia<T>
             ObjectDictionary[kvp.Key] = kvp.Value;
         }
     }
+
+    public T? Value { get; }
 }

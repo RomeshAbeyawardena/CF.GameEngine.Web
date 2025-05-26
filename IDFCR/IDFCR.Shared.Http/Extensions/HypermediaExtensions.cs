@@ -1,6 +1,6 @@
 ﻿using IDFCR.Shared.Http.Links;
 
-namespace IDFCR.Shared.Http;
+namespace IDFCR.Shared.Http.Extensions;
 
 public static class HypermediaExtensions
 {
