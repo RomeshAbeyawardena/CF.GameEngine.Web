@@ -57,15 +57,21 @@ public static class UserTransformer
     }
 
 
-    public static async Task<DbUser> Transform(IUser user, CFIdentityDbContext context, IUserHmac userHmac,
+    public static async Task<DbUser> Transform(IUser user, CFIdentityDbContext context, IProtectionInfo protectionInfo,
         CancellationToken cancellationToken, DbUser? dbUser = null)
     {
         bool isDbUserProvided = dbUser is not null;
         dbUser ??= user.Map<DbUser>();
 
+        var userHmac = protectionInfo.UserHmac;
+        var userCasingImpressions = protectionInfo.CasingImpressions;
+
         dbUser.EmailAddressHmac = userHmac.EmailAddressHmac;
+        dbUser.EmailAddressCI = userCasingImpressions.EmailAddressCI;
         dbUser.UsernameHmac = userHmac.UsernameHmac;
+        dbUser.UsernameCI = userCasingImpressions.UsernameCI;
         dbUser.PreferredUsernameHmac = userHmac.PreferredUsernameHmac;
+        dbUser.PreferredUsernameCI = userCasingImpressions.PreferredUsernameCI;
         dbUser.PrimaryTelephoneNumberHmac = userHmac.PrimaryTelephoneNumberHmac;
 
         await SetCommonNameAsync(context, user.Firstname, name => dbUser.FirstCommonName = name, id => dbUser.FirstCommonNameId = id, cancellationToken);
