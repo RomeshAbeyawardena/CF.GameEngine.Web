@@ -42,7 +42,10 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
         var byPassInterceptors = roleRequirementHandlerInterceptors
             .Where(x => x.Type == RoleRequirementHandlerInterceptorType.Bypass);
 
-        if (await RunAllAsync(byPassInterceptors, request, cancellationToken) || request.Bypass)
+        var state = await RunAllAsync(byPassInterceptors, request, cancellationToken); ;
+        logger.LogInformation("Interceptor bypass state: {state}\r\nRequest is bypassed:{Bypass}", state, request.Bypass);
+
+        if (state || request.Bypass)
         {
             logger.LogWarning("Bypassing role requirement for request {RequestType}, ensure this was not used by a front-end facing endpoint that required authorisation",
                 request.GetType().Name);
