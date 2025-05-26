@@ -60,6 +60,12 @@ public static class ObjectExtensions
         }
 
         var type = value.GetType();
+
+        if (type.IsGenericType)
+        {
+            return new Dictionary<string, object?>();
+        }
+
         if (!_cache.Value.TryGetValue(type, out var converter))
         {
             converter = BuildConverter(type);
