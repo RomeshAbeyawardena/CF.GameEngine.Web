@@ -14,6 +14,7 @@ internal class ScopeRepository(TimeProvider timeProvider, CFIdentityDbContext co
     public Task<IUnitPagedResult<ScopeDto>> GetPagedScopesAsync(IPagedScopeFilter filter, CancellationToken cancellation)
     {
         var query = new ScopeFilter(filter);
+
         return GetPagedAsync(filter, new EntityOrder(filter, 
             nameof(ScopeDto.Name)), 
             Set<DbScope>(filter).Where(query.ApplyFilter(Builder)),

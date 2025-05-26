@@ -90,8 +90,9 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
             query = query.OrderBy(order);
         }
 
-        query = query.Take(conventional.Take ?? 10)
-            .Skip(conventional.Skip ?? 0);
+        query = query
+            .Skip(conventional.Skip ?? 0)
+            .Take(conventional.Take ?? 10);
 
         var result = await query.ToListAsync(cancellationToken);
         return new UnitPagedResult<T>([.. MapTo(result)], await source.CountAsync(cancellationToken), pagedQuery, UnitAction.Get);
