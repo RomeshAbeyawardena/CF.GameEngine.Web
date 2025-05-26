@@ -64,7 +64,7 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
         var reference = client.Reference
             ?? throw new InvalidOperationException("Encryption key not found in configuration.");
 
-        return Convert.ToBase64String(HMACSHA512.HashData(encoding.GetBytes($"{key}|{reference}"), encoding.GetBytes(value)));
+        return Convert.ToBase64String(HMACSHA512.HashData(encoding.GetBytes($"{key}|{reference}"), encoding.GetBytes(value.ToUpperInvariant())));
     }
 
     public string HashUsingHmac(UserDto user, IClient client, Func<UserDto, string> target)
@@ -91,9 +91,9 @@ public class UserCredentialProtectionProvider(IConfiguration configuration, Enco
 
         var userHmac = new UserHmac
         {
-            EmailAddressHmac = HashUsingHmac(user, client, x => x.EmailAddress.ToUpperInvariant()),
-            PreferredUsernameHmac = HashUsingHmac(user, client, x => x.Username.ToUpperInvariant()),
-            UsernameHmac = HashUsingHmac(user, client, x => x.Username.ToUpperInvariant()),
+            EmailAddressHmac = HashUsingHmac(user, client, x => x.EmailAddress),
+            PreferredUsernameHmac = HashUsingHmac(user, client, x => x.Username),
+            UsernameHmac = HashUsingHmac(user, client, x => x.Username),
             PrimaryTelephoneNumberHmac = HashUsingHmac(user, client, x => x.PrimaryTelephoneNumber)
         };
         
