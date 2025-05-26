@@ -1,7 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Scope;
-using IDFCR.Shared.Abstractions.Records;
-using IDFCR.Shared.Abstractions.Results;
+using IDFCR.Shared.Abstractions.Paging;
 using IDFCR.Shared.Mediatr;
 using IRoleRequirement = IDFCR.Shared.Abstractions.IRoleRequirement;
 using RoleRequirementType = IDFCR.Shared.Abstractions.RoleRequirementType;
@@ -9,7 +8,7 @@ using RoleRequirementType = IDFCR.Shared.Abstractions.RoleRequirementType;
 namespace CF.Identity.Api.Features.Scopes.Get;
 
 public record GetPagedScopesQuery
-    : MappableBase<IScopeFilter>, IUnitRequestCollection<ScopeDto>,
+    : MappablePagedQuery<IScopeFilter>, IUnitPagedRequest<ScopeDto>,
       IPagedScopeFilter, 
       IRoleRequirement
 {
@@ -33,14 +32,5 @@ public record GetPagedScopesQuery
         Keys = source.Keys;
         IncludePrivilegedScoped = source.IncludePrivilegedScoped;
         NoTracking = source.NoTracking;
-    }
-}
-
-public class GetPagedScopesQueryHandler(IScopeRepository scopeRepository) : IUnitRequestCollectionHandler<GetPagedScopesQuery, ScopeDto>
-{
-    public async Task<IUnitResultCollection<ScopeDto>> Handle(GetPagedScopesQuery request, CancellationToken cancellationToken)
-    {
-        var scopes = await scopeRepository.GetPagedAsync(request, cancellationToken);
-        return scopes.Select(scope => new ScopeDto().Map(scope));
     }
 }
