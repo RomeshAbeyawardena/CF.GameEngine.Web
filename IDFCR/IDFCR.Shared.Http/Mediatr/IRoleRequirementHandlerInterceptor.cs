@@ -1,6 +1,5 @@
 ﻿using IDFCR.Shared.Http.Extensions;
 using IDFCR.Shared.Http.Mediatr.Scopes;
-using Microsoft.AspNetCore.Http;
 
 namespace IDFCR.Shared.Http.Mediatr;
 

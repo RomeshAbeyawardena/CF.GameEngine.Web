@@ -23,11 +23,16 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
                 bool result;
                 interceptorResults.Add(result = await interceptor.InterceptAsync(contextAccessor, request, cancellationToken));
 
-                logger.LogTrace("Interceptor of type {type}: Validation {result}", interceptor.GetType(), result ? "passed" : "failed");
+                logger.LogInformation("Interceptor of type {type}: Validation {result}", interceptor.GetType(), result ? "passed" : "failed");
             }
         }
 
-        return interceptorResults.TrueForAll(x => x);
+        if(interceptorResults.Count == 0)
+        {
+            return false;
+        }
+
+        return interceptorResults.All(x => x);
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
