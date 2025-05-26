@@ -1,5 +1,28 @@
 ﻿namespace IDFCR.Shared.Abstractions.Paging;
 
+public abstract record MappablePagedQuery<T> : Records.MappableBase<T>, IPagedQuery
+{
+    private Lazy<IPagedQuery> _calculatedPagedQuery;
+    private IPagedQuery pagedQuery => _calculatedPagedQuery.Value;
+    protected MappablePagedQuery()
+    {
+        _calculatedPagedQuery = new(() => new PagedQuery(PageSize, PageIndex));
+    }
+
+    public int? PageSize => pagedQuery.PageSize;
+    public int? PageIndex => pagedQuery.PageIndex;
+
+    public void Map(IPagedQuery source)
+    {
+        pagedQuery.Map(source);
+    }
+
+    public void Map(IConventionalPagedQuery source)
+    {
+        pagedQuery.Map(source);
+    }
+}
+
 public record PagedQuery() : IPagedQuery
 {
     public PagedQuery(int? pageSize, int? pageIndex) : this()
@@ -22,7 +45,9 @@ public record PagedQuery() : IPagedQuery
         if(source.Skip.HasValue && source.Take.HasValue)
         {
             PageSize = source.Take;
-            PageIndex = source.Skip / source.Take;
+            PageIndex = source.Skip.HasValue && source.Take.HasValue && source.Take.Value != 0
+                            ? source.Skip / source.Take
+                            : null;
         }
     }
 }
