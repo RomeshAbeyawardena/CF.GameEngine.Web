@@ -18,8 +18,8 @@ public interface IHypermedia : IReadOnlyDictionary<string, object?>
 public abstract record HypermediaBase : IHypermedia
 {
     private readonly Dictionary<string, object?> _dictionary = [];
-    private readonly Dictionary<string, ILink?> _links = [];
-    private readonly Dictionary<string, object?> _meta = [];
+    internal readonly Dictionary<string, ILink?> _links = [];
+    internal readonly Dictionary<string, object?> _meta = [];
 
     protected Dictionary<string, ILink?> LinksDictionary => _links;
     protected Dictionary<string, object?> MetaDictionary => _meta;
@@ -45,6 +45,9 @@ public abstract record HypermediaBase : IHypermedia
 
     public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
     {
+        _dictionary["_links"] = LinksDictionary;
+        _dictionary["_meta"] = MetaDictionary;
+
         return _dictionary.GetEnumerator();
     }
 
