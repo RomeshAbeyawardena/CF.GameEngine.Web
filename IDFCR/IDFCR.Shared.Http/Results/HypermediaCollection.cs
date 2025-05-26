@@ -10,6 +10,7 @@ public class HypermediaCollection<T> : IHypermediaCollection<T>
 
     public HypermediaCollection(IEnumerable<T> values)
     {
+        Console.WriteLine(typeof(T).Name);
         _items.AddRange(values.Select(v => new Hypermedia<T>(v)));
     }
 

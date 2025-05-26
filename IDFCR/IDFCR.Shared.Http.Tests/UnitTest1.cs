@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Routing;
 
 namespace IDFCR.Shared.Http.Tests;
 
-public record Customer(Guid Id, Guid TitleId, string Name, string Email, string PhoneNumber, string Address);
+public record Customer(Guid Id, Guid TitleId, string Name, string Email, string PhoneNumber, string Address)
+{
+    Guid? NullableGUid { get; set; }
+}
 
 public class CustomerLinkBuilder : LinkBuilder<Customer>
 {
