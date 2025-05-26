@@ -21,8 +21,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
     private async Task AttachScopes(IClientDetails client, Guid userId, List<Claim> claims)
     {
-        var scopes = (await mediator.Send(FindScopesQuery
-            .Instance(client.Id, userId, includePrivilegedScoped: client.IsSystem, byPass: true))).GetResultOrDefault();
+        var scopes = (await mediator.Send(new FindScopesQuery(client.Id, userId, IncludePrivilegedScoped: client.IsSystem, Bypass: true))).GetResultOrDefault();
 
         if(scopes is null || !scopes.Any())
         {

@@ -1,35 +1,8 @@
-﻿using CF.Identity.Api.Features.Scopes.Get;
-using CF.Identity.Infrastructure.Features.Scope;
-using IDFCR.Http.Authentication.Abstractions;
-using IDFCR.Shared.Abstractions.Records;
+﻿using IDFCR.Http.Authentication.Abstractions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 
 namespace CF.Identity.Api.Endpoints.Scopes.Get;
-
-public record GetScopesRequest(string? Key = null, IEnumerable<string>? Keys = null) : MappableBase<IScopeFilter>
-{
-    protected override IScopeFilter Source => new FindScopesQuery
-    {
-        Key = Key,
-        Keys = Keys,
-        UserId = UserId,
-        ClientId = ClientId
-    };
-
-    public Guid? UserId { get; init; }
-    public Guid? ClientId { get; set; }
-
-    public override void Map(IScopeFilter source)
-    {
-        throw new NotSupportedException();
-    }
-
-    public FindScopesQuery ToQuery()
-    {
-        return Map<FindScopesQuery>();
-    }
-}
 
 public static class Endpoint
 {

@@ -75,7 +75,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         }
 
         var requestedScopes = request.TokenRequest.Scope.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        var scopesResponse = await mediator.Send(FindScopesQuery.Instance(clientDetail.Id, keys: requestedScopes, byPass: true), cancellationToken);
+        var scopesResponse = await mediator.Send(new FindScopesQuery(clientDetail.Id, Keys: requestedScopes, Bypass: true), cancellationToken);
         var scopes = scopesResponse.AsList();
 
         if (!requestedScopes.All(y => scopes.Any(x => x.Key.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
