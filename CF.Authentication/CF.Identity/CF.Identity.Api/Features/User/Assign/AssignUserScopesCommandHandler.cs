@@ -24,7 +24,7 @@ public class AssignUserScopesCommandHandler(IAuthenticatedUserContext authentica
 
         bool includePrivilegedScopes = client.IsSystem;
 
-        var scopes = (await mediator.Send(new FindScopeQuery(client.Id, client.UserId, Keys: request.Scopes, IncludePrivilegedScoped: includePrivilegedScopes), cancellationToken))
+        var scopes = (await mediator.Send(FindScopesQuery.Instance(client.Id, client.UserId, keys: request.Scopes, includePrivilegedScoped: includePrivilegedScopes), cancellationToken))
             .GetResultOrDefault();
 
         if(scopes is null)

@@ -8,7 +8,6 @@ using IDFCR.Shared.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
-using System.IO;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -22,7 +21,8 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
     private async Task AttachScopes(IClientDetails client, Guid userId, List<Claim> claims)
     {
-        var scopes = (await mediator.Send(new FindScopeQuery(client.Id, userId, IncludePrivilegedScoped: client.IsSystem, Bypass: true))).GetResultOrDefault();
+        var scopes = (await mediator.Send(FindScopesQuery
+            .Instance(client.Id, userId, includePrivilegedScoped: client.IsSystem, byPass: true))).GetResultOrDefault();
 
         if(scopes is null || !scopes.Any())
         {
