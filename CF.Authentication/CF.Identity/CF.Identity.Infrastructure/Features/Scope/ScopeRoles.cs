@@ -9,11 +9,11 @@ public class ScopeRoles : RoleRegistrarBase
     public const string ScopeWrite = "scope:api:write";
     public ScopeRoles()
     {
-        TryRegisterRole(ScopeRead, b => b
+        TryRegisterRole(ScopeRead, RoleCategory.Read, b => b
             .AddDisplayName(Resources.ScopeReadRoleName)
             .AddDescription(Resources.ScopeReadRoleDescription));
 
-        TryRegisterRole(ScopeWrite, b => b
+        TryRegisterRole(ScopeWrite, RoleCategory.Write, b => b
             .AddDisplayName(Resources.ScopeWriteRoleName)
             .AddDescription(Resources.ScopeWriteRoleDescription));
     }
