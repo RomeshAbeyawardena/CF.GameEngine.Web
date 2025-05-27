@@ -2,7 +2,7 @@
 
 namespace IDFCR.Shared.Abstractions.Filters;
 
-public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<TFilter, TDb>
+public abstract class MappableFilterBase<TFilter, TDb> : MappableBase<TFilter>, IMappableFilter<TFilter, TDb>
     where TFilter : IFilter<TFilter>
 {
     protected TFilter? _filter;
@@ -13,7 +13,7 @@ public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<
     /// </summary>
     protected NotSupportedException MappingNotSupportedException => new(
         "This is a low-level filter, use the constructor parameter to map it as the parameters are read-only in this state");
-    protected FilterBase(TFilter? targetFilter = default)
+    protected MappableFilterBase(TFilter? targetFilter = default)
     {
         if (targetFilter is not null)
         {
@@ -35,9 +35,10 @@ public abstract class FilterBase<TFilter, TDb> : MappableBase<TFilter>, IFilter<
         return ApplyFilter(query, _filter ?? throw new NullReferenceException("Filter not supplied"));
     }
 
-    public virtual Task<ExpressionStarter<TDb>> ApplyFilterAsync(ExpressionStarter<TDb> query, TFilter filter, CancellationToken cancellationToken)
+    public virtual async Task<ExpressionStarter<TDb>> ApplyFilterAsync(ExpressionStarter<TDb> query, TFilter filter, CancellationToken cancellationToken)
     {
-        return Task.FromResult(ApplyFilter(query, filter));
+        await Task.CompletedTask;
+        return ApplyFilter(query, filter);
     }
 
     public abstract ExpressionStarter<TDb> ApplyFilter(ExpressionStarter<TDb> query, TFilter filter);
