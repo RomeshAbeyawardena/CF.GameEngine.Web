@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CF.Identity.Infrastructure.SqlServer.EntityConfiguration;
 
-internal class UserRoleEntityConfiguration : IEntityTypeConfiguration<DbUserRole>
+internal class UserRoleEntityConfiguration : IEntityTypeConfiguration<DbUserAccessRole>
 {
-    public void Configure(EntityTypeBuilder<DbUserRole> builder)
+    public void Configure(EntityTypeBuilder<DbUserAccessRole> builder)
     {
         builder.ToTable("UserRole", "dbo");
         builder.HasKey(x => x.Id);

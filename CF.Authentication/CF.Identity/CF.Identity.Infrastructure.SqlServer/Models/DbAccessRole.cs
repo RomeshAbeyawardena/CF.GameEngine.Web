@@ -12,11 +12,14 @@ public class DbAccessRole : MappableBase<IAccessRole>, IAccessRole
     public Guid Id { get; set; }
 
     public virtual DbClient Client { get; set; } = null!;
-    public virtual ICollection<DbUserRole> UserRoles { get; set; } = [];
+    public virtual ICollection<DbUserAccessRole> UserRoles { get; set; } = [];
     public virtual ICollection<DbRoleScope> Scopes { get; set; } = [];
 
     public override void Map(IAccessRole source)
     {
-        throw new NotImplementedException();
+        ClientId = source.ClientId;
+        Key = source.Key;
+        DisplayName = source.DisplayName;
+        Id = source.Id;
     }
 }
