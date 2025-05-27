@@ -8,6 +8,18 @@ public static class RoleRegistrar
         var registrar = new T();
         return registrar.Select(role => role.Key);
     }
+
+    public static string FlattenedRoles<T>()
+        where T : IRoleRegistrar, new()
+    {
+        return TransformRoles<T>(x => string.Join(',', x));
+    }
+
+    public static string TransformRoles<T>(Func<IEnumerable<string>, string> transformer)
+        where T : IRoleRegistrar, new()
+    {
+        return transformer(List<T>());
+    }
 }
 
 public abstract class RoleRegistrarBase : IRoleRegistrar
