@@ -5,7 +5,7 @@ using LinqKit;
 
 namespace CF.Identity.Infrastructure.SqlServer.Filters;
 
-internal class ScopeFilter(IScopeFilter filter) : FilterBase<IScopeFilter, DbScope>(filter), IScopeFilter
+internal class ScopeFilter(IScopeFilter filter) : MappableFilterBase<IScopeFilter, DbScope>(filter), IScopeFilter
 {
     protected override IScopeFilter Source => this;
     public bool IncludePrivilegedScoped { get; set; }

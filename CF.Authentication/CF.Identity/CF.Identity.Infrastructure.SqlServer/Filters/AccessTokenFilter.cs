@@ -6,7 +6,7 @@ using LinqKit;
 
 namespace CF.Identity.Infrastructure.SqlServer.Filters;
 
-internal class AccessTokenFilter(IAccessTokenFilter filter) : FilterBase<IAccessTokenFilter, DbAccessToken>(filter), IAccessTokenFilter
+internal class AccessTokenFilter(IAccessTokenFilter filter) : MappableFilterBase<IAccessTokenFilter, DbAccessToken>(filter), IAccessTokenFilter
 {
     protected override IAccessTokenFilter Source => this;
     public string? ReferenceToken { get; set;}

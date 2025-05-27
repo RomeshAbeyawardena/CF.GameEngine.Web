@@ -6,7 +6,7 @@ using LinqKit;
 
 namespace CF.Identity.Infrastructure.SqlServer.Filters;
 
-internal class ClientFilter(IClientFilter filter) : FilterBase<IClientFilter, DbClient>(filter), IClientFilter
+internal class ClientFilter(IClientFilter filter) : MappableFilterBase<IClientFilter, DbClient>(filter), IClientFilter
 {
     protected override IClientFilter Source => this;
     public string? Key { get; set; }

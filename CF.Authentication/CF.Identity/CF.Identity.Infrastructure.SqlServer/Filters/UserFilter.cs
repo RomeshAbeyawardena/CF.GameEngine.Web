@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using CF.Identity.Infrastructure.Features.Users;
+﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Extensions;
@@ -7,14 +6,8 @@ using LinqKit;
 
 namespace CF.Identity.Infrastructure.SqlServer.Filters;
 
-public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionProvider userCredentialProtectionProvider) : InjectableFilterBase<IUserFilter, DbUser>(), IUserFilter
+public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionProvider userCredentialProtectionProvider) : InjectableFilterBase<IUserFilter, DbUser>()
 {
-    protected override IUserFilter Source => this;
-    public Guid ClientId { get; set; }
-    public string? Username { get; set; }
-    public string? NameContains { get; set; }
-    public bool? IsSystem { get; set; }
-
     private string? UsernameHmac;
 
     public override async Task<ExpressionStarter<DbUser>> ApplyFilterAsync(ExpressionStarter<DbUser> query, IUserFilter filter, CancellationToken cancellationToken)
@@ -25,7 +18,7 @@ public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionPr
             UsernameHmac = userCredentialProtectionProvider.HashUsingHmac(foundClient, filter.Username);
         }
 
-        return await base.ApplyFilterAsync(query, cancellationToken);
+        return await base.ApplyFilterAsync(query, filter, cancellationToken);
     }
 
     public override ExpressionStarter<DbUser> ApplyFilter(ExpressionStarter<DbUser> query, IUserFilter filter)
@@ -42,7 +35,7 @@ public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionPr
             var nameMatch = PredicateBuilder.New<DbUser>(true);
             nameMatch = nameMatch.Or(x => x.FirstCommonName.ValueNormalised.Contains(filter.NameContains))
                 .Or(x => x.LastCommonName.ValueNormalised.Contains(filter.NameContains))
-                .Or(ExpressionExtensions.OrNullContains<DbUser>(u => u.MiddleCommonName.ValueNormalised, NameContains));
+                .Or(ExpressionExtensions.OrNullContains<DbUser>(u => u.MiddleCommonName.ValueNormalised, filter.NameContains));
 
             query = query.And(nameMatch);
         }
@@ -53,13 +46,5 @@ public class UserFilter(CFIdentityDbContext context, IUserCredentialProtectionPr
         }
 
         return query;
-    }
-
-    public override void Map(IUserFilter source)
-    {
-        Username = source.Username;
-        ClientId = source.ClientId;
-        NameContains = source.NameContains;
-        IsSystem = source.IsSystem;
     }
 }
