@@ -21,28 +21,19 @@ dotnet run --project CF.Identity.MigrationUtility.csproj -- --migrate -seed-[see
 Example secrets.json
 ```json
 {
-  "Encryption": {
-    "Key": "01621481-926b-4c9b-974c-ca7c040b8d40"
-  },
-  "ConnectionStrings": {
-    "CFIdentity": "Server=localhost,5060;Database=CFIdentity;User Id=sa;Password=<password>;MultipleActiveResultSets=true;TrustServerCertificate=true"
-  },
-  "JwtSettings": {
-    "Issuer": "https://localhost:7234",
-    "Audience": "https://localhost:8224",
-    "SigningKey": "dev-Only-Signing-Key_thatIsSecureEnough!2025"
-  },
-  "Seed": {
-    "Client": {
-      "SystemClientSecret": "dev-client-secret"
-    },
-    "User": {
-      "Password": "@dmin-123!",
-      "EmailAddress": "admin@identity.co",
-      "PreferredUsername": "admin",
-      "Firstname": "Admin",
-      "Lastname": "User"
-    }
-  }
+  "Seed:User:Username": "admin",
+  "Seed:User:PrimaryTelephoneNumber": "+44-7123-012345",
+  "Seed:User:PreferredUsername": "admin",
+  "Seed:User:Password": "@dmin-123!",
+  "Seed:User:Lastname": "User",
+  "Seed:User:Firstname": "Admin",
+  "Seed:User:EmailAddress": "admin@identity.co",
+  "Seed:Client:SystemClientSecret": "dev-client-secret",
+  "Kestrel:Certificates:Development:Password": "<unique-id>",
+  "JwtSettings:SigningKey": "dev-Only-Signing-Key_thatIsSecureEnough!2025",
+  "JwtSettings:Issuer": "https://localhost:7234",
+  "JwtSettings:Audience": "https://localhost:8224",
+  "Encryption:Key": "<unique-id>",
+  "ConnectionStrings:CFIdentity": "Server=localhost,5060;Database=CFIdentity;User Id=sa;Password=<password>;MultipleActiveResultSets=true;TrustServerCertificate=true"
 }
 ```
