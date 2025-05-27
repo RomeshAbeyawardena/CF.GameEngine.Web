@@ -1,6 +1,5 @@
-﻿namespace CF.Identity.Api.Endpoints.Roles.Get
+﻿namespace CF.Identity.Api.Endpoints.Roles.Get;
+
+public class Endpoints
 {
-    public class Endpoints
-    {
-    }
 }

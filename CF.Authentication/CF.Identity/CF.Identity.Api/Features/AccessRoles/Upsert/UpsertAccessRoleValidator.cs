@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Api.Features.Clients.Get;
 using FluentValidation;
 using IDFCR.Shared.Extensions;
+using IDFCR.Shared.FluentValidation.Constants;
 using MediatR;
 
 namespace CF.Identity.Api.Features.AccessRoles.Upsert
@@ -30,7 +31,10 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
                 .MaximumLength(500)
                 .WithMessage("Description must not exceed 500 characters.");
 
-            RuleFor(x => x.AccessRole).MustAsync(HaveValidClient);
+            RuleFor(x => x.AccessRole).MustAsync(HaveValidClient)
+                .WithName("ClientId")
+                .WithMessage("Client or Client ID must be a valid value")
+                .WithErrorCode(Errorcodes.Conflict);
         }
         public async Task<bool> HaveValidClient(
             EditableAccessRoleDto model, CancellationToken cancellationToken)
