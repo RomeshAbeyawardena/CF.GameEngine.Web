@@ -27,7 +27,8 @@ public static class Endpoint
     {
         builder.MapPost(Endpoints.BaseUrl, SaveRoleAsync)
             .DisableAntiforgery()
-            .RequireAuthorization(new AuthorizeAttribute(RoleRegistrar.FlattenedRoles<Infrastructure.Features.AccessRoles.Roles>(RoleCategory.Write, SystemRoles.GlobalWrite)));
+            .RequireAuthorization(new AuthorizeAttribute(RoleRegistrar
+                .FlattenedRoles<Infrastructure.Features.AccessRoles.Roles>(RoleCategory.Write, SystemRoles.GlobalWrite)));
         return builder;
     }
 }
