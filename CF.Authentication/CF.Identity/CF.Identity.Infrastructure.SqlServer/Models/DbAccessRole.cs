@@ -9,6 +9,7 @@ public class DbAccessRole : MappableBase<IAccessRole>, IAccessRole
     public Guid ClientId { get; set; }
     public string Key { get; set; } = null!;
     public string? DisplayName { get; set; }
+    public string? Description { get; set; }
     public Guid Id { get; set; }
 
     public virtual DbClient Client { get; set; } = null!;
@@ -20,6 +21,7 @@ public class DbAccessRole : MappableBase<IAccessRole>, IAccessRole
         ClientId = source.ClientId;
         Key = source.Key;
         DisplayName = source.DisplayName;
+        Description = source.Description;
         Id = source.Id;
     }
 }

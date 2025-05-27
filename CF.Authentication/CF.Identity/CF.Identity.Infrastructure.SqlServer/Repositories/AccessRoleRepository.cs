@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Infrastructure.Features.AccessRoles;
-using CF.Identity.Infrastructure.Features.Roles;
 using CF.Identity.Infrastructure.SqlServer.Models;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;

@@ -10,11 +10,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CF.Identity.Api.Endpoints.Roles.Post;
+namespace CF.Identity.Api.Endpoints.AccessRoles.Post;
 
 public static class Endpoint
 {
-    public static async Task<IResult> SaveRoleAsync([FromForm] PostRoleCommand request,
+    public static async Task<IResult> SaveRoleAsync([FromForm] PostRoleRequest request,
         IMediator mediator, IHttpContextAccessor httpContextAccessor,
         CancellationToken cancellationToken)
     {

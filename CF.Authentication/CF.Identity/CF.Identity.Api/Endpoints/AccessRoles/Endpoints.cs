@@ -1,4 +1,4 @@
-﻿namespace CF.Identity.Api.Endpoints.Roles;
+﻿namespace CF.Identity.Api.Endpoints.AccessRoles;
 
 public static class Endpoints
 {
