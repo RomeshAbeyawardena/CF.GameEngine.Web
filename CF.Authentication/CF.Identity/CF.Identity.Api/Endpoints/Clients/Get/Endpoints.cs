@@ -27,7 +27,7 @@ public static class Endpoints
             .WithName(nameof(GetClientAsync))
             .Produces<ClientDetailResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
-            .RequireAuthorization(new AuthorizeAttribute(string.Join("", RoleRegistrar.List<ClientRoles>())))
+            .RequireAuthorization(new AuthorizeAttribute(RoleRegistrar.FlattenedRoles<ClientRoles>()))
             .WithTags(Route.Tag);
         return app;
     }

@@ -39,8 +39,7 @@ public static class Endpoint
     public static IEndpointRouteBuilder AddGetScopesEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapGet(Endpoints.BaseUrl, GetScopePagedAsync)
-            .RequireAuthorization(new AuthorizeAttribute(RoleDescriptor
-                .ConcatenateRoles(',', SystemRoles.GlobalRead, ScopeRoles.ScopeRead)))
+            .RequireAuthorization(new AuthorizeAttribute(RoleRegistrar.FlattenedRoles<ScopeRoles>()))
             .WithName("GetScopes")
             .WithSummary("Get paged scopes")
             .WithDescription("Retrieves a paginated list of scopes based on the provided filter criteria.");
