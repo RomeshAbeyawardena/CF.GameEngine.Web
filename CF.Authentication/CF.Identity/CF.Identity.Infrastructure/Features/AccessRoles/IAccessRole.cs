@@ -8,4 +8,5 @@ public interface IAccessRole : IMappable<IAccessRole>, IIdentifer
     Guid ClientId { get; }
     string Key { get; }
     string? DisplayName { get; }
+    string? Description { get; }
 }

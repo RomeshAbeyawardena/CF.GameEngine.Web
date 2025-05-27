@@ -1,4 +1,5 @@
-﻿using CF.Identity.Api.Features.Scopes.Post;
+﻿using CF.Identity.Api.Features.AccessRoles.Post;
+using CF.Identity.Api.Features.Scopes.Post;
 using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.AccessRoles;
 using CF.Identity.Infrastructure.Features.Scope;
@@ -13,20 +14,20 @@ namespace CF.Identity.Api.Endpoints.Roles.Post;
 
 public static class Endpoint
 {
-    public static async Task<IResult> SaveScopeAsync([FromForm] PostRoleRequest request,
+    public static async Task<IResult> SaveRoleAsync([FromForm] PostRoleCommand request,
         IMediator mediator, IHttpContextAccessor httpContextAccessor,
         CancellationToken cancellationToken)
     {
         var data = request.ConvertToEditable();
-        var result = await mediator.Send(new PostScopeCommand(data), cancellationToken);
+        var result = await mediator.Send(new PostAccessRoleCommand(data), cancellationToken);
         return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }
 
     public static IEndpointRouteBuilder AddPostEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapPost(Endpoints.BaseUrl, SaveScopeAsync)
+        builder.MapPost(Endpoints.BaseUrl, SaveRoleAsync)
             .DisableAntiforgery()
-            .RequireAuthorization(new AuthorizeAttribute(RoleRegistrar.FlattenedRoles<AccessRoles>(RoleCategory.Write, SystemRoles.GlobalWrite)));
+            .RequireAuthorization(new AuthorizeAttribute(RoleRegistrar.FlattenedRoles<Infrastructure.Features.AccessRoles.Roles>(RoleCategory.Write, SystemRoles.GlobalWrite)));
         return builder;
     }
 }

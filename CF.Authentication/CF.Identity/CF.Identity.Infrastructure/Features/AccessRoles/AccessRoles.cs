@@ -3,11 +3,11 @@ using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Infrastructure.Features.AccessRoles;
 
-public class AccessRoles : RoleRegistrarBase
+public class Roles : RoleRegistrarBase
 {
     public const string RoleRead = "api:role:read";
     public const string RoleWrite = "api:role:write";
-    public AccessRoles()
+    public Roles()
     {
         TryRegisterRole(RoleRead, RoleCategory.Read , b => b
             .AddDisplayName(Resources.AccessRoleReadRoleName)
