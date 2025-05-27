@@ -3,11 +3,11 @@ using CF.Identity.Api.Features.Scopes.Post;
 using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.AccessRoles;
 using CF.Identity.Infrastructure.Features.Scope;
+using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.AccessRoles.Post;
@@ -27,8 +27,7 @@ public static class Endpoint
     {
         builder.MapPost(Endpoints.BaseUrl, SaveRoleAsync)
             .DisableAntiforgery()
-            .RequireAuthorization(new AuthorizeAttribute(RoleRegistrar
-                .FlattenedRoles<Infrastructure.Features.AccessRoles.Roles>(RoleCategory.Write, SystemRoles.GlobalWrite)));
+            .RequireAuthorization(Authorise.Using<Infrastructure.Features.AccessRoles.Roles>(RoleCategory.Write, SystemRoles.GlobalWrite));
         return builder;
     }
 }
