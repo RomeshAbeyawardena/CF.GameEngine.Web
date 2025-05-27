@@ -1,5 +1,15 @@
 ﻿namespace IDFCR.Shared.Abstractions;
 
+public static class RoleRegistrar
+{
+    public static IEnumerable<string> List<T>()
+        where T : IRoleRegistrar, new()
+    {
+        var registrar = new T();
+        return registrar.Select(role => role.Key);
+    }
+}
+
 public abstract class RoleRegistrarBase : IRoleRegistrar
 {
     protected readonly Dictionary<string, IRoleDescriptor> _roles = [];
