@@ -9,11 +9,11 @@ public class AccessRoles : RoleRegistrarBase
     public const string RoleWrite = "api:role:write";
     public AccessRoles()
     {
-        TryRegisterRole(RoleRead, b => b
+        TryRegisterRole(RoleRead, RoleCategory.Read , b => b
             .AddDisplayName(Resources.AccessRoleReadRoleName)
             .AddDescription(Resources.AccessRoleReadRoleDescription));
 
-        TryRegisterRole(RoleWrite, b => b
+        TryRegisterRole(RoleWrite, RoleCategory.Write, b => b
             .AddDisplayName(Resources.AccessRoleWriteRoleName)
             .AddDescription(Resources.AccessRoleWriteRoleDescription));
     }

@@ -10,11 +10,11 @@ public class ClientRoles : RoleRegistrarBase
 
     public ClientRoles()
     {
-        TryRegisterRole(ClientRead, b => b
+        TryRegisterRole(ClientRead, RoleCategory.Read, b => b
             .AddDisplayName(Resources.ClientReadRoleName)
             .AddDescription(Resources.ClientReadRoleDescription));
 
-        TryRegisterRole(ClientWrite, b => b
+        TryRegisterRole(ClientWrite, RoleCategory.Write, b => b
             .AddDisplayName(Resources.ClientWriteRoleName)
             .AddDescription(Resources.ClientWriteRoleDescription));
     }
