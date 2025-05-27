@@ -2,6 +2,7 @@
 using CF.Identity.Api.Features.Clients.Post;
 using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
@@ -30,7 +31,7 @@ public static class Endpoint
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status409Conflict)
             .WithDescription("Creates a new client.")
-            .RequireAuthorization(RoleRegistrar.FlattenedRoles<ClientRoles>(RoleCategory.Write, SystemRoles.GlobalWrite));
+            .RequireAuthorization(Authorise.Using<ClientRoles>(RoleCategory.Write, SystemRoles.GlobalWrite));
         return builder;
     }
 }

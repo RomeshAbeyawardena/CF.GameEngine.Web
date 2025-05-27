@@ -2,6 +2,7 @@
 using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
@@ -27,7 +28,7 @@ public static class Endpoints
             .WithName(nameof(GetClientAsync))
             .Produces<ClientDetailResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
-            .RequireAuthorization(new AuthorizeAttribute(RoleRegistrar.FlattenedRoles<ClientRoles>(RoleCategory.Read, SystemRoles.GlobalRead)))
+            .RequireAuthorization(Authorise.Using<ClientRoles>(RoleCategory.Read, SystemRoles.GlobalRead))
             .WithTags(Route.Tag);
         return app;
     }

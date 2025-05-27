@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Http.Authentication.Abstractions;
+using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
@@ -39,7 +40,7 @@ public static class Endpoint
     public static IEndpointRouteBuilder AddGetScopesEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapGet(Endpoints.BaseUrl, GetScopePagedAsync)
-            .RequireAuthorization(new AuthorizeAttribute(RoleRegistrar.FlattenedRoles<ScopeRoles>(RoleCategory.Read, SystemRoles.GlobalRead)))
+            .RequireAuthorization(Authorise.Using<ScopeRoles>(RoleCategory.Read, SystemRoles.GlobalRead))
             .WithName("GetScopes")
             .WithSummary("Get paged scopes")
             .WithDescription("Retrieves a paginated list of scopes based on the provided filter criteria.");
