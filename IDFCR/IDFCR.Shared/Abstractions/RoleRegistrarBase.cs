@@ -2,26 +2,26 @@
 
 public static class RoleRegistrar
 {
-    public static IEnumerable<string> List<T>(RoleCategory? category = null)
+    public static IEnumerable<string> List<T>(RoleCategory? category = null, params string[] additionalRoles)
         where T : IRoleRegistrar, new()
     {
         var registrar = new T();
 
         return category.HasValue 
             ? registrar.Where(r => r.Category == category).Select(role => role.Key)
-            : registrar.Select(role => role.Key);
+            : registrar.Select(role => role.Key).Union(additionalRoles);
     }
 
-    public static string FlattenedRoles<T>(RoleCategory? category = null)
+    public static string FlattenedRoles<T>(RoleCategory? category = null, params string[] additionalRoles)
         where T : IRoleRegistrar, new()
     {
-        return TransformRoles<T>(x => string.Join(',', x), category);
+        return TransformRoles<T>(x => string.Join(',', x), category, additionalRoles);
     }
 
-    public static string TransformRoles<T>(Func<IEnumerable<string>, string> transformer, RoleCategory? category = null)
+    public static string TransformRoles<T>(Func<IEnumerable<string>, string> transformer, RoleCategory? category = null, params string[] additionalRoles)
         where T : IRoleRegistrar, new()
     {
-        return transformer(List<T>(category));
+        return transformer(List<T>(category, additionalRoles));
     }
 }
 
