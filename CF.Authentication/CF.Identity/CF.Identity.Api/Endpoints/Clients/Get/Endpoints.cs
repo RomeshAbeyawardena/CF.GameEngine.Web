@@ -7,7 +7,6 @@ using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 
 namespace CF.Identity.Api.Endpoints.Clients.Get;
 
