@@ -1,6 +1,6 @@
 ﻿namespace IDFCR.Shared.Abstractions;
 
-public class RoleDescriptorBuilder(string key) : IRoleDescriptorBuilder
+public class RoleDescriptorBuilder(string key, RoleCategory category = RoleCategory.None) : IRoleDescriptorBuilder
 {
     private string? description;
     private string? displayName;
@@ -22,6 +22,7 @@ public class RoleDescriptorBuilder(string key) : IRoleDescriptorBuilder
     {
         return new DefaultRoleDescriptor(key, isPrivileged)
         {
+            Category = category,
             Description = description,
             DisplayName = displayName
         };
