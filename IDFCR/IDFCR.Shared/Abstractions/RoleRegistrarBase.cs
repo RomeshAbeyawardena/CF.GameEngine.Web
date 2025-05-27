@@ -37,7 +37,7 @@ public abstract class RoleRegistrarBase : IRoleRegistrar
         {
             return false;
         }
-        
+
         return _roles.TryAdd(key, roleDescriptor);
     }
 
@@ -46,7 +46,12 @@ public abstract class RoleRegistrarBase : IRoleRegistrar
 
     public bool TryRegisterRole(string roleName, Action<IRoleDescriptorBuilder> buildRole)
     {
-        var builder = new RoleDescriptorBuilder(roleName);
+        return TryRegisterRole(roleName, RoleCategory.None, buildRole);
+    }
+
+    public bool TryRegisterRole(string roleName, RoleCategory roleCategory, Action<IRoleDescriptorBuilder> buildRole)
+    {
+        var builder = new RoleDescriptorBuilder(roleName, roleCategory);
         buildRole(builder);
 
         return TryRegisterRole(roleName, builder.Build(), out _);
