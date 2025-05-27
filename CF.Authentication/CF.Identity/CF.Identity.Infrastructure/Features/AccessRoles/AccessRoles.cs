@@ -1,7 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Properties;
 using IDFCR.Shared.Abstractions;
 
-namespace CF.Identity.Infrastructure.Features.Roles;
+namespace CF.Identity.Infrastructure.Features.AccessRoles;
 
 public class AccessRoles : RoleRegistrarBase
 {

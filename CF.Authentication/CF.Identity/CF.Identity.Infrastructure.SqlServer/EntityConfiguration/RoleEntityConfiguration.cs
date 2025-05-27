@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CF.Identity.Infrastructure.SqlServer.EntityConfiguration;
 
-internal class RoleEntityConfiguration : IEntityTypeConfiguration<DbRole>
+internal class RoleEntityConfiguration : IEntityTypeConfiguration<DbAccessRole>
 {
-    public void Configure(EntityTypeBuilder<DbRole> builder)
+    public void Configure(EntityTypeBuilder<DbAccessRole> builder)
     {
         builder.ToTable("Role", "dbo");
         builder.HasKey(x => x.Id);
@@ -25,13 +25,13 @@ internal class RoleEntityConfiguration : IEntityTypeConfiguration<DbRole>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.UserRoles)
-            .WithOne(x => x.Role)
-            .HasForeignKey(x => x.RoleId)
+            .WithOne(x => x.AccessRole)
+            .HasForeignKey(x => x.AccessRoleId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.Scopes)
             .WithOne(x => x.Role)
-            .HasForeignKey(x => x.RoleId)
+            .HasForeignKey(x => x.AccessRoleId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

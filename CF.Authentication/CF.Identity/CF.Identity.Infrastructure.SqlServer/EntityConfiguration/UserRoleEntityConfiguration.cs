@@ -10,15 +10,15 @@ internal class UserRoleEntityConfiguration : IEntityTypeConfiguration<DbUserRole
     {
         builder.ToTable("UserRole", "dbo");
         builder.HasKey(x => x.Id);
-        builder.HasAlternateKey(x => new { x.UserId, x.RoleId });
+        builder.HasAlternateKey(x => new { x.UserId, x.AccessRoleId });
         builder.Property(x => x.Id)
             .HasColumnName("UserRoleId").ValueGeneratedOnAdd();
         builder.Property(x => x.UserId).IsRequired();
-        builder.Property(x => x.RoleId).IsRequired();
+        builder.Property(x => x.AccessRoleId).IsRequired();
 
-        builder.HasOne(x => x.Role)
+        builder.HasOne(x => x.AccessRole)
             .WithMany(x => x.UserRoles)
-            .HasForeignKey(x => x.RoleId)
+            .HasForeignKey(x => x.AccessRoleId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.User)
