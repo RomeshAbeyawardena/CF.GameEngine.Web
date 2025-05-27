@@ -62,7 +62,6 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
 
     public async Task<IUnitResultCollection<UserDto>> FindUsersAsync(IUserFilter filter, CancellationToken cancellationToken)
     {
-        userFilter.Filter = filter;
         var externalFilter = await userFilter.ApplyFilterAsync(Builder, filter, cancellationToken);
         var result = await Set<DbUser>(filter)
             .Include(x => x.Client)
