@@ -52,7 +52,7 @@ public static class ObjectExtensions
         return lambda.Compile();
     }
     
-    public static IDictionary<string, object?> ToDictionary(this object value)
+    public static IDictionary<string, object?> AsDictionary(this object value)
     {
         if (value is null)
         {

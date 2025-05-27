@@ -13,7 +13,7 @@ public sealed record Hypermedia<T> : HypermediaBase, IHypermedia<T>
             return;
         }
 
-        var dictionary = item.ToDictionary();
+        var dictionary = item.AsDictionary();
 
         foreach(var kvp in dictionary)
         {
