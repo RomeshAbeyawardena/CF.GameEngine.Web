@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace IDFCR.Shared.Abstractions;
@@ -20,24 +22,38 @@ public interface IProtectionInfo
 
 public record DefaultProtectionInfo(string Hmac, string CasingImpressions) : IProtectionInfo;
 
-public class PIIProtectionFactory(Func<PIIProtectionProviderBase, IProtectionInfo> protect,
-    Action<PIIProtectionProviderBase, IProtectionInfo> unprotect)
+public class PIIProtectionFactory<T>(Expression<Func<T, string>> member, Func<PIIProtectionProviderBase, string, IProtectionInfo> protect,
+    Action<PIIProtectionProviderBase, string, IProtectionInfo> unprotect)
 {
-    public IProtectionInfo Protect(PIIProtectionProviderBase instance)
+    public IProtectionInfo Protect(PIIProtectionProviderBase provider, T instance)
     {
-        return protect(instance);
+        var value = member.Compile();
+        return protect(provider, value(instance));
     }
 
-    public void Unprotect(PIIProtectionProviderBase instance, IProtectionInfo protectionInfo)
+    public void Unprotect(PIIProtectionProviderBase provider, T instance, IProtectionInfo protectionInfo)
     {
-        unprotect(instance, protectionInfo);
+        var value = member.Compile();
+        unprotect(provider, value(instance), protectionInfo);
     }
 }
 
 public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase, IPIIProtection<T>
 {
-    private readonly Dictionary<string, PIIProtectionFactory> protectionFactories = [];
+    private readonly Dictionary<string, PIIProtectionFactory<T>> protectionFactories = [];
     private readonly Dictionary<string, IProtectionInfo> protectionData = [];
+
+    protected PIIProtectionBase<T> For(Expression<Func<T, string>> member, Func<PIIProtectionProviderBase, string, IProtectionInfo> protect,
+    Action<PIIProtectionProviderBase, string, IProtectionInfo> unprotect)
+    {
+        var vis = new LinkExpressionVisitor();
+        vis.Visit(member);
+
+        protectionFactories.Add(vis.MemberName!,
+            new PIIProtectionFactory<T>(member, protect, unprotect));
+
+        return this;
+    }
 
     public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)
     {
@@ -57,7 +73,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         protectionData.Clear();
         foreach (var (key, value) in protectionFactories)
         {
-            protectionData.Add(key, value.Protect(this));
+            protectionData.Add(key, value.Protect(this, entry));
         }
 
         return protectionData;
@@ -75,7 +91,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
                 throw new KeyNotFoundException($"Protection data for key '{key}' not found.");
             }
 
-            value.Unprotect(this, protectionInfo);
+            value.Unprotect(this, entry, protectionInfo);
         }
     }
 }

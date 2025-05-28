@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
-namespace IDFCR.Shared.Http.Links;
+namespace IDFCR.Shared;
 
 internal class LinkExpressionVisitor : ExpressionVisitor
 {
