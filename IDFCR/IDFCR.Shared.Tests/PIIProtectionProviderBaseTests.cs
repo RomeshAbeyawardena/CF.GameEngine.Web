@@ -81,17 +81,17 @@ internal class PIIProtectionProviderBaseTests
             SetRowVersion(x => x.RowVersion);
 
             ProtectSymmetric(x => x.Name);
-            SetStoreProtectionInfoBackingStoreFor(x => x.Name, BackingStore.Hmac, x => x.NameHmac);
-            SetStoreProtectionInfoBackingStoreFor(x => x.Name, BackingStore.CasingImpression, x => x.NameCI);
+            MapProtectionInfoTo(x => x.Name, BackingStore.Hmac, x => x.NameHmac);
+            MapProtectionInfoTo(x => x.Name, BackingStore.CasingImpression, x => x.NameCI);
 
             ProtectSymmetric(x => x.Email);
-            SetStoreProtectionInfoBackingStoreFor(x => x.Email, BackingStore.Hmac, x => x.EmailHmac);
-            SetStoreProtectionInfoBackingStoreFor(x => x.Email, BackingStore.CasingImpression, x => x.EmailCI);
+            MapProtectionInfoTo(x => x.Email, BackingStore.Hmac, x => x.EmailHmac);
+            MapProtectionInfoTo(x => x.Email, BackingStore.CasingImpression, x => x.EmailCI);
 
             ProtectHashed(x => x.Password, "Secret", "Salt", System.Security.Cryptography.HashAlgorithmName.SHA384);
             ProtectSymmetric(x => x.PhoneNumber);
-            SetStoreProtectionInfoBackingStoreFor(x => x.PhoneNumber, BackingStore.CasingImpression, x => x.PhoneNumberCI);
-            SetStoreProtectionInfoBackingStoreFor(x => x.PhoneNumber, BackingStore.Hmac, x => x.PhoneNumberHmac);
+            MapProtectionInfoTo(x => x.PhoneNumber, BackingStore.CasingImpression, x => x.PhoneNumberCI);
+            MapProtectionInfoTo(x => x.PhoneNumber, BackingStore.Hmac, x => x.PhoneNumberHmac);
         }
     }
 }
