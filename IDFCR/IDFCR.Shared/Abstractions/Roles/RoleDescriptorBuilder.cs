@@ -1,4 +1,4 @@
-﻿namespace IDFCR.Shared.Abstractions;
+﻿namespace IDFCR.Shared.Abstractions.Roles;
 
 public class RoleDescriptorBuilder(string key, RoleCategory category = RoleCategory.None) : IRoleDescriptorBuilder
 {
@@ -37,7 +37,7 @@ public class RoleDescriptorBuilder(string key, RoleCategory category = RoleCateg
 
     public IRoleDescriptorBuilder SetCategory(RoleCategory category)
     {
-        this._category = category;
+        _category = category;
         return this;
     }
 }

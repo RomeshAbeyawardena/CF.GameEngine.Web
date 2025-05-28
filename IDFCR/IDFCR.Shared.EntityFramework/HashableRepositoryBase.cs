@@ -1,4 +1,5 @@
 ﻿using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;

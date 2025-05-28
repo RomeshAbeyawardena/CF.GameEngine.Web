@@ -1,6 +1,6 @@
 ﻿using LinqKit;
 
-namespace IDFCR.Shared.Abstractions;
+namespace IDFCR.Shared.Abstractions.Filters;
 
 /// <summary>
 /// Represents a shared filter model

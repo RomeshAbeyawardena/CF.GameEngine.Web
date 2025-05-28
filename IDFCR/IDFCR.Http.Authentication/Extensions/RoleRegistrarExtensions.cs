@@ -1,4 +1,5 @@
 ﻿using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Roles;
 using Microsoft.AspNetCore.Authorization;
 
 namespace IDFCR.Http.Authentication.Extensions;

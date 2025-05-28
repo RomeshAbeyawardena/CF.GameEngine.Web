@@ -1,5 +1,6 @@
 ﻿using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Filters;
+using IDFCR.Shared.Abstractions.Roles;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 

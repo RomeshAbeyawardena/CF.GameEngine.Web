@@ -8,6 +8,7 @@ using IDFCR.Shared.Extensions;
 using System.Linq.Dynamic.Core;
 using IDFCR.Shared.Abstractions.Paging;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using IDFCR.Shared.Abstractions.Filters;
 
 namespace IDFCR.Shared.EntityFramework;
 

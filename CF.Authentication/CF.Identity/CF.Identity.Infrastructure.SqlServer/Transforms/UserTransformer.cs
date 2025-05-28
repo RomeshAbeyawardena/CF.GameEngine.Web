@@ -18,16 +18,16 @@ public static class UserTransformer
     /// <param name="setEntityRef">Callback to assign the newly created tracked entity.</param>
     /// <param name="setIdRef">Callback to assign the ID of an existing tracked entity.</param>
     /// <param name="cancellationToken">Token to cancel the async operation.</param>
-    private static async Task<(bool, Guid)> ResolveNameAsync(ICommonNameRepository commonNameRepository, string name, CancellationToken cancellationToken)
+    private static async Task<(bool, DbCommonName?)> ResolveNameAsync(ICommonNameRepository commonNameRepository, string name, CancellationToken cancellationToken)
     {
         var normalised = name.Trim();
         var upper = normalised.ToUpperInvariant();
 
-        var foundName = (await commonNameRepository.GetByNameAsync(upper, cancellationToken)).GetResultOrDefault();
+        var foundName = (await commonNameRepository.GetByNameRawAsync(upper, cancellationToken)).GetResultOrDefault();
 
         if (foundName is null)
         {
-            var newName = new CommonNameDto
+            var newName = new DbCommonName
             {
                 Value = upper,
                 ValueNormalised = normalised
@@ -38,11 +38,11 @@ public static class UserTransformer
             return (true, id);
         }
 
-        return (false, foundName.Id);
+        return (false, foundName.Map<DbCommonName>());
     }
 
     private static async Task SetCommonNameAsync(ICommonNameRepository commonNameRepository, 
-        string? lookupName, Action<Guid> setIdRef, CancellationToken cancellationToken)
+        string? lookupName, Action<Guid> setIdRef, Action<DbCommonName> setCommonName, CancellationToken cancellationToken)
     {
         if (!string.IsNullOrWhiteSpace(lookupName))
         {
@@ -50,7 +50,14 @@ public static class UserTransformer
             if (name is null)
                 throw new EntityNotFoundException(typeof(DbCommonName), lookupName);
 
-            setIdRef(name.Id);
+            if (isNew)
+            {
+                setIdRef(name.Id);
+            }
+            else
+            {
+                setCommonName(name);
+            }
         }
     }
 
@@ -72,9 +79,9 @@ public static class UserTransformer
         dbUser.PreferredUsernameCI = userCasingImpressions.PreferredUsernameCI;
         dbUser.PrimaryTelephoneNumberHmac = userHmac.PrimaryTelephoneNumberHmac;
 
-        await SetCommonNameAsync(commonNameRepository, user.Firstname, name => dbUser.FirstCommonName = name.ValueNormalised, id => dbUser.FirstCommonNameId = id, cancellationToken);
-        await SetCommonNameAsync(commonNameRepository, user.Middlename, name => dbUser.MiddleCommonName = name.ValueNormalised, id => dbUser.MiddleCommonNameId = id, cancellationToken);
-        await SetCommonNameAsync(commonNameRepository, user.Lastname, name => dbUser.LastCommonName = name.ValueNormalised, id => dbUser.LastCommonNameId = id, cancellationToken);
+        await SetCommonNameAsync(commonNameRepository, user.Firstname, id => dbUser.FirstCommonNameId = id, model => dbUser.FirstCommonNameId = model.Id, cancellationToken);
+        await SetCommonNameAsync(commonNameRepository, user.Middlename, id => dbUser.MiddleCommonNameId = id, model => dbUser.MiddleCommonNameId = model.Id, cancellationToken);
+        await SetCommonNameAsync(commonNameRepository, user.Lastname, id => dbUser.LastCommonNameId = id, model => dbUser.LastCommonNameId = model.Id, cancellationToken);
 
         if(isDbUserProvided)
         {

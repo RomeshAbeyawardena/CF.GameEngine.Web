@@ -2,7 +2,7 @@
 
 namespace CF.Identity.Infrastructure.SqlServer.Models;
 
-internal class CommonNameDto : MappableBase<ICommonName>, ICommonName
+public class CommonNameDto : MappableBase<ICommonName>, ICommonName
 {
     protected override ICommonName Source => this;
 

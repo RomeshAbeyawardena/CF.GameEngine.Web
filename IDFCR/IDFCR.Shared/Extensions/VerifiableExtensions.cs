@@ -1,4 +1,4 @@
-﻿using IDFCR.Shared.Abstractions;
+﻿using IDFCR.Shared.Abstractions.Filters;
 
 namespace IDFCR.Shared.Extensions;
 

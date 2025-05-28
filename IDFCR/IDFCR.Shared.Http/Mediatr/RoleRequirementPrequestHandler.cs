@@ -1,4 +1,4 @@
-﻿using IDFCR.Shared.Abstractions;
+﻿using IDFCR.Shared.Abstractions.Roles;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

@@ -1,6 +1,6 @@
 ﻿using LinqKit;
-using IDFCR.Shared.Abstractions;
 using System.Linq.Expressions;
+using IDFCR.Shared.Abstractions.Filters;
 
 namespace IDFCR.Shared.Extensions;
 

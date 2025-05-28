@@ -1,4 +1,4 @@
-﻿namespace IDFCR.Shared.Abstractions;
+﻿namespace IDFCR.Shared.Abstractions.Filters;
 
 public interface IValidity
 {

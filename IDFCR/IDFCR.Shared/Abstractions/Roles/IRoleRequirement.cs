@@ -1,4 +1,4 @@
-﻿namespace IDFCR.Shared.Abstractions;
+﻿namespace IDFCR.Shared.Abstractions.Roles;
 
 public enum RoleRequirementType
 {

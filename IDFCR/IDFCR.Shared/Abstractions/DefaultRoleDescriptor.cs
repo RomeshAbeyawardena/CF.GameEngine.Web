@@ -1,4 +1,6 @@
 ﻿
+using IDFCR.Shared.Abstractions.Roles;
+
 namespace IDFCR.Shared.Abstractions;
 
 [Flags]
