@@ -7,6 +7,7 @@ using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
 using System.Linq.Dynamic.Core;
 using IDFCR.Shared.Abstractions.Paging;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace IDFCR.Shared.EntityFramework;
 
@@ -18,11 +19,14 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     where TDb : class, IMappable<TAbstraction>, IIdentifer
     where TDbContext : DbContext
 {
+    private EntityEntry<TDb>? lastAddedEntry;
     private DbSet<TDb> DbSet => Context.Set<TDb>();
     protected TimeProvider TimeProvider => timeProvider;
     protected ExpressionStarter<TDb> Builder => PredicateBuilder.New<TDb>(true);
     protected virtual Func<T, TDb> Map => x => x.Map<TDb>();
     protected virtual  Func<TDb, T> MapDto => x => x.Map<T>();
+
+    protected EntityEntry<TDb>? LastAddedEntry => lastAddedEntry;
 
     protected virtual Task OnAddAsync(TDb db, T source, CancellationToken cancellationToken)
     {
@@ -150,6 +154,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
     {
         var affectedRows = await base.SaveChangesAsync(cancellationToken);
         OnCommit(affectedRows);
+        lastAddedEntry = null;
         return affectedRows;
     }
 
@@ -161,8 +166,8 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
             var dbValue = Map(value);
             if (dbValue.Id == Guid.Empty)
             {
+                lastAddedEntry = await DbSet.AddAsync(dbValue, cancellationToken);
                 await OnAddAsync(dbValue, value, cancellationToken);
-                await DbSet.AddAsync(dbValue, cancellationToken);
                 unitAction = UnitAction.Add;
             }
             else
@@ -174,6 +179,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
                     return new UnitResult(new EntityNotFoundException(typeof(T), dbValue.Id))
                         .As<Guid>();
                 }
+
                 BeforeUpdate(foundEntry, value);
                 foundEntry.Apply(dbValue);
                 await OnUpdateAsync(foundEntry, value, cancellationToken);
