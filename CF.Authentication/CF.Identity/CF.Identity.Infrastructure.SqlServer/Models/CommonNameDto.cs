@@ -2,7 +2,7 @@
 
 namespace CF.Identity.Infrastructure.SqlServer.Models;
 
-public class DbCommonName : MappableBase<ICommonName>, ICommonName
+internal class CommonNameDto : MappableBase<ICommonName>, ICommonName
 {
     protected override ICommonName Source => this;
 
@@ -21,3 +21,4 @@ public class DbCommonName : MappableBase<ICommonName>, ICommonName
         MetaData = source.MetaData;
     }
 }
+
