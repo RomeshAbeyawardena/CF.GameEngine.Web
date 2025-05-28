@@ -25,7 +25,8 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     }
 
     protected Expression<Func<T, string?>>? RowVersionMember { get; private set; }
-
+    protected Expression<Func<T, string?>>? MetaDataMember { get; private set; }
+    protected Encoding Encoding => encoding;
     protected abstract string GetKey(T entity);
 
     protected PIIProtectionBase<T> For(Expression<Func<T, string>> member, Func<PIIProtectionProviderBase, string, T, IProtectionInfo> protect,
@@ -44,13 +45,16 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     {
         RowVersionMember = member;
     }
-
+    protected void SetMetaData(Expression<Func<T, string?>> member)
+    {
+        MetaDataMember = member;
+    }
     protected SymmetricAlgorithm UseAlgorithm(
         SymmetricAlgorithmName algorithmName, T entity, bool regenerateIv = false)
     {
         var algorithm = GetAlgorithm(algorithmName);
 
-        algorithm.Key = encoding.GetBytes(GetKey(entity));
+        algorithm.Key = Convert.FromBase64String(GetKey(entity));
         var rowVersion = RowVersionMember?.Compile()?.Invoke(entity);
         if (regenerateIv || string.IsNullOrWhiteSpace(rowVersion))
         {
@@ -107,13 +111,32 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             (_, _, _, _) => { });
     }
 
-
     protected IProtectionInfo GetProtectionInfo(T context, string value)
     {
         var hmac = HashWithHMAC(GetKey(context), value);
         var caseImpressions = CasingImpression.Calculate(value);
 
         return new DefaultProtectionInfo(hmac, caseImpressions);
+    }
+
+    protected byte[] GenerateKey(T entity, int length, char separator, Encoding encoding, params string[] values)
+    {
+        var metaData = MetaDataMember?.Compile()(entity);
+
+        if (!string.IsNullOrWhiteSpace(metaData))
+        {
+            metaData = encoding.GetString(Convert.FromBase64String(metaData));
+        }
+
+        var keyData = GenerateKey(length, separator, Encoding, metaData, values);
+
+        //if all spaces are populated sufficiently with key data, this metadata will be an empty string and won't need persisting to the database
+        if (!string.IsNullOrWhiteSpace(keyData.Item1))
+        {
+            SetMemberValue(entity, MetaDataMember!, Convert.ToBase64String(encoding.GetBytes(keyData.Item1)));
+        }
+
+        return keyData.Item2;
     }
 
     public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)

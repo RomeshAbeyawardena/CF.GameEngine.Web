@@ -23,7 +23,21 @@ internal class PIIProtectionProviderBaseTests
         b = PIIProtectionProviderBase.GenerateKey(32, ';', Encoding.UTF8, null, "Exactly 16 chars", "Exactly 16 chars");
         Assert.That(b.Item2, Has.Length.EqualTo(32));
     }
+    [Test]
+    public void Test2()
+    {
+        var model = new MyProtectionModel(Encoding.UTF8);
 
+        var customer = new Customer
+        {
+            Name = "John Doe",
+            Email = "john.doe@gmail.com",
+            Password = "SomePassword1",
+            PhoneNumber = "0123-456-7890"
+        };
+
+        model.Protect(customer);
+    }
 
     public class Customer()
     {
@@ -34,6 +48,7 @@ internal class PIIProtectionProviderBaseTests
         public string Password { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;
         public string RowVersion { get; set; } = null!;
+        public string? MetaData { get; set; }
     }
 
     internal class MyProtectionModel: PIIProtectionBase<Customer>
@@ -41,55 +56,18 @@ internal class PIIProtectionProviderBaseTests
         protected override string GetKey(Customer entity)
         {
             //using something that should not change or collide
-            return $"{entity.Id}:{entity.ClientId}";
+            return Convert.ToBase64String(GenerateKey(entity, 32, ',',Encoding, entity.Id.ToString(), entity.ClientId.ToString()));
         }
 
         public MyProtectionModel(Encoding encoding) : base(encoding)
         {
+            SetMetaData(x => x.MetaData);
             SetRowVersion(x => x.RowVersion);
 
-            For(x => x.Name, (provider, value, context) =>
-            {
-                var protectionInfo = GetProtectionInfo(context, value);
-                context.Name = Encrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
-                return protectionInfo;
-            }, (provider, value, context, protectionInfo) =>
-            {
-                context.Name = Decrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
-                context.Name = CasingImpression.Restore(context.Name, protectionInfo.CasingImpressions);
-            });
-
-            For(x => x.Email, (provider, value, context) =>
-            {
-                var protectionInfo = GetProtectionInfo(context, value);
-                context.Email = Encrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
-                return protectionInfo;
-            }, (provider, value, context, protectionInfo) =>
-            {
-                context.Email = Decrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
-                context.Email = CasingImpression.Restore(context.Email, protectionInfo.CasingImpressions);
-            });
-
-            For(x => x.Password, (provider, value, context) =>
-            {
-                var protectionInfo = GetProtectionInfo(context, value);
-                context.Password = Hash(System.Security.Cryptography.HashAlgorithmName.SHA384, "Mysecret", "A salt", 64);//TODO this would come from config or generated using secret known values
-                return protectionInfo;
-            }, (provider, value, context, protectionInfo) =>
-            {
-                //one-way hash
-            });
-
-            For(x => x.PhoneNumber, (provider, value, context) =>
-            {
-                var protectionInfo = GetProtectionInfo(context, value);
-                context.PhoneNumber = Encrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
-                return protectionInfo;
-            }, (provider, value, context, protectionInfo) =>
-            {
-                context.PhoneNumber = Decrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
-                context.PhoneNumber = CasingImpression.Restore(context.PhoneNumber, protectionInfo.CasingImpressions);
-            });
+            ProtectSymmetric(x => x.Name);
+            ProtectSymmetric(x => x.Email);
+            ProtectHashed(x => x.Password, "Secret", "Salt", System.Security.Cryptography.HashAlgorithmName.SHA384);
+            ProtectSymmetric(x => x.PhoneNumber);
         }
     }
 }

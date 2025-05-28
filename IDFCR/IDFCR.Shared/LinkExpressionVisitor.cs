@@ -7,7 +7,7 @@ namespace IDFCR.Shared;
 internal class LinkExpressionVisitor : ExpressionVisitor
 {
     public string? MemberName { get; private set; }
-    public MemberInfo? Member { get; private set; };
+    public MemberInfo? Member { get; private set; }
     [return: NotNullIfNotNull("node")]
     public override Expression? Visit(Expression? node)
     {
