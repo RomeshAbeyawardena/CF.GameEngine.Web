@@ -10,10 +10,18 @@ public enum SymmetricAlgorithmName
     Aes
 }
 
+public enum BackingStore
+{
+    Hmac,
+    CasingImpression
+}
+
 public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase, IPIIProtection<T>
 {
     private readonly Dictionary<string, PIIProtectionFactory<T>> protectionFactories = [];
     private readonly Dictionary<string, IProtectionInfo> protectionData = [];
+    private readonly Dictionary<string, Expression<Func<T, string>>> protectionInfoHmacBackingStore = [];
+    private readonly Dictionary<string, Expression<Func<T, string>>> protectionInfoCiBackingStore = [];
 
     private static SymmetricAlgorithm GetAlgorithm(SymmetricAlgorithmName algorithmName)
     {
@@ -111,6 +119,23 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             (_, _, _, _) => { });
     }
 
+    protected void SetStoreProtectionInfoBackingStoreFor(Expression<Func<T, string>> member, Expression<Func<T, string>> target, BackingStore backingStore)
+    {
+        var linkVisitor = new LinkExpressionVisitor();
+        linkVisitor.Visit(member);
+        switch (backingStore)
+        {
+            case BackingStore.Hmac:
+                protectionInfoHmacBackingStore.Add(linkVisitor.MemberName!, target);
+                break;
+            case BackingStore.CasingImpression:
+                protectionInfoCiBackingStore.Add(linkVisitor.MemberName!, target);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(backingStore), backingStore, null);
+        }
+    }
+
     protected IProtectionInfo GetProtectionInfo(T context, string value)
     {
         var hmac = HashWithHMAC(GetKey(context), value);
@@ -139,6 +164,41 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return Convert.ToBase64String(keyData.Item2);
     }
 
+    protected string GetMemberValue(T instance, Expression<Func<T, string>> expr)
+    {
+        var visitor = new LinkExpressionVisitor();
+        visitor.Visit(expr);
+        var member = visitor.Member;
+        if (member is PropertyInfo pi)
+        {
+            return pi.GetValue(instance) as string ?? string.Empty;
+        }
+
+        return string.Empty;
+    }
+
+
+    public IReadOnlyDictionary<string, IProtectionInfo> ExtractProtectionInfo(T entity)
+    {
+        var result = new Dictionary<string, IProtectionInfo>();
+
+        foreach (var key in protectionFactories.Keys)
+        {
+            var hmac = protectionInfoHmacBackingStore.TryGetValue(key, out var hmacExpr)
+                ? GetMemberValue(entity, hmacExpr)
+                : string.Empty;
+
+            var ci = protectionInfoCiBackingStore.TryGetValue(key, out var ciExpr)
+                ? GetMemberValue(entity, ciExpr)
+                : string.Empty;
+
+            result[key] = new DefaultProtectionInfo(hmac, ci);
+        }
+
+        return result;
+    }
+
+
     public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)
     {
         var derived = new Rfc2898DeriveBytes(encoding.GetBytes(secret), 
@@ -157,7 +217,20 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         protectionData.Clear();
         foreach (var (key, value) in protectionFactories)
         {
-            protectionData.Add(key, value.Protect(this, entry));
+            var pD = value.Protect(this, entry);
+            protectionData.Add(key, pD);
+
+            var backingStore = protectionInfoHmacBackingStore.GetValueOrDefault(key);
+            if (backingStore is not null)
+            {
+                SetMemberValue(entry, backingStore, pD.Hmac);
+            }
+
+            backingStore = protectionInfoCiBackingStore.GetValueOrDefault(key);
+            if (backingStore is not null)
+            {
+                SetMemberValue(entry, backingStore, pD.CasingImpressions);
+            }
         }
 
         return protectionData;

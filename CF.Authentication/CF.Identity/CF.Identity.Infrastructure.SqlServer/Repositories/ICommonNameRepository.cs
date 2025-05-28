@@ -41,7 +41,8 @@ internal class CommonNameRepository(ICommonNamePIIProtection commonNamePIIProtec
 
     protected override void OnAdd(DbCommonName db, CommonNameDto source)
     {
-        commonNamePIIProtection.Protect(db);
+        var protectionData = commonNamePIIProtection.Protect(db);
+
         base.OnAdd(db, source);
     }
 
