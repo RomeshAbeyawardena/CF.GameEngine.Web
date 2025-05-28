@@ -70,6 +70,47 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return algorithm;
     }
 
+    protected void SetMemberValue(T instance, Expression<Func<T, string>> expr, string value)
+    {
+        var member = ((MemberExpression)expr.Body).Member;
+        if (member is PropertyInfo pi)
+        {
+            pi.SetValue(instance, value);
+        }
+    }
+
+    protected void ProtectSymmetric(Expression<Func<T, string>> member)
+    {
+        For(member,
+            (provider, value, context) =>
+            {
+                var info = GetProtectionInfo(context, value);
+                var encrypted = Encrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
+                SetMemberValue(context, member, encrypted);
+                return info;
+            },
+            (provider, value, context, info) =>
+            {
+                var decrypted = Decrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
+                var restored = CasingImpression.Restore(decrypted, info.CasingImpressions);
+                SetMemberValue(context, member, restored);
+            });
+    }
+
+    protected void ProtectHashed(Expression<Func<T, string>> member, string secret, string salt, HashAlgorithmName algorithm)
+    {
+        For(member,
+            (provider, value, context) =>
+            {
+                var info = GetProtectionInfo(context, value);
+                var hash = Hash(algorithm, secret, salt, 64);
+                SetMemberValue(context, member, hash);
+                return info;
+            },
+            (_, _, _, _) => { });
+    }
+
+
     protected IProtectionInfo GetProtectionInfo(T context, string value)
     {
         var hmac = HashWithHMAC(GetKey(context), value);
