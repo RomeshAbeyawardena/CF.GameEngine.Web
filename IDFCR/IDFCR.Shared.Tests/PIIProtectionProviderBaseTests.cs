@@ -36,7 +36,9 @@ internal class PIIProtectionProviderBaseTests
             PhoneNumber = "0123-456-7890"
         };
 
-        model.Protect(customer);
+        var ip = model.Protect(customer);
+
+        model.Unprotect(customer, ip);
     }
 
     public class Customer()
