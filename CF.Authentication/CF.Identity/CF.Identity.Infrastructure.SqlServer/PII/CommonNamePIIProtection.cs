@@ -1,9 +1,9 @@
-﻿using IDFCR.Shared.Abstractions.Cryptography;
+﻿using CF.Identity.Infrastructure.SqlServer.Models;
+using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
-using System.Configuration;
 using System.Text;
 
-namespace CF.Identity.Infrastructure.SqlServer.Models;
+namespace CF.Identity.Infrastructure.SqlServer.PII;
 
 internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>
 {
@@ -12,7 +12,7 @@ internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>
     {
         var ourValue = _configuration.GetValue<string>("Encryption:Key") 
             ?? throw new InvalidOperationException("Encryption key not found in configuration.");
-        return GenerateKey(entity, 32, '|', Encoding, ourValue);
+        return GenerateKey(entity, 32, '|', Encoding, ourValue, entity.Id.ToString("N"));
     }
 
     public CommonNamePIIProtection(IConfiguration configuration, Encoding encoding) : base(encoding)
