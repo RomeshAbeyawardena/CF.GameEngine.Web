@@ -50,10 +50,9 @@ internal class PIIProtectionProviderBaseTests
 
             For(x => x.Name, (provider, value, context) =>
             {
-                var hmac = HashWithHMAC(GetKey(context), value);
-                var caseImpressions = CasingImpression.Calculate(value);
+                var protectionInfo = GetProtectionInfo(context, value);
                 context.Name = Encrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
-                return new DefaultProtectionInfo(hmac, caseImpressions);
+                return protectionInfo;
             }, (provider, value, context, protectionInfo) =>
             {
                 context.Name = Decrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
@@ -62,10 +61,9 @@ internal class PIIProtectionProviderBaseTests
 
             For(x => x.Email, (provider, value, context) =>
             {
-                var hmac = HashWithHMAC(GetKey(context), value);
-                var caseImpressions = CasingImpression.Calculate(value);
+                var protectionInfo = GetProtectionInfo(context, value);
                 context.Email = Encrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
-                return new DefaultProtectionInfo(hmac, caseImpressions);
+                return protectionInfo;
             }, (provider, value, context, protectionInfo) =>
             {
                 context.Email = Decrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
@@ -74,10 +72,9 @@ internal class PIIProtectionProviderBaseTests
 
             For(x => x.Password, (provider, value, context) =>
             {
-                var hmac = HashWithHMAC(GetKey(context), value);
-                var caseImpressions = CasingImpression.Calculate(value);
+                var protectionInfo = GetProtectionInfo(context, value);
                 context.Password = Hash(System.Security.Cryptography.HashAlgorithmName.SHA384, "Mysecret", "A salt", 64);//TODO this would come from config or generated using secret known values
-                return new DefaultProtectionInfo(hmac, caseImpressions);
+                return protectionInfo;
             }, (provider, value, context, protectionInfo) =>
             {
                 //one-way hash
@@ -85,10 +82,9 @@ internal class PIIProtectionProviderBaseTests
 
             For(x => x.PhoneNumber, (provider, value, context) =>
             {
-                var hmac = HashWithHMAC(GetKey(context), value);
-                var caseImpressions = CasingImpression.Calculate(value);
+                var protectionInfo = GetProtectionInfo(context, value);
                 context.PhoneNumber = Encrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
-                return new DefaultProtectionInfo(hmac, caseImpressions);
+                return protectionInfo;
             }, (provider, value, context, protectionInfo) =>
             {
                 context.PhoneNumber = Decrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;

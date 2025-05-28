@@ -70,6 +70,14 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return algorithm;
     }
 
+    protected IProtectionInfo GetProtectionInfo(T context, string value)
+    {
+        var hmac = HashWithHMAC(GetKey(context), value);
+        var caseImpressions = CasingImpression.Calculate(value);
+
+        return new DefaultProtectionInfo(hmac, caseImpressions);
+    }
+
     public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)
     {
         var derived = new Rfc2898DeriveBytes(encoding.GetBytes(secret), 
