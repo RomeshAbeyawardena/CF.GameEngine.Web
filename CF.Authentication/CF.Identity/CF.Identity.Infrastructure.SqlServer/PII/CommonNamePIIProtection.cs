@@ -5,7 +5,9 @@ using System.Text;
 
 namespace CF.Identity.Infrastructure.SqlServer.PII;
 
-internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>
+public interface ICommonNamePIIProtection : IPIIProtection<DbCommonName>;
+
+internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>, ICommonNamePIIProtection
 {
     private readonly IConfiguration _configuration;
     protected override string GetKey(DbCommonName entity)
