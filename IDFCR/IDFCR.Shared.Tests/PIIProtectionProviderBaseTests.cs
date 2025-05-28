@@ -1,4 +1,4 @@
-﻿using IDFCR.Shared.Abstractions;
+﻿using IDFCR.Shared.Abstractions.Cryptography;
 using System.Text;
 
 namespace IDFCR.Shared.Tests;
