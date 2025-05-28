@@ -31,14 +31,22 @@ internal class PIIProtectionProviderBaseTests
         var customer = new Customer
         {
             Name = "John Doe",
-            Email = "john.doe@gmail.com",
+            Email = "John.doe@gmail.com",
             Password = "SomePassword1",
             PhoneNumber = "0123-456-7890"
         };
 
         var ip = model.Protect(customer);
 
+        Assert.That(customer.Name, Is.Not.EqualTo("John Doe"));
+        Assert.That(customer.Email, Is.Not.EqualTo("John.doe@gmail.com"));
+        Assert.That(customer.PhoneNumber, Is.Not.EqualTo("0123-456-7890"));
+
         model.Unprotect(customer, ip);
+
+        Assert.That(customer.Name, Is.EqualTo("John Doe"));
+        Assert.That(customer.Email, Is.EqualTo("John.doe@gmail.com"));
+        Assert.That(customer.PhoneNumber, Is.EqualTo("0123-456-7890"));
     }
 
     public class Customer()
@@ -58,7 +66,7 @@ internal class PIIProtectionProviderBaseTests
         protected override string GetKey(Customer entity)
         {
             //using something that should not change or collide
-            return Convert.ToBase64String(GenerateKey(entity, 32, ',',Encoding, entity.Id.ToString(), entity.ClientId.ToString()));
+            return GenerateKey(entity, 32, ',',Encoding, entity.Id.ToString("X"), entity.ClientId.ToString("X"));
         }
 
         public MyProtectionModel(Encoding encoding) : base(encoding)

@@ -119,7 +119,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return new DefaultProtectionInfo(hmac, caseImpressions);
     }
 
-    protected byte[] GenerateKey(T entity, int length, char separator, Encoding encoding, params string[] values)
+    protected string GenerateKey(T entity, int length, char separator, Encoding encoding, params string[] values)
     {
         var metaData = MetaDataMember?.Compile()(entity);
 
@@ -136,7 +136,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             SetMemberValue(entity, MetaDataMember!, Convert.ToBase64String(encoding.GetBytes(keyData.Item1)));
         }
 
-        return keyData.Item2;
+        return Convert.ToBase64String(keyData.Item2);
     }
 
     public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)

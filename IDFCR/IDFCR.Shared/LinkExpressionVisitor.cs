@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace IDFCR.Shared;
 
-internal class LinkExpressionVisitor : ExpressionVisitor
+public class LinkExpressionVisitor : ExpressionVisitor
 {
     public string? MemberName { get; private set; }
     public MemberInfo? Member { get; private set; }
