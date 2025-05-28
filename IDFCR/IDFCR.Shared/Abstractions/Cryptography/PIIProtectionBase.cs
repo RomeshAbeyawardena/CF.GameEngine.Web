@@ -119,7 +119,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             (_, _, _, _) => { });
     }
 
-    protected void SetStoreProtectionInfoBackingStoreFor(Expression<Func<T, string>> member, Expression<Func<T, string>> target, BackingStore backingStore)
+    protected void SetStoreProtectionInfoBackingStoreFor(Expression<Func<T, string>> member, BackingStore backingStore, Expression<Func<T, string>> target)
     {
         var linkVisitor = new LinkExpressionVisitor();
         linkVisitor.Visit(member);

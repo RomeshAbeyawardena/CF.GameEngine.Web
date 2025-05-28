@@ -54,9 +54,15 @@ internal class PIIProtectionProviderBaseTests
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid ClientId { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = null!;
+        public string NameHmac { get; set; } = null!;
+        public string NameCI { get; set; } = null!;
         public string Email { get; set; } = null!;
+        public string EmailHmac { get; set; } = null!;
+        public string EmailCI { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;
+        public string PhoneNumberCI { get; set; } = null!;
+        public string PhoneNumberHmac { get; set; } = null!;
         public string RowVersion { get; set; } = null!;
         public string? MetaData { get; set; }
     }
@@ -75,9 +81,17 @@ internal class PIIProtectionProviderBaseTests
             SetRowVersion(x => x.RowVersion);
 
             ProtectSymmetric(x => x.Name);
+            SetStoreProtectionInfoBackingStoreFor(x => x.Name, BackingStore.Hmac, x => x.NameHmac);
+            SetStoreProtectionInfoBackingStoreFor(x => x.Name, BackingStore.CasingImpression, x => x.NameCI);
+
             ProtectSymmetric(x => x.Email);
+            SetStoreProtectionInfoBackingStoreFor(x => x.Email, BackingStore.Hmac, x => x.EmailHmac);
+            SetStoreProtectionInfoBackingStoreFor(x => x.Email, BackingStore.CasingImpression, x => x.EmailCI);
+
             ProtectHashed(x => x.Password, "Secret", "Salt", System.Security.Cryptography.HashAlgorithmName.SHA384);
             ProtectSymmetric(x => x.PhoneNumber);
+            SetStoreProtectionInfoBackingStoreFor(x => x.PhoneNumber, BackingStore.CasingImpression, x => x.PhoneNumberCI);
+            SetStoreProtectionInfoBackingStoreFor(x => x.PhoneNumber, BackingStore.Hmac, x => x.PhoneNumberHmac);
         }
     }
 }
