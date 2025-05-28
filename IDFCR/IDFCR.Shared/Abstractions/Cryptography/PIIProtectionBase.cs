@@ -238,17 +238,20 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     public void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo> protectionData)
     {
+        var strippedProtectionData = ExtractProtectionInfo(entry);
+
         foreach(var (key, value) in protectionFactories)
         {
             // Try protection data from caller first; fallback to internal copy.
             // This guards against DI scope misalignment (e.g., transient reuse).
             if (!protectionData.TryGetValue(key, out var protectionInfo) 
-                && !this.protectionData.TryGetValue(key, out protectionInfo))
+                && !this.protectionData.TryGetValue(key, out protectionInfo)
+                && !strippedProtectionData.TryGetValue(key, out protectionInfo))
             {
                 throw new KeyNotFoundException($"Protection data for key '{key}' not found.");
             }
 
-            value.Unprotect(this, entry, protectionInfo);
+            value.Unprotect(this, entry, protectionInfo ?? throw new NullReferenceException());
         }
     }
 }
