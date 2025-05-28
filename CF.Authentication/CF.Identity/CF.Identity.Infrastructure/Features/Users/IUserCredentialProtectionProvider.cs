@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using System.Text;

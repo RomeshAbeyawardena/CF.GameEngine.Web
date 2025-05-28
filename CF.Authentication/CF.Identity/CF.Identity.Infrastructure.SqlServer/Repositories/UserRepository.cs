@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
-using CF.Identity.Infrastructure.SqlServer.Filters;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.Transforms;
 using IDFCR.Shared.Abstractions;

@@ -22,10 +22,10 @@ public record GetRolesRequest : MappablePagedQuery<IPagedAccessRoleFilter>, IPag
 
 public static class Endpoints
 {
-    public static async Task<IResult> GetRoles(
-        [AsParameters] GetRolesRequest request,
-        IMediator mediator, CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(new FindAccessRoleQuery(), cancellationToken);
-    }
+    //public static async Task<IResult> GetRoles(
+    //    [AsParameters] GetRolesRequest request,
+    //    IMediator mediator, CancellationToken cancellationToken)
+    //{
+    //    var result = await mediator.Send(new FindAccessRoleQuery(), cancellationToken);
+    //}
 }
