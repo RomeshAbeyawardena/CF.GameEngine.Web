@@ -1,16 +1,35 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace IDFCR.Shared.Abstractions.Cryptography;
+
+public enum SymmetricAlgorithmName
+{
+    Aes
+}
 
 public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase, IPIIProtection<T>
 {
     private readonly Dictionary<string, PIIProtectionFactory<T>> protectionFactories = [];
     private readonly Dictionary<string, IProtectionInfo> protectionData = [];
 
-    protected PIIProtectionBase<T> For(Expression<Func<T, string>> member, Func<PIIProtectionProviderBase, string, IProtectionInfo> protect,
-    Action<PIIProtectionProviderBase, string, IProtectionInfo> unprotect)
+    private static SymmetricAlgorithm GetAlgorithm(SymmetricAlgorithmName algorithmName)
+    {
+        return algorithmName switch
+        {
+            SymmetricAlgorithmName.Aes => Aes.Create(),
+            _ => throw new NotSupportedException($"Algorithm '{algorithmName}' is not supported.")
+        };
+    }
+
+    protected Expression<Func<T, string?>>? RowVersionMember { get; private set; }
+
+    protected abstract string GetKey(T entity);
+
+    protected PIIProtectionBase<T> For(Expression<Func<T, string>> member, Func<PIIProtectionProviderBase, string, T, IProtectionInfo> protect,
+    Action<PIIProtectionProviderBase, string, T, IProtectionInfo> unprotect)
     {
         var vis = new LinkExpressionVisitor();
         vis.Visit(member);
@@ -19,6 +38,36 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             new PIIProtectionFactory<T>(member, protect, unprotect));
 
         return this;
+    }
+
+    protected void SetRowVersion(Expression<Func<T, string?>> member)
+    {
+        RowVersionMember = member;
+    }
+
+    protected SymmetricAlgorithm UseAlgorithm(
+        SymmetricAlgorithmName algorithmName, T entity, bool regenerateIv = false)
+    {
+        var algorithm = GetAlgorithm(algorithmName);
+
+        algorithm.Key = encoding.GetBytes(GetKey(entity));
+        var rowVersion = RowVersionMember?.Compile()?.Invoke(entity);
+        if (regenerateIv || string.IsNullOrWhiteSpace(rowVersion))
+        {
+            algorithm.GenerateIV();
+            var exp = new LinkExpressionVisitor();
+            exp.Visit(RowVersionMember);
+            if (exp.Member is PropertyInfo prop)
+            {
+                prop.SetValue(entity, $"{Convert.ToBase64String(algorithm.IV)}");
+            }
+        }
+        else
+        {
+            algorithm.IV = Convert.FromBase64String(rowVersion);
+        }
+
+        return algorithm;
     }
 
     public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)
