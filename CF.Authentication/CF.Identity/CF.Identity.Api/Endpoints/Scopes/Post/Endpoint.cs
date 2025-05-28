@@ -5,7 +5,6 @@ using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.Scopes.Post;
@@ -22,7 +21,7 @@ public static class Endpoint
     public static IEndpointRouteBuilder AddPostScopeEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost(Endpoints.BaseUrl, SaveScopeAsync)
-            .RequireAuthorization(Authorise.Using<ScopeRoles>(RoleCategory.Write, SystemRoles.GlobalWrite)));
+            .RequireAuthorization(Authorise.Using<ScopeRoles>(RoleCategory.Write, SystemRoles.GlobalWrite));
 
         return builder;
     }
