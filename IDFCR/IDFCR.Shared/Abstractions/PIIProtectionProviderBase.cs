@@ -3,6 +3,81 @@ using System.Text;
 
 namespace IDFCR.Shared.Abstractions;
 
+public interface IPIIProtection<T>
+{
+    string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length);
+    IReadOnlyDictionary<string, IProtectionInfo> Protect(T entry);
+    void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo> protectionData);
+    string HashWithHMAC(string key, string data);
+}
+
+
+public interface IProtectionInfo
+{
+    string Hmac { get; }
+    string CasingImpressions { get; }
+}
+
+public record DefaultProtectionInfo(string Hmac, string CasingImpressions) : IProtectionInfo;
+
+public class PIIProtectionFactory(Func<PIIProtectionProviderBase, IProtectionInfo> protect,
+    Action<PIIProtectionProviderBase, IProtectionInfo> unprotect)
+{
+    public IProtectionInfo Protect(PIIProtectionProviderBase instance)
+    {
+        return protect(instance);
+    }
+
+    public void Unprotect(PIIProtectionProviderBase instance, IProtectionInfo protectionInfo)
+    {
+        unprotect(instance, protectionInfo);
+    }
+}
+
+public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase, IPIIProtection<T>
+{
+    private readonly Dictionary<string, PIIProtectionFactory> protectionFactories = [];
+    private readonly Dictionary<string, IProtectionInfo> protectionData = [];
+
+    public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)
+    {
+        var derived = new Rfc2898DeriveBytes(encoding.GetBytes(secret), 
+            encoding.GetBytes(salt), 100_000, algorithmName);
+        return Convert.ToBase64String(derived.GetBytes(length));
+    }
+
+    public string HashWithHMAC(string key, string data)
+    {
+        return Convert.ToBase64String(
+            HMACSHA512.HashData(encoding.GetBytes(key), encoding.GetBytes(data)));
+    }
+
+    public IReadOnlyDictionary<string, IProtectionInfo> Protect(T entry)
+    {
+        protectionData.Clear();
+        foreach (var (key, value) in protectionFactories)
+        {
+            protectionData.Add(key, value.Protect(this));
+        }
+
+        return protectionData;
+    }
+
+    public void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo> protectionData)
+    {
+        foreach(var (key, value) in protectionFactories)
+        {
+            if (!protectionData.TryGetValue(key, out var protectionInfo) || !this.protectionData.TryGetValue(key, out protectionInfo))
+            {
+                throw new KeyNotFoundException($"Protection data for key '{key}' not found.");
+            }
+
+            value.Unprotect(this, protectionInfo);
+        }
+    }
+}
+
+
 public abstract class PIIProtectionProviderBase
 {
     private static string[] GetSpacerParts(string parts, char separator)
