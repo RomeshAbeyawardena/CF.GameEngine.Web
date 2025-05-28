@@ -55,12 +55,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         if (regenerateIv || string.IsNullOrWhiteSpace(rowVersion))
         {
             algorithm.GenerateIV();
-            var exp = new LinkExpressionVisitor();
-            exp.Visit(RowVersionMember);
-            if (exp.Member is PropertyInfo prop)
-            {
-                prop.SetValue(entity, $"{Convert.ToBase64String(algorithm.IV)}");
-            }
+            SetMemberValue(entity, RowVersionMember!, $"{Convert.ToBase64String(algorithm.IV)}");
         }
         else
         {
@@ -72,7 +67,9 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     protected void SetMemberValue(T instance, Expression<Func<T, string>> expr, string value)
     {
-        var member = ((MemberExpression)expr.Body).Member;
+        var visitor = new LinkExpressionVisitor();
+        visitor.Visit(expr);
+        var member = visitor.Member;
         if (member is PropertyInfo pi)
         {
             pi.SetValue(instance, value);
@@ -97,13 +94,13 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             });
     }
 
-    protected void ProtectHashed(Expression<Func<T, string>> member, string secret, string salt, HashAlgorithmName algorithm)
+    protected void ProtectHashed(Expression<Func<T, string>> member, string secret, string salt, HashAlgorithmName algorithm, int length = 64)
     {
         For(member,
             (provider, value, context) =>
             {
                 var info = GetProtectionInfo(context, value);
-                var hash = Hash(algorithm, secret, salt, 64);
+                var hash = Hash(algorithm, secret, salt, length);
                 SetMemberValue(context, member, hash);
                 return info;
             },
