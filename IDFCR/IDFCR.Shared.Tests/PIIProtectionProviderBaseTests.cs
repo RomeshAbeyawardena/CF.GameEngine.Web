@@ -24,7 +24,7 @@ internal class PIIProtectionProviderBaseTests
         Assert.That(b.Item2, Has.Length.EqualTo(32));
     }
     [Test]
-    public void Test2()
+    public void ModelProtectionTests()
     {
         var model = new MyProtectionModel(Encoding.UTF8);
 
@@ -42,6 +42,7 @@ internal class PIIProtectionProviderBaseTests
         Assert.That(customer.Email, Is.Not.EqualTo("John.Doe@gmail.com"));
         Assert.That(customer.PhoneNumber, Is.Not.EqualTo("0123-456-7890"));
         
+        //kills off internal caches, the model will be relied upon for the decryption process and the application (test) manages the key
         model = new MyProtectionModel(Encoding.UTF8);
         
         model.Unprotect(customer, ip);
