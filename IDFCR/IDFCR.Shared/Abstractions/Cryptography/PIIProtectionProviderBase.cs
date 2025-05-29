@@ -3,7 +3,7 @@ using System.Text;
 
 namespace IDFCR.Shared.Abstractions.Cryptography;
 
-public abstract class PIIProtectionProviderBase
+public abstract class PIIProtectionProviderBase(Encoding encoding)
 {
     private static string[] GetSpacerParts(string parts, char separator)
     {
@@ -69,12 +69,17 @@ public abstract class PIIProtectionProviderBase
         return (string.Join(separator, spacerParts), encoding.GetBytes(builder.ToString()));
     }
 
-    protected static string? Encrypt(string? value, SymmetricAlgorithm symmetricAlgorithm)
+    protected internal (string?, byte[]) GenerateKey(int length, char separator, string? spacers, params string[] values)
+    {
+        return GenerateKey(length, separator, encoding, spacers, values);
+    }
+
+    protected string? Encrypt(string? value, SymmetricAlgorithm symmetricAlgorithm)
     {
         if (!string.IsNullOrWhiteSpace(value))
         {
             using var encryptor = symmetricAlgorithm.CreateEncryptor();
-            var plainBytes = Encoding.UTF8.GetBytes(value);
+            var plainBytes = encoding.GetBytes(value);
             var encryptedBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
             return Convert.ToBase64String(encryptedBytes);
         }
@@ -82,14 +87,14 @@ public abstract class PIIProtectionProviderBase
         return value;
     }
 
-    protected static string? Decrypt(string? value, SymmetricAlgorithm symmetricAlgorithm)
+    protected string? Decrypt(string? value, SymmetricAlgorithm symmetricAlgorithm)
     {
         if (!string.IsNullOrWhiteSpace(value))
         {
             using var decryptor = symmetricAlgorithm.CreateDecryptor();
             var encryptedBytes = Convert.FromBase64String(value);
             var plainBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
-            return Encoding.UTF8.GetString(plainBytes);
+            return encoding.GetString(plainBytes);
         }
         return value;
     }

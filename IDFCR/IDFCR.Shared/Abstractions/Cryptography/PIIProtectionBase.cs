@@ -16,7 +16,7 @@ public enum BackingStore
     CasingImpression
 }
 
-public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase, IPIIProtection<T>
+public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase(encoding), IPIIProtection<T>
 {
     private readonly Dictionary<string, PIIProtectionFactory<T>> protectionFactories = [];
     private readonly Dictionary<string, IProtectionInfo> protectionData = [];
@@ -153,7 +153,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             metaData = encoding.GetString(Convert.FromBase64String(metaData));
         }
 
-        var keyData = GenerateKey(length, separator, Encoding, metaData, values);
+        var keyData = GenerateKey(length, separator, metaData, values);
 
         //if all spaces are populated sufficiently with key data, this metadata will be an empty string and won't need persisting to the database
         if (!string.IsNullOrWhiteSpace(keyData.Item1))

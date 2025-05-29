@@ -41,7 +41,9 @@ internal class PIIProtectionProviderBaseTests
         Assert.That(customer.Name, Is.Not.EqualTo("John Doe"));
         Assert.That(customer.Email, Is.Not.EqualTo("John.Doe@gmail.com"));
         Assert.That(customer.PhoneNumber, Is.Not.EqualTo("0123-456-7890"));
-
+        
+        model = new MyProtectionModel(Encoding.UTF8);
+        
         model.Unprotect(customer, ip);
 
         Assert.That(customer.Name, Is.EqualTo("John Doe"));
