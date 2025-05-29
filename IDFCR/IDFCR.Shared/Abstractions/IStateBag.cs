@@ -21,7 +21,7 @@ public record StateBagItem(Type Type, string Key, object? Value) : IStateBagItem
 
 public class StateBag : IStateBag
 {
-    private ConcurrentDictionary<string, IStateBagItem> _state = [];
+    private readonly ConcurrentDictionary<string, IStateBagItem> _state = [];
     public T? Get<T>(string key)
     {
         var value = Get(key);
@@ -47,7 +47,7 @@ public class StateBag : IStateBag
     {
         if (value is null)
         {
-            throw new NullReferenceException();
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
         }
 
         var val = new StateBagItem(value.GetType(), key, value);

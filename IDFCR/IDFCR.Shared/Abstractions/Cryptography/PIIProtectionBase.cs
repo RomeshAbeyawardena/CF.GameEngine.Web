@@ -256,17 +256,17 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         }
     }
 
-    public TItem? Get<TItem>(string key)
+    public virtual TItem? Get<TItem>(string key)
     {
         return stateBag.Get<TItem>(key);
     }
 
-    public object? Get(string key)
+    public virtual object? Get(string key)
     {
         return stateBag.Get(key);
     }
 
-    public void Set(string key, object? value)
+    public virtual void Set(string key, object? value)
     {
         stateBag.Set(key, value);
     }
