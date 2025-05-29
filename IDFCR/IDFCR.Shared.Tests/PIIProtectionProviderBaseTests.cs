@@ -75,7 +75,7 @@ internal class PIIProtectionProviderBaseTests
         protected override string GetKey(Customer entity)
         {
             //using something that should not change or collide
-            return GenerateKey(entity, 32, ',',Encoding, entity.Id.ToString("X"), entity.ClientId.ToString("X"));
+            return GenerateKey(entity, 32, ',', entity.Id.ToString("X"), entity.ClientId.ToString("X"));
         }
 
         public MyProtectionModel(Encoding encoding) : base(encoding)

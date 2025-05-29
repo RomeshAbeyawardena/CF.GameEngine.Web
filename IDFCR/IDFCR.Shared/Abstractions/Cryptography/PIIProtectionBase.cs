@@ -145,13 +145,13 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return new DefaultProtectionInfo(hmac, caseImpressions);
     }
 
-    protected string GenerateKey(T entity, int length, char separator, Encoding encoding, params string[] values)
+    protected string GenerateKey(T entity, int length, char separator, params string[] values)
     {
         var metaData = MetaDataMember?.Compile()(entity);
 
         if (!string.IsNullOrWhiteSpace(metaData))
         {
-            metaData = encoding.GetString(Convert.FromBase64String(metaData));
+            metaData = Encoding.GetString(Convert.FromBase64String(metaData));
         }
 
         var keyData = GenerateKey(length, separator, metaData, values);
@@ -159,7 +159,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         //if all spaces are populated sufficiently with key data, this metadata will be an empty string and won't need persisting to the database
         if (!string.IsNullOrWhiteSpace(keyData.Item1))
         {
-            SetMemberValue(entity, MetaDataMember!, Convert.ToBase64String(encoding.GetBytes(keyData.Item1)));
+            SetMemberValue(entity, MetaDataMember!, Convert.ToBase64String(Encoding.GetBytes(keyData.Item1)));
         }
 
         return Convert.ToBase64String(keyData.Item2);
