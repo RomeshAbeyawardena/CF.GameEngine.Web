@@ -34,7 +34,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     protected Expression<Func<T, string?>>? RowVersionMember { get; private set; }
     protected Expression<Func<T, string?>>? MetaDataMember { get; private set; }
-    protected Encoding Encoding => encoding;
+    
     protected abstract string GetKey(T entity);
 
     protected PIIProtectionBase<T> For(Expression<Func<T, string>> member, Func<PIIProtectionProviderBase, string, T, IProtectionInfo> protect,
@@ -201,15 +201,15 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)
     {
-        var derived = new Rfc2898DeriveBytes(encoding.GetBytes(secret), 
-            encoding.GetBytes(salt), 100_000, algorithmName);
+        var derived = new Rfc2898DeriveBytes(Encoding.GetBytes(secret), 
+            Encoding.GetBytes(salt), 100_000, algorithmName);
         return Convert.ToBase64String(derived.GetBytes(length));
     }
 
     public string HashWithHMAC(string key, string data)
     {
         return Convert.ToBase64String(
-            HMACSHA512.HashData(encoding.GetBytes(key), encoding.GetBytes(data)));
+            HMACSHA512.HashData(Encoding.GetBytes(key), Encoding.GetBytes(data)));
     }
 
     public IReadOnlyDictionary<string, IProtectionInfo> Protect(T entry)

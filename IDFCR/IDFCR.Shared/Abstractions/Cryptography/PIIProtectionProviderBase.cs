@@ -74,6 +74,8 @@ public abstract class PIIProtectionProviderBase(Encoding encoding)
         return GenerateKey(length, separator, encoding, spacers, values);
     }
 
+    protected Encoding Encoding => encoding;
+
     protected string? Encrypt(string? value, SymmetricAlgorithm symmetricAlgorithm)
     {
         if (!string.IsNullOrWhiteSpace(value))
