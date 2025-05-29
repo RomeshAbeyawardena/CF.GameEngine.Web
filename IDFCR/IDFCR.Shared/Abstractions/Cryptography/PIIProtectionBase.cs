@@ -108,14 +108,17 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             });
     }
 
-    protected void ProtectHashed(Expression<Func<T, string?>> member, string secret, string salt, HashAlgorithmName algorithm, int length = 64)
+    protected void ProtectHashed(Expression<Func<T, string?>> member, string salt, HashAlgorithmName algorithm, int length = 64)
     {
         For(member,
             (provider, value, context) =>
             {
                 var info = GetProtectionInfo(context, value);
-                var hash = Hash(algorithm, secret, salt, length);
-                SetMemberValue(context, member, hash);
+                if (value is not null)
+                {
+                    var hash = Hash(algorithm, value, salt, length);
+                    SetMemberValue(context, member, hash);
+                }
                 return info;
             },
             (_, _, _, _) => { });
