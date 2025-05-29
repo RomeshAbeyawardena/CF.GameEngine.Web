@@ -2,8 +2,8 @@
 
 namespace IDFCR.Shared.Abstractions.Cryptography;
 
-public class PIIProtectionFactory<T>(Expression<Func<T, string>> member, Func<PIIProtectionProviderBase, string, T, IProtectionInfo> protect,
-    Action<PIIProtectionProviderBase, string, T, IProtectionInfo> unprotect)
+public class PIIProtectionFactory<T>(Expression<Func<T, string?>> member, Func<PIIProtectionProviderBase, string?, T, IProtectionInfo> protect,
+    Action<PIIProtectionProviderBase, string?, T, IProtectionInfo> unprotect)
 {
     public IProtectionInfo Protect(PIIProtectionProviderBase provider, T instance)
     {
@@ -13,7 +13,11 @@ public class PIIProtectionFactory<T>(Expression<Func<T, string>> member, Func<PI
 
     public void Unprotect(PIIProtectionProviderBase provider, T instance, IProtectionInfo protectionInfo)
     {
-        var value = member.Compile();
-        unprotect(provider, value(instance), instance, protectionInfo);
+        var compiledMember = member.Compile();
+
+        var value = compiledMember(instance);
+
+        unprotect(provider, value, instance, protectionInfo);
+        
     }
 }

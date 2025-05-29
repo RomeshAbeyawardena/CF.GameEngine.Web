@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Data;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,8 +22,8 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     private readonly StateBag stateBag = new();
     private readonly Dictionary<string, PIIProtectionFactory<T>> protectionFactories = [];
     private readonly Dictionary<string, IProtectionInfo> protectionData = [];
-    private readonly Dictionary<string, Expression<Func<T, string>>> protectionInfoHmacBackingStore = [];
-    private readonly Dictionary<string, Expression<Func<T, string>>> protectionInfoCiBackingStore = [];
+    private readonly Dictionary<string, Expression<Func<T, string?>>> protectionInfoHmacBackingStore = [];
+    private readonly Dictionary<string, Expression<Func<T, string?>>> protectionInfoCiBackingStore = [];
 
     private static SymmetricAlgorithm GetAlgorithm(SymmetricAlgorithmName algorithmName)
     {
@@ -38,8 +39,8 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     
     protected abstract string GetKey(T entity);
 
-    protected PIIProtectionBase<T> For(Expression<Func<T, string>> member, Func<PIIProtectionProviderBase, string, T, IProtectionInfo> protect,
-    Action<PIIProtectionProviderBase, string, T, IProtectionInfo> unprotect)
+    protected PIIProtectionBase<T> For(Expression<Func<T, string?>> member, Func<PIIProtectionProviderBase, string?, T, IProtectionInfo> protect,
+    Action<PIIProtectionProviderBase, string?, T, IProtectionInfo> unprotect)
     {
         var vis = new LinkExpressionVisitor();
         vis.Visit(member);
@@ -78,7 +79,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return algorithm;
     }
 
-    protected void SetMemberValue(T instance, Expression<Func<T, string>> expr, string value)
+    protected void SetMemberValue(T instance, Expression<Func<T, string?>> expr, string value)
     {
         var visitor = new LinkExpressionVisitor();
         visitor.Visit(expr);
@@ -89,7 +90,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         }
     }
 
-    protected void ProtectSymmetric(Expression<Func<T, string>> member)
+    protected void ProtectSymmetric(Expression<Func<T, string?>> member)
     {
         For(member,
             (provider, value, context) =>
@@ -107,7 +108,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             });
     }
 
-    protected void ProtectHashed(Expression<Func<T, string>> member, string secret, string salt, HashAlgorithmName algorithm, int length = 64)
+    protected void ProtectHashed(Expression<Func<T, string?>> member, string secret, string salt, HashAlgorithmName algorithm, int length = 64)
     {
         For(member,
             (provider, value, context) =>
@@ -120,7 +121,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             (_, _, _, _) => { });
     }
 
-    protected void MapProtectionInfoTo(Expression<Func<T, string>> member, BackingStore backingStore, Expression<Func<T, string>> target)
+    protected void MapProtectionInfoTo(Expression<Func<T, string?>> member, BackingStore backingStore, Expression<Func<T, string?>> target)
     {
         var linkVisitor = new LinkExpressionVisitor();
         linkVisitor.Visit(member);
@@ -137,10 +138,10 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         }
     }
 
-    protected IProtectionInfo GetProtectionInfo(T context, string value)
+    protected IProtectionInfo GetProtectionInfo(T context, string? value)
     {
         var hmac = HashWithHMAC(GetKey(context), value);
-        var caseImpressions = CasingImpression.Calculate(value);
+        var caseImpressions = string.IsNullOrEmpty(value) ? string.Empty : CasingImpression.Calculate(value);
 
         return new DefaultProtectionInfo(hmac, caseImpressions);
     }
@@ -165,7 +166,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return Convert.ToBase64String(keyData.Item2);
     }
 
-    protected string GetMemberValue(T instance, Expression<Func<T, string>> expr)
+    protected string GetMemberValue(T instance, Expression<Func<T, string?>> expr)
     {
         var visitor = new LinkExpressionVisitor();
         visitor.Visit(expr);
@@ -207,8 +208,13 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return Convert.ToBase64String(derived.GetBytes(length));
     }
 
-    public string HashWithHMAC(string key, string data)
+    public string HashWithHMAC(string key, string? data)
     {
+        if (string.IsNullOrWhiteSpace(data))
+        {
+            return string.Empty;
+        }
+
         return Convert.ToBase64String(
             HMACSHA512.HashData(Encoding.GetBytes(key), Encoding.GetBytes(data)));
     }
