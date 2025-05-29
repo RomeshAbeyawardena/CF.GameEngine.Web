@@ -91,7 +91,7 @@ internal class PIIProtectionProviderBaseTests
             MapProtectionInfoTo(x => x.Email, BackingStore.Hmac, x => x.EmailHmac);
             MapProtectionInfoTo(x => x.Email, BackingStore.CasingImpression, x => x.EmailCI);
 
-            ProtectHashed(x => x.Password, "Secret", "Salt", System.Security.Cryptography.HashAlgorithmName.SHA384);
+            ProtectHashed(x => x.Password, "Salt", System.Security.Cryptography.HashAlgorithmName.SHA384);
             ProtectSymmetric(x => x.PhoneNumber);
             MapProtectionInfoTo(x => x.PhoneNumber, BackingStore.CasingImpression, x => x.PhoneNumberCI);
             MapProtectionInfoTo(x => x.PhoneNumber, BackingStore.Hmac, x => x.PhoneNumberHmac);
