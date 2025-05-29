@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using IDFCR.Shared.Hashers;
+using System.Text;
 
 namespace CF.Identity.Infrastructure.Features.Clients;
 

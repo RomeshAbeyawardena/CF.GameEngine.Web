@@ -25,7 +25,7 @@ public interface IUserCredentialProtectionProvider
     string HashUsingHmac(IClient client, string value);
 }
 
-public class UserCredentialProtectionProvider(IConfiguration configuration, Encoding encoding) : PIIProtectionProviderBase, IUserCredentialProtectionProvider
+public class UserCredentialProtectionProvider(IConfiguration configuration, Encoding encoding) : PIIProtectionProviderBase(encoding), IUserCredentialProtectionProvider
 {
     private byte[] GetKey(UserDto user, IClient client)
     {

@@ -16,8 +16,9 @@ public enum BackingStore
     CasingImpression
 }
 
-public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase(encoding), IPIIProtection<T>
+public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase(encoding), IPIIProtection<T>, IStateBag
 {
+    private readonly StateBag stateBag = new();
     private readonly Dictionary<string, PIIProtectionFactory<T>> protectionFactories = [];
     private readonly Dictionary<string, IProtectionInfo> protectionData = [];
     private readonly Dictionary<string, Expression<Func<T, string>>> protectionInfoHmacBackingStore = [];
@@ -253,5 +254,20 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
             value.Unprotect(this, entry, protectionInfo ?? throw new NullReferenceException());
         }
+    }
+
+    public TItem? Get<TItem>(string key)
+    {
+        return stateBag.Get<TItem>(key);
+    }
+
+    public object? Get(string key)
+    {
+        return stateBag.Get(key);
+    }
+
+    public void Set(string key, object? value)
+    {
+        stateBag.Set(key, value);
     }
 }
