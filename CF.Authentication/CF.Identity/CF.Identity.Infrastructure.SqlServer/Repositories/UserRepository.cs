@@ -1,7 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.PII;
-using CF.Identity.Infrastructure.SqlServer.Transforms;
 using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
@@ -50,7 +49,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
             return UnitResult.NotFound<UserDto>(id);
         }
 
-        userCredentialProtectionProvider.Unprotect(foundUser, []);
+        userCredentialProtectionProvider.Unprotect(foundUser);
         var user = foundUser.Map<UserDto>();
 
         var client = await Context.Clients.FindAsync([user.ClientId], cancellationToken);
@@ -75,8 +74,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
             .ToListAsync(cancellationToken);
 
         var mappedResult = MapTo(result, (db, x) => {
-            userCredentialProtectionProvider.Unprotect(db,);
-            return x;
+            userCredentialProtectionProvider.Unprotect(db);
         });
 
         return UnitResultCollection.FromResult(mappedResult);

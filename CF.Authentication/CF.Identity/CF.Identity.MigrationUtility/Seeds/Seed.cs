@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Infrastructure.SqlServer;
 using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

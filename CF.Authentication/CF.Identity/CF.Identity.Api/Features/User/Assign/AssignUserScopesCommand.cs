@@ -1,7 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Scope;
 using CF.Identity.Infrastructure.Features.Users;
-using IDFCR.Http.Authentication;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Mediatr;
 

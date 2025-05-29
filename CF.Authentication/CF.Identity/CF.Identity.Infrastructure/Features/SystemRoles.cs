@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Properties;
 using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Roles;
 
 namespace CF.Identity.Infrastructure.Features;
 

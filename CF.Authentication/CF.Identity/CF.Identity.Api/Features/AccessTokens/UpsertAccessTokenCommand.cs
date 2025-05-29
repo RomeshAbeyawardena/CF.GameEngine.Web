@@ -1,6 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.AccessToken;
-using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
 
