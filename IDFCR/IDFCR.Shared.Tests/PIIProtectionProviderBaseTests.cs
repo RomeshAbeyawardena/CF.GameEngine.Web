@@ -45,7 +45,7 @@ internal class PIIProtectionProviderBaseTests
         //kills off internal caches, the model will be relied upon for the decryption process and the application (test) manages the key
         model = new MyProtectionModel(Encoding.UTF8);
         
-        model.Unprotect(customer, ip);
+        model.Unprotect(customer);
 
         Assert.That(customer.Name, Is.EqualTo("John Doe"));
         Assert.That(customer.Email, Is.EqualTo("John.Doe@gmail.com"));

@@ -237,9 +237,10 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return protectionData;
     }
 
-    public void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo> protectionData)
+    public void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo>? protectionData = null)
     {
         var strippedProtectionData = ExtractProtectionInfo(entry);
+        protectionData ??= new Dictionary<string,IProtectionInfo>();
 
         foreach(var (key, value) in protectionFactories)
         {

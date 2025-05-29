@@ -18,9 +18,9 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         var dbClient = await Context.Clients.FindAsync([db.ClientId], cancellationToken)
             ?? throw new EntityNotFoundException(typeof(DbClient), db.ClientId);
 
+        userCredentialProtectionProvider.Set("Client", dbClient);
 
-
-        //userCredentialProtectionProvider.Protect(source, dbClient, out var hMac);
+        userCredentialProtectionProvider.Protect(db);
         //await UserTransformer.Transform(source, Context, hMac, cancellationToken, db);
         await base.OnAddAsync(db, source, cancellationToken);
     }
@@ -30,15 +30,16 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
     {
         var dbClient = await Context.Clients.FindAsync([db.ClientId], cancellationToken) 
             ?? throw new EntityNotFoundException(typeof(DbClient), db.ClientId);
-        //userCredentialProtectionProvider.Protect(source, dbClient, out var hMac);
-        //await UserTransformer.Transform(source, Context, hMac, cancellationToken, db);
+        userCredentialProtectionProvider.Set("Client", dbClient);
 
+        userCredentialProtectionProvider.Protect(db);
         await base.OnUpdateAsync(db, source, cancellationToken);
     }
 
     public async Task<IUnitResult<UserDto>> FindUserByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var foundUser = await Context.Users
+            .AsNoTracking()
             .Include(x => x.FirstCommonName)
             .Include(x => x.MiddleCommonName)
             .Include(x => x.LastCommonName)
@@ -49,6 +50,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
             return UnitResult.NotFound<UserDto>(id);
         }
 
+        userCredentialProtectionProvider.Unprotect(foundUser, []);
         var user = foundUser.Map<UserDto>();
 
         var client = await Context.Clients.FindAsync([user.ClientId], cancellationToken);
@@ -57,8 +59,6 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         {
             return UnitResult.NotFound<UserDto>(user.ClientId);
         }
-
-        userCredentialProtectionProvider.Unprotect(user, client, foundUser);
 
         return UnitResult.FromResult(user);
     }
@@ -74,7 +74,10 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
             .Where(externalFilter)
             .ToListAsync(cancellationToken);
 
-        var mappedResult = MapTo(result, (db, x) => userCredentialProtectionProvider.Unprotect(x, db.Client, db));
+        var mappedResult = MapTo(result, (db, x) => {
+            userCredentialProtectionProvider.Unprotect(db,);
+            return x;
+        });
 
         return UnitResultCollection.FromResult(mappedResult);
     }
