@@ -2,8 +2,8 @@
 using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
+using IDFCR.Shared.Hashers;
 using Microsoft.EntityFrameworkCore;
-using StateManagent.Web.Infrastructure.Hashers;
 
 namespace IDFCR.Shared.EntityFramework;
 
