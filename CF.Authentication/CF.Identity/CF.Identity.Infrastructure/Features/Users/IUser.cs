@@ -1,4 +1,5 @@
 ﻿using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Cryptography;
 
 namespace CF.Identity.Infrastructure.Features.Users;
 

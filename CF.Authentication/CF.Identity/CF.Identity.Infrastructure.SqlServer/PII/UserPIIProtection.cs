@@ -2,7 +2,6 @@
 using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
-using System.Configuration;
 using System.Text;
 
 namespace CF.Identity.Infrastructure.SqlServer.PII;
@@ -19,6 +18,6 @@ internal class UserPIIProtection(IConfiguration configuration, Encoding encoding
         var client = Get<ClientDto>("client") 
             ?? throw new NullReferenceException("Client dependency not found");
 
-
+        return GenerateKey(entity, 32, '|', ourValue, client.SecretHash ?? throw new NullReferenceException());
     }
 }

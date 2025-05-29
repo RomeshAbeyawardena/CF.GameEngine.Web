@@ -16,7 +16,7 @@ public enum BackingStore
     CasingImpression
 }
 
-public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase(encoding), IPIIProtection<T>, IStateBag
+public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase(encoding), IPIIProtection<T>
 {
     private readonly StateBag stateBag = new();
     private readonly Dictionary<string, PIIProtectionFactory<T>> protectionFactories = [];
