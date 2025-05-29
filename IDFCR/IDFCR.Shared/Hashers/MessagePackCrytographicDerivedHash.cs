@@ -1,7 +1,7 @@
 ﻿using MessagePack;
 using System.Security.Cryptography;
 
-namespace StateManagent.Web.Infrastructure.Hashers;
+namespace IDFCR.Shared.Hashers;
 
 public class MessagePackCrytographicDerivedHash(MessagePackCrytographicDerivedHashOptions options) : IUniqueContentHasher
 {

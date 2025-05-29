@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace CF.Identity.Infrastructure;
+namespace IDFCR.Shared.Hashers;
 
 public abstract class DomainHasherBase<T>(Encoding? encoding) : IDomainHasher<T>
 {

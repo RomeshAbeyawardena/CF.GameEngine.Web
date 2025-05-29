@@ -1,4 +1,4 @@
-﻿namespace CF.Identity.Infrastructure;
+﻿namespace IDFCR.Shared.Hashers;
 
 public interface IDomainHasher<T>
 {

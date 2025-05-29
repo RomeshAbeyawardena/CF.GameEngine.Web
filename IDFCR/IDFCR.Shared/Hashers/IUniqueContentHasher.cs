@@ -1,4 +1,4 @@
-﻿namespace StateManagent.Web.Infrastructure.Hashers;
+﻿namespace IDFCR.Shared.Hashers;
 
 public interface IUniqueContentHasher
 {
