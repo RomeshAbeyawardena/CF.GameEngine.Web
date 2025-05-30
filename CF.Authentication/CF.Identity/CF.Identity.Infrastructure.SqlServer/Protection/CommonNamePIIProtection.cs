@@ -1,9 +1,10 @@
 ﻿using CF.Identity.Infrastructure.SqlServer.Models;
+using CF.Identity.Infrastructure.SqlServer.PII;
 using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 
-namespace CF.Identity.Infrastructure.SqlServer.PII;
+namespace CF.Identity.Infrastructure.SqlServer.Protection;
 
 internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>, ICommonNamePIIProtection
 {
@@ -17,7 +18,7 @@ internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>, ICommo
 
     protected override string GetHmacKey()
     {
-        return base.ApplicationKnownValue;
+        return ApplicationKnownValue;
     }
 
     public CommonNamePIIProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)

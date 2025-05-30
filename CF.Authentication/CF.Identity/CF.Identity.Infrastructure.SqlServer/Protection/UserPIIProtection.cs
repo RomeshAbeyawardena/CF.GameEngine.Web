@@ -1,9 +1,10 @@
 ﻿using CF.Identity.Infrastructure.SqlServer.Models;
+using CF.Identity.Infrastructure.SqlServer.PII;
 using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 
-namespace CF.Identity.Infrastructure.SqlServer.PII;
+namespace CF.Identity.Infrastructure.SqlServer.Protection;
 
 internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
 {

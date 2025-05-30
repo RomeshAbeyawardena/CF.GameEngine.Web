@@ -2,7 +2,7 @@
 using System.Text;
 using Microsoft.Extensions.Configuration;
 
-namespace CF.Identity.Infrastructure.SqlServer.PII;
+namespace CF.Identity.Infrastructure.SqlServer.Protection;
 
 internal abstract class PIIProtectionBase<T>(IConfiguration configuration, Encoding encoding) : PIIProtection.PIIProtectionBase<T>(encoding)
 {
