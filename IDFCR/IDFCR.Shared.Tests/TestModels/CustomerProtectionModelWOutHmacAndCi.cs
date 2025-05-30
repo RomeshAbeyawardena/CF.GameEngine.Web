@@ -13,7 +13,7 @@ internal class CustomerProtectionModelWOutHmacAndCi : PIIProtectionBase<Customer
 
     protected override string GetHmacKey()
     {
-        throw new NotImplementedException();
+        return "application-secret";
     }
 
     public CustomerProtectionModelWOutHmacAndCi(Encoding encoding) : base(encoding)

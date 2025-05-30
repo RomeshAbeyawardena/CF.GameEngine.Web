@@ -13,7 +13,7 @@ internal class CustomerProtectionModelWithDynamicSalt : PIIProtectionBase<Custom
 
     protected override string GetHmacKey()
     {
-        throw new NotImplementedException();
+        return $"application-secret";
     }
 
     public CustomerProtectionModelWithDynamicSalt(Encoding encoding) : base(encoding)

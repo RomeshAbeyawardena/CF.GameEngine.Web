@@ -13,7 +13,7 @@ internal class CustomerProtectionModel : PIIProtectionBase<Customer>
 
     protected override string GetHmacKey()
     {
-        throw new NotImplementedException();
+        return "application-salt";
     }
 
     public CustomerProtectionModel(Encoding encoding) : base(encoding)
