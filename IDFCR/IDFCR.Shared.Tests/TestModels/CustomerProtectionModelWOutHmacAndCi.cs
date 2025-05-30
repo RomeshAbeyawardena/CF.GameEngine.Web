@@ -11,6 +11,11 @@ internal class CustomerProtectionModelWOutHmacAndCi : PIIProtectionBase<Customer
         return GenerateKey(entity, 32, ',', entity.Id.ToString("X").Substring(0, 15), entity.ClientId.ToString("X"));
     }
 
+    protected override string GetHmacKey()
+    {
+        throw new NotImplementedException();
+    }
+
     public CustomerProtectionModelWOutHmacAndCi(Encoding encoding) : base(encoding)
     {
         SetMetaData(x => x.MetaData);

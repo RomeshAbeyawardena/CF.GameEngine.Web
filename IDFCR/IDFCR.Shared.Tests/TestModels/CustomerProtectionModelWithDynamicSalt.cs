@@ -11,6 +11,11 @@ internal class CustomerProtectionModelWithDynamicSalt : PIIProtectionBase<Custom
         return GenerateKey(entity, 32, ',', entity.Id.ToString("X").Substring(0, 15), entity.ClientId.ToString("X"));
     }
 
+    protected override string GetHmacKey()
+    {
+        throw new NotImplementedException();
+    }
+
     public CustomerProtectionModelWithDynamicSalt(Encoding encoding) : base(encoding)
     {
         SetMetaData(x => x.MetaData);

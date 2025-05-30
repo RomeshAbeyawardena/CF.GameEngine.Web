@@ -2,6 +2,7 @@
 using CF.Identity.Infrastructure.SqlServer.PII;
 using IDFCR.Shared.Abstractions.Repositories;
 using IDFCR.Shared.Abstractions.Results;
+using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
@@ -58,7 +59,8 @@ internal class CommonNameRepository(ICommonNamePIIProtection commonNamePIIProtec
 
     public Task<IUnitResult<DbCommonName?>> GetByNameRawAsync(string name, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        commonNamePIIProtection.HashWithHMAC(x => x);
+        Context.CommonNames.AsNoTracking()
     }
 }
 

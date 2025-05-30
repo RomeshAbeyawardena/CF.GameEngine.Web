@@ -27,6 +27,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     protected Expression<Func<T, string?>>? MetaDataMember { get; private set; }
 
     protected abstract string GetKey(T entity);
+    protected abstract string GetHmacKey();
 
     protected PIIProtectionBase<T> For(Expression<Func<T, string?>> member, Func<PIIProtectionProviderBase, string?, T, IProtectionInfo> protect,
     Action<PIIProtectionProviderBase, string?, T, IProtectionInfo> unprotect)
@@ -143,7 +144,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     protected IProtectionInfo GetProtectionInfo(T context, string? value)
     {
-        var hmac = HashWithHMAC(GetKey(context), value?.ToUpperInvariant());
+        var hmac = HashWithHMAC(GetHmacKey(), value?.ToUpperInvariant());
         var caseImpressions = string.IsNullOrEmpty(value) ? string.Empty : CasingImpression.Calculate(value);
 
         return new DefaultProtectionInfo(hmac, caseImpressions);
@@ -305,7 +306,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         }
 
         var hmacValue = GetMemberValue(hashedEntry, hmacExpr);
-        var hmac = HashWithHMAC(GetKey(hashedEntry), valueToTest.ToUpperInvariant());
+        var hmac = HashWithHMAC(GetHmacKey(), valueToTest.ToUpperInvariant());
 
         return CryptographicOperations.FixedTimeEquals(Convert.FromBase64String(hmacValue),
             Convert.FromBase64String(hmac));
