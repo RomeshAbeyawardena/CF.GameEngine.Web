@@ -1,10 +1,20 @@
-﻿using System.Security.Authentication;
+﻿using System.Globalization;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 
 namespace IDFCR.Shared.Extensions;
 
 public static class StringExtensions
 {
+    public static string NormaliseNames(this string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return value;
+        // Replace multiple spaces with a single space
+        value = System.Text.RegularExpressions.Regex.Replace(value, @"\s+", " ").Trim();
+        // Capitalize the first letter of each word
+        return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(value.ToLowerInvariant());
+    }
     public static string FixedLength(this string value, int length)
     {
         if (string.IsNullOrWhiteSpace(value))

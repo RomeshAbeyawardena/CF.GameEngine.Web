@@ -1,8 +1,8 @@
 ﻿using IDFCR.Shared.Exceptions;
 
-namespace IDFC.Shared.Tests;
+namespace IDFCR.Shared.Tests;
 
-public class Tests
+public class EntityAlreadyExistsExceptionTests
 {
     [SetUp]
     public void Setup()
