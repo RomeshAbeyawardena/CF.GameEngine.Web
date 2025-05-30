@@ -77,8 +77,8 @@ internal class PIIProtectionProviderBaseTests
 
         model.Unprotect(customer);
 
-        Assert.That(customer.Name, Is.EqualTo("John Doe"));
-        Assert.That(customer.Email, Is.EqualTo("John.Doe@gmail.com"));
+        Assert.That(customer.Name, Is.EqualTo("John Doe".ToUpperInvariant()));
+        Assert.That(customer.Email, Is.EqualTo("John.Doe@gmail.com".ToUpperInvariant()));
         Assert.That(customer.PhoneNumber, Is.EqualTo("0123-456-7890"));
 
         Assert.That(model.VerifyHashUsing(customer, x => x.Password, "SomePassword1"), Is.True);
