@@ -12,7 +12,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     private readonly Dictionary<string, IProtectionInfo> protectionDataStore = [];
     private readonly Dictionary<string, Expression<Func<T, string?>>> protectionInfoHmacBackingStore = [];
     private readonly Dictionary<string, Expression<Func<T, string?>>> protectionInfoCiBackingStore = [];
-    private readonly Dictionary<string, Func<string, string>> hashingValueStore = [];
+    private readonly Dictionary<string, Func<T, string, string>> hashingValueStore = [];
 
     private static SymmetricAlgorithm GetAlgorithm(SymmetricAlgorithmName algorithmName)
     {
@@ -97,13 +97,13 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             });
     }
 
-    protected void ProtectHashed(Expression<Func<T, string?>> member, string salt, HashAlgorithmName algorithm, int length = 64)
+    protected void ProtectHashed(Expression<Func<T, string?>> member, Func<T, string> saltGeneration, HashAlgorithmName algorithm, int length = 64)
     {
         var visitor = new LinkExpressionVisitor();
         visitor.Visit(member);
 
         hashingValueStore.TryAdd(visitor.MemberName!,
-            (value) => Hash(algorithm, value, salt, length));
+            (context, value) => Hash(algorithm, value, saltGeneration(context), length));
 
         For(member,
             (provider, value, context) =>
@@ -111,12 +111,17 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
                 var info = GetProtectionInfo(context, value);
                 if (value is not null)
                 {
-                    var hash = Hash(algorithm, value, salt, length);
+                    var hash = Hash(algorithm, value, saltGeneration(context), length);
                     SetMemberValue(context, member, hash);
                 }
                 return info;
             },
             (_, _, _, _) => { });
+    }
+
+    protected void ProtectHashed(Expression<Func<T, string?>> member, string salt, HashAlgorithmName algorithm, int length = 64)
+    {
+        ProtectHashed(member, (x) => salt, algorithm, length);
     }
 
     protected void MapProtectionInfoTo(Expression<Func<T, string?>> member, BackingStore backingStore, Expression<Func<T, string?>> target)
@@ -284,7 +289,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             throw new KeyNotFoundException($"Hashing function for member '{memberName}' not found.");
         }
         var value = GetMemberValue(hashedEntry, member);
-        var hashedValue = hashFunc(valueToTest);
+        var hashedValue = hashFunc(hashedEntry, valueToTest);
         return CryptographicOperations.FixedTimeEquals(Convert.FromBase64String(value),
             Convert.FromBase64String(hashedValue));
     }

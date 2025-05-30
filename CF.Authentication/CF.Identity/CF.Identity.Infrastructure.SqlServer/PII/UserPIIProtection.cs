@@ -41,9 +41,10 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
             System.Security.Cryptography.HashAlgorithmName.SHA384);
     }
 
+    private const string ClientKey = "client";
     public DbClient Client { 
-        get => Get<DbClient>("client") 
+        get => Get<DbClient>(ClientKey) 
             ?? throw new NullReferenceException("Client dependency not found");
-        set => Set("client", value);
+        set => Set(ClientKey, value);
     }
 }
