@@ -25,7 +25,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     protected Expression<Func<T, string?>>? RowVersionMember { get; private set; }
     protected Expression<Func<T, string?>>? MetaDataMember { get; private set; }
-    
+
     protected abstract string GetKey(T entity);
 
     protected PIIProtectionBase<T> For(Expression<Func<T, string?>> member, Func<PIIProtectionProviderBase, string?, T, IProtectionInfo> protect,
@@ -177,7 +177,6 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return string.Empty;
     }
 
-
     public IReadOnlyDictionary<string, IProtectionInfo> ExtractProtectionInfo(T entity)
     {
         var result = new Dictionary<string, IProtectionInfo>();
@@ -198,10 +197,9 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return result;
     }
 
-
     public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)
     {
-        var derived = new Rfc2898DeriveBytes(Encoding.GetBytes(secret), 
+        var derived = new Rfc2898DeriveBytes(Encoding.GetBytes(secret),
             Encoding.GetBytes(salt), 100_000, algorithmName);
         return Convert.ToBase64String(derived.GetBytes(length));
     }
@@ -244,13 +242,13 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     public void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo>? protectionData = null)
     {
         var strippedProtectionData = ExtractProtectionInfo(entry);
-        protectionData ??= new Dictionary<string,IProtectionInfo>();
+        protectionData ??= new Dictionary<string, IProtectionInfo>();
 
-        foreach(var (key, value) in protectionFactories)
+        foreach (var (key, value) in protectionFactories)
         {
             // Try protection data from caller first; fallback to internal copy.
             // This guards against DI scope misalignment (e.g., transient reuse).
-            if (!protectionData.TryGetValue(key, out var protectionInfo) 
+            if (!protectionData.TryGetValue(key, out var protectionInfo)
                 && !strippedProtectionData.TryGetValue(key, out protectionInfo)
                 && !this.protectionDataStore.TryGetValue(key, out protectionInfo))
             {
@@ -274,5 +272,20 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     public virtual void Set(string key, object? value)
     {
         stateBag.Set(key, value);
+    }
+
+    public bool VerifyHashUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest)
+    {
+        var visitor = new LinkExpressionVisitor();
+        visitor.Visit(member);
+        var memberName = visitor.MemberName ?? throw new NullReferenceException("Member not found");
+        if (!hashingValueStore.TryGetValue(memberName, out var hashFunc))
+        {
+            throw new KeyNotFoundException($"Hashing function for member '{memberName}' not found.");
+        }
+        var value = GetMemberValue(hashedEntry, member);
+        var hashedValue = hashFunc(valueToTest);
+        return CryptographicOperations.FixedTimeEquals(Convert.FromBase64String(value),
+            Convert.FromBase64String(hashedValue));
     }
 }

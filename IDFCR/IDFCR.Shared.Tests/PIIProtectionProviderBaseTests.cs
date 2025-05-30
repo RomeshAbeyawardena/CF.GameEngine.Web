@@ -8,7 +8,7 @@ namespace IDFCR.Shared.Tests;
 internal class PIIProtectionProviderBaseTests
 {
     [Test]
-    public void Test()
+    public void GeneralEncryptionTests()
     {
         var b = PIIProtectionProviderBase.GenerateKey(32, ';', Encoding.UTF8, null, "MyVeryLongApplicationSecret", "MyVeryLongClientApplicationSet");
         Assert.That(b.Item2, Has.Length.EqualTo(32));
@@ -50,6 +50,8 @@ internal class PIIProtectionProviderBaseTests
         Assert.That(customer.Name, Is.EqualTo("John Doe"));
         Assert.That(customer.Email, Is.EqualTo("John.Doe@gmail.com"));
         Assert.That(customer.PhoneNumber, Is.EqualTo("0123-456-7890"));
+
+        Assert.That(model.VerifyHashUsing(customer, x => x.Password, "SomePassword1"), Is.True);
     }
 
     public class Customer()
@@ -75,7 +77,7 @@ internal class PIIProtectionProviderBaseTests
         protected override string GetKey(Customer entity)
         {
             //using something that should not change or collide
-            return GenerateKey(entity, 32, ',', entity.Id.ToString("X"), entity.ClientId.ToString("X"));
+            return GenerateKey(entity, 32, ',', entity.Id.ToString("X").Substring(0,15), entity.ClientId.ToString("X"));
         }
 
         public MyProtectionModel(Encoding encoding) : base(encoding)
