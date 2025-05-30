@@ -51,6 +51,8 @@ internal class PIIProtectionProviderBaseTests
         Assert.That(customer.PhoneNumber, Is.EqualTo("0123-456-7890"));
 
         Assert.That(model.VerifyHashUsing(customer, x => x.Password, "SomePassword1"), Is.True);
+
+        Assert.That(model.VerifyHmacUsing(customer, x => x.Name, "john doe"), Is.True);
     }
 
     [Test]

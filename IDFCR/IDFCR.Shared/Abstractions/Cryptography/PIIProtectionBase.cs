@@ -138,7 +138,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     protected IProtectionInfo GetProtectionInfo(T context, string? value)
     {
-        var hmac = HashWithHMAC(GetKey(context), value);
+        var hmac = HashWithHMAC(GetKey(context), value?.ToUpperInvariant());
         var caseImpressions = string.IsNullOrEmpty(value) ? string.Empty : CasingImpression.Calculate(value);
 
         return new DefaultProtectionInfo(hmac, caseImpressions);
@@ -287,5 +287,22 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         var hashedValue = hashFunc(valueToTest);
         return CryptographicOperations.FixedTimeEquals(Convert.FromBase64String(value),
             Convert.FromBase64String(hashedValue));
+    }
+
+    public bool VerifyHmacUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest)
+    {
+        var expressionVisitor = new LinkExpressionVisitor();
+        expressionVisitor.Visit(member);
+        var memberName = expressionVisitor.MemberName ?? throw new NullReferenceException("Member not found");
+        if (!protectionInfoHmacBackingStore.TryGetValue(memberName, out var hmacExpr))
+        {
+            throw new KeyNotFoundException($"HMAC backing store for member '{memberName}' not found.");
+        }
+
+        var hmacValue = GetMemberValue(hashedEntry, hmacExpr);
+        var hmac = HashWithHMAC(GetKey(hashedEntry), valueToTest.ToUpperInvariant());
+
+        return CryptographicOperations.FixedTimeEquals(Convert.FromBase64String(hmacValue),
+            Convert.FromBase64String(hmac));
     }
 }

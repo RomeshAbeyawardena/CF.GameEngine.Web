@@ -10,4 +10,5 @@ public interface IPIIProtection<T> : IStateBag
     void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo>? protectionData = null);
     string HashWithHMAC(string key, string data);
     bool VerifyHashUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest);
+    bool VerifyHmacUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest);
 }
