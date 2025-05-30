@@ -24,7 +24,10 @@ internal class CustomerProtectionModelWithDynamicSalt : PIIProtectionBase<Custom
         MapProtectionInfoTo(x => x.Email, BackingStore.Hmac, x => x.EmailHmac);
         MapProtectionInfoTo(x => x.Email, BackingStore.CasingImpression, x => x.EmailCI);
 
-        ProtectHashed(x => x.Password, ExternalSaltProvider.GetSalt, System.Security.Cryptography.HashAlgorithmName.SHA384);
+#pragma warning disable IDE0200
+        // This must be a lambda or this will crash as ExternalSaltProvider will not be available during instantiation
+        ProtectHashed(x => x.Password, (x) => ExternalSaltProvider.GetSalt(x), System.Security.Cryptography.HashAlgorithmName.SHA384);
+#pragma warning restore IDE0200
         ProtectSymmetric(x => x.PhoneNumber);
         MapProtectionInfoTo(x => x.PhoneNumber, BackingStore.CasingImpression, x => x.PhoneNumberCI);
         MapProtectionInfoTo(x => x.PhoneNumber, BackingStore.Hmac, x => x.PhoneNumberHmac);
