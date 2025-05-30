@@ -144,7 +144,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     protected IProtectionInfo GetProtectionInfo(T context, string? value)
     {
-        var hmac = HashWithHMAC(GetHmacKey(), value?.ToUpperInvariant());
+        var hmac = HashWithHmac(GetHmacKey(), value?.ToUpperInvariant());
         var caseImpressions = string.IsNullOrEmpty(value) ? string.Empty : CasingImpression.Calculate(value);
 
         return new DefaultProtectionInfo(hmac, caseImpressions);
@@ -210,13 +210,13 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return Convert.ToBase64String(derived.GetBytes(length));
     }
 
-    public string HashWithHMAC(string data)
+    public string HashWithHmac(string data)
     {
-        return HashWithHMAC(GetHmacKey(), data.ToUpperInvariant());
+        return HashWithHmac(GetHmacKey(), data.ToUpperInvariant());
     }
 
 
-    public string HashWithHMAC(string key, string? data)
+    public string HashWithHmac(string key, string? data)
     {
         if (string.IsNullOrWhiteSpace(data))
         {
@@ -312,7 +312,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         }
 
         var hmacValue = GetMemberValue(hashedEntry, hmacExpr);
-        var hmac = HashWithHMAC(GetHmacKey(), valueToTest.ToUpperInvariant());
+        var hmac = HashWithHmac(GetHmacKey(), valueToTest.ToUpperInvariant());
 
         return CryptographicOperations.FixedTimeEquals(Convert.FromBase64String(hmacValue),
             Convert.FromBase64String(hmac));

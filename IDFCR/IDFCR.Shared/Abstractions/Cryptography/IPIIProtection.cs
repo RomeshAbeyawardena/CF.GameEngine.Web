@@ -8,8 +8,8 @@ public interface IPIIProtection<T> : IStateBag
     string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length);
     IReadOnlyDictionary<string, IProtectionInfo> Protect(T entry);
     void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo>? protectionData = null);
-    string HashWithHMAC(string key, string data);
-    string HashWithHMAC(string data);
+    string HashWithHmac(string key, string data);
+    string HashWithHmac(string data);
     bool VerifyHashUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest);
     bool VerifyHmacUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest);
 }
