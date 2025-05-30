@@ -8,7 +8,6 @@ public class CommonNameDto : MappableBase<ICommonName>, ICommonName
 
     public Guid Id { get; set; }
     public string Value { get; set; } = null!;
-    public string ValueNormalised { get; set; } = null!;
     public string RowVersion { get; set; } = null!;
     public string MetaData { get; set; } = null!;
 
@@ -16,7 +15,6 @@ public class CommonNameDto : MappableBase<ICommonName>, ICommonName
     {
         Id = source.Id;
         Value = source.Value;
-        ValueNormalised = source.ValueNormalised;
         RowVersion = source.RowVersion;
         MetaData = source.MetaData;
     }

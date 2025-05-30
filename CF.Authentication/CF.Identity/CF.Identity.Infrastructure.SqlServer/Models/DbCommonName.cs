@@ -11,10 +11,6 @@ public class DbCommonName : MappableBase<ICommonName>, ICommonName
     public string ValueCI { get; set; } = null!;
     public string ValueHmac { get; set; } = null!;
     
-    public string ValueNormalised { get; set; } = null!;
-    public string ValueNormalisedCI { get; set; } = null!;
-    public string ValueNormalisedHmac { get; set; } = null!;
-
     public string RowVersion { get; set; } = null!;
     public string MetaData { get; set; } = null!;
 
@@ -22,7 +18,6 @@ public class DbCommonName : MappableBase<ICommonName>, ICommonName
     {
         Id = source.Id;
         Value = source.Value;
-        ValueNormalised = source.ValueNormalised;
         RowVersion = source.RowVersion;
         MetaData = source.MetaData;
     }
