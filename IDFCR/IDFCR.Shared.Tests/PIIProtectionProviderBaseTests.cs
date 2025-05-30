@@ -1,5 +1,4 @@
-﻿using IDFCR.Shared.Abstractions;
-using IDFCR.Shared.Abstractions.Cryptography;
+﻿using IDFCR.Shared.Abstractions.Cryptography;
 using System.Text;
 
 namespace IDFCR.Shared.Tests;
@@ -54,6 +53,37 @@ internal class PIIProtectionProviderBaseTests
         Assert.That(model.VerifyHashUsing(customer, x => x.Password, "SomePassword1"), Is.True);
     }
 
+    [Test]
+    public void ModelProtectionTestsWOutCiAndHmac()
+    {
+        var model = new MyProtectionModelWOutHmacAndCi(Encoding.UTF8);
+
+        var customer = new Customer
+        {
+            Name = "John Doe",
+            Email = "John.Doe@gmail.com",
+            Password = "SomePassword1",
+            PhoneNumber = "0123-456-7890"
+        };
+
+        var ip = model.Protect(customer);
+
+        Assert.That(customer.Name, Is.Not.EqualTo("John Doe"));
+        Assert.That(customer.Email, Is.Not.EqualTo("John.Doe@gmail.com"));
+        Assert.That(customer.PhoneNumber, Is.Not.EqualTo("0123-456-7890"));
+
+        //kills off internal caches, the model will be relied upon for the decryption process and the application (test) manages the key
+        model = new MyProtectionModelWOutHmacAndCi(Encoding.UTF8);
+
+        model.Unprotect(customer);
+
+        Assert.That(customer.Name, Is.EqualTo("John Doe"));
+        Assert.That(customer.Email, Is.EqualTo("John.Doe@gmail.com"));
+        Assert.That(customer.PhoneNumber, Is.EqualTo("0123-456-7890"));
+
+        Assert.That(model.VerifyHashUsing(customer, x => x.Password, "SomePassword1"), Is.True);
+    }
+
     public class Customer()
     {
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -70,6 +100,28 @@ internal class PIIProtectionProviderBaseTests
         public string PhoneNumberHmac { get; set; } = null!;
         public string RowVersion { get; set; } = null!;
         public string? MetaData { get; set; }
+    }
+
+    internal class MyProtectionModelWOutHmacAndCi : PIIProtectionBase<Customer>
+    {
+        protected override string GetKey(Customer entity)
+        {
+            //using something that should not change or collide
+            return GenerateKey(entity, 32, ',', entity.Id.ToString("X").Substring(0, 15), entity.ClientId.ToString("X"));
+        }
+
+        public MyProtectionModelWOutHmacAndCi(Encoding encoding) : base(encoding)
+        {
+            SetMetaData(x => x.MetaData);
+            SetRowVersion(x => x.RowVersion);
+
+            ProtectSymmetric(x => x.Name);
+            
+            ProtectSymmetric(x => x.Email);
+            
+            ProtectHashed(x => x.Password, "Salt", System.Security.Cryptography.HashAlgorithmName.SHA384);
+            ProtectSymmetric(x => x.PhoneNumber);
+        }
     }
 
     internal class MyProtectionModel: PIIProtectionBase<Customer>

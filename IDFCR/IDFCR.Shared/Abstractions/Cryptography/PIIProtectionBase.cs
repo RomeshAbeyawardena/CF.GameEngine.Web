@@ -85,7 +85,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             (provider, value, context) =>
             {
                 var info = GetProtectionInfo(context, value);
-                var encrypted = Encrypt(value, UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
+                var encrypted = Encrypt(value?.ToUpperInvariant(), UseAlgorithm(SymmetricAlgorithmName.Aes, context))!;
                 SetMemberValue(context, member, encrypted);
                 return info;
             },
