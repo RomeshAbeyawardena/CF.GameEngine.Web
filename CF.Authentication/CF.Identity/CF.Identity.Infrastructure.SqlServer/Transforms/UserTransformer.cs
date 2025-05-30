@@ -34,7 +34,7 @@ public static class UserTransformer
             return (true, id);
         }
 
-        return (false, foundName.Map<DbCommonName>());
+        return (false, foundName);
     }
 
     private static async Task SetCommonNameAsync(ICommonNameRepository commonNameRepository, 
@@ -49,11 +49,10 @@ public static class UserTransformer
             if (isNew)
             {
                 setCommonName(name);
+                return;
             }
-            else
-            {
-                setIdRef(name.Id);
-            }
+            
+            setIdRef(name.Id);
         }
     }
 
