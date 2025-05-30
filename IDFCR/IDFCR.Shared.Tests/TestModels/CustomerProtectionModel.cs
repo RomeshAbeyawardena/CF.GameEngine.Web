@@ -28,5 +28,9 @@ internal class CustomerProtectionModel : PIIProtectionBase<Customer>
         ProtectSymmetric(x => x.PhoneNumber);
         MapProtectionInfoTo(x => x.PhoneNumber, BackingStore.CasingImpression, x => x.PhoneNumberCI);
         MapProtectionInfoTo(x => x.PhoneNumber, BackingStore.Hmac, x => x.PhoneNumberHmac);
+
+        ProtectSymmetric(x => x.Blank);
+        MapProtectionInfoTo(x => x.Blank, BackingStore.CasingImpression, x => x.BlankCI);
+        MapProtectionInfoTo(x => x.Blank, BackingStore.Hmac, x => x.BlankHmac);
     }
 }

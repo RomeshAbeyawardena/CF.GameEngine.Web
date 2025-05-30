@@ -14,6 +14,9 @@ public class Customer
     public string PhoneNumber { get; set; } = null!;
     public string PhoneNumberCI { get; set; } = null!;
     public string PhoneNumberHmac { get; set; } = null!;
+    public string? Blank { get; set; }
+    public string? BlankCI { get; set; }
+    public string? BlankHmac { get; set; }
     public string RowVersion { get; set; } = null!;
     public string? MetaData { get; set; }
 }
