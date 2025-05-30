@@ -5,11 +5,6 @@ using System.Text;
 
 namespace CF.Identity.Infrastructure.SqlServer.PII;
 
-public interface IUserPIIProtection : IPIIProtection<DbUser>
-{
-    DbClient Client { get; set; }
-}
-
 internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
 {
     private readonly ICommonNamePIIProtection _commonNamePIIProtection;
