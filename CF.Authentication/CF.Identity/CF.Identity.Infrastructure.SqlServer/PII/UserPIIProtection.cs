@@ -38,7 +38,7 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
         MapProtectionInfoTo(x => x.PreferredUsername, BackingStore.Hmac, x => x.PreferredUsernameHmac);
         ProtectSymmetric(x => x.PrimaryTelephoneNumber);
         MapProtectionInfoTo(x => x.PrimaryTelephoneNumber, BackingStore.Hmac, x => x.PrimaryTelephoneNumberHmac);
-        ProtectHashed(x => x.HashedPassword, "PasswordHash", "PasswordHashSalt",
+        ProtectHashed(x => x.HashedPassword, "PasswordHashSalt",
             System.Security.Cryptography.HashAlgorithmName.SHA384);
     }
 }

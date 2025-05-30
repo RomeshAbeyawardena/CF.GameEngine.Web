@@ -1,29 +1,18 @@
-﻿using System.Data;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace IDFCR.Shared.Abstractions.Cryptography;
 
-public enum SymmetricAlgorithmName
-{
-    Aes
-}
-
-public enum BackingStore
-{
-    Hmac,
-    CasingImpression
-}
-
 public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionProviderBase(encoding), IPIIProtection<T>
 {
     private readonly StateBag stateBag = new();
     private readonly Dictionary<string, PIIProtectionFactory<T>> protectionFactories = [];
-    private readonly Dictionary<string, IProtectionInfo> protectionData = [];
+    private readonly Dictionary<string, IProtectionInfo> protectionDataStore = [];
     private readonly Dictionary<string, Expression<Func<T, string?>>> protectionInfoHmacBackingStore = [];
     private readonly Dictionary<string, Expression<Func<T, string?>>> protectionInfoCiBackingStore = [];
+    private readonly Dictionary<string, Func<string, string>> hashingValueStore = [];
 
     private static SymmetricAlgorithm GetAlgorithm(SymmetricAlgorithmName algorithmName)
     {
@@ -110,6 +99,12 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     protected void ProtectHashed(Expression<Func<T, string?>> member, string salt, HashAlgorithmName algorithm, int length = 64)
     {
+        var visitor = new LinkExpressionVisitor();
+        visitor.Visit(member);
+
+        hashingValueStore.TryAdd(visitor.MemberName!,
+            (value) => Hash(algorithm, value, salt, length));
+
         For(member,
             (provider, value, context) =>
             {
@@ -224,11 +219,11 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     public IReadOnlyDictionary<string, IProtectionInfo> Protect(T entry)
     {
-        protectionData.Clear();
+        protectionDataStore.Clear();
         foreach (var (key, value) in protectionFactories)
         {
             var pD = value.Protect(this, entry);
-            protectionData.Add(key, pD);
+            protectionDataStore.Add(key, pD);
 
             var backingStore = protectionInfoHmacBackingStore.GetValueOrDefault(key);
             if (backingStore is not null)
@@ -243,7 +238,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             }
         }
 
-        return protectionData;
+        return protectionDataStore;
     }
 
     public void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo>? protectionData = null)
@@ -257,7 +252,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             // This guards against DI scope misalignment (e.g., transient reuse).
             if (!protectionData.TryGetValue(key, out var protectionInfo) 
                 && !strippedProtectionData.TryGetValue(key, out protectionInfo)
-                && !this.protectionData.TryGetValue(key, out protectionInfo))
+                && !this.protectionDataStore.TryGetValue(key, out protectionInfo))
             {
                 throw new KeyNotFoundException($"Protection data for key '{key}' not found.");
             }

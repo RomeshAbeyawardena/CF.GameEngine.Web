@@ -45,11 +45,9 @@ public class StateBag : IStateBag
 
     public void Set(string key, object? value)
     {
-        if (value is null)
-        {
-            ArgumentNullException.ThrowIfNull(value, nameof(value));
-        }
-
+        ArgumentException.ThrowIfNullOrWhiteSpace(key, nameof(key));
+        ArgumentNullException.ThrowIfNull(value, nameof(value));
+        
         var val = new StateBagItem(value.GetType(), key, value);
         
         _state.AddOrUpdate(key, val, (k, v) => val);
