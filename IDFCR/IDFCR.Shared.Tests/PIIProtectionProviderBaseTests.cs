@@ -56,7 +56,7 @@ internal class PIIProtectionProviderBaseTests
 
         Assert.That(model.VerifyHmacUsing(customer, x => x.Name, "john doe"), Is.True);
 
-        Assert.That(model.HashWithHMAC("john doe"), Is.EqualTo(customer.NameHmac));
+        Assert.That(model.HashWithHmac("john doe"), Is.EqualTo(customer.NameHmac));
     }
 
     [Test]
