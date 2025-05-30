@@ -5,8 +5,6 @@ using System.Text;
 
 namespace CF.Identity.Infrastructure.SqlServer.PII;
 
-public interface ICommonNamePIIProtection : IPIIProtection<DbCommonName>;
-
 internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>, ICommonNamePIIProtection
 {
     private readonly IConfiguration _configuration;
@@ -17,7 +15,12 @@ internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>, ICommo
         return GenerateKey(entity, 32, '|', ourValue, entity.Id.ToString("N"));
     }
 
-    public CommonNamePIIProtection(IConfiguration configuration, Encoding encoding) : base(encoding)
+    protected override string GetHmacKey()
+    {
+        return base.ApplicationKnownValue;
+    }
+
+    public CommonNamePIIProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
     {
         _configuration = configuration;
         SetMetaData(x => x.MetaData);

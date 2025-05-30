@@ -12,9 +12,6 @@ public interface IUserPIIProtection : IPIIProtection<DbUser>
 
 internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
 {
-    private readonly IConfiguration _configuration;
-    private string ApplicationKnownValue => _configuration
-        .GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
     private string GetHash(DbUser user)
     {
         var secondPart = Client.SecretHash ?? user.Id.ToString();
@@ -26,9 +23,13 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
         return GenerateKey(entity, 32, '|', ApplicationKnownValue, Client.SecretHash ?? throw new NullReferenceException());
     }
 
-    public UserPIIProtection(IConfiguration configuration, Encoding encoding) : base(encoding)
+    protected override string GetHmacKey()
     {
-        _configuration = configuration;
+        return ApplicationKnownValue;
+    }
+
+    public UserPIIProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
+    {
         SetMetaData(x => x.Metadata);
         SetRowVersion(x => x.RowVersion);
 
