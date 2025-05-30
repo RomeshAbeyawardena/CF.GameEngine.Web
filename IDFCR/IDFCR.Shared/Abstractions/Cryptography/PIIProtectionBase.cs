@@ -210,6 +210,12 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return Convert.ToBase64String(derived.GetBytes(length));
     }
 
+    public string HashWithHMAC(string data)
+    {
+        return HashWithHMAC(GetHmacKey(), data.ToUpperInvariant());
+    }
+
+
     public string HashWithHMAC(string key, string? data)
     {
         if (string.IsNullOrWhiteSpace(data))

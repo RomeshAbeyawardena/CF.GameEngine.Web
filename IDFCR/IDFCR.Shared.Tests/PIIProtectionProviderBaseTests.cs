@@ -55,6 +55,8 @@ internal class PIIProtectionProviderBaseTests
         Assert.That(model.VerifyHashUsing(customer, x => x.Password, "SomePassword1"), Is.True);
 
         Assert.That(model.VerifyHmacUsing(customer, x => x.Name, "john doe"), Is.True);
+
+        Assert.That(model.HashWithHMAC("john doe"), Is.EqualTo(customer.NameHmac));
     }
 
     [Test]
