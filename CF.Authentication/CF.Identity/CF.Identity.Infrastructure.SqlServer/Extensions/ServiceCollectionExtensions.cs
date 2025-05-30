@@ -35,6 +35,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IClientCredentialHasher, ClientCredentialHasher>()
             .AddSingleton<IUserPIIProtection, UserPIIProtection>()
             .AddScoped<IAccessTokenRepository, AccessTokenRepository>()
+            .AddScoped<ICommonNameRepository, CommonNameRepository>()
+            .AddScoped<ICommonNamePIIProtection, CommonNamePIIProtection>()
             .AddScoped<ITransactionalUnitOfWork>(x => x.GetRequiredService<IAccessTokenRepository>() as AccessTokenRepository ?? throw new InvalidCastException())
             .AddScoped<IClientRepository, ClientRepository>()
             .AddScoped<IScopeRepository, ScopeRepository>()

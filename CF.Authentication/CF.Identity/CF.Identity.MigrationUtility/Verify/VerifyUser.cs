@@ -20,6 +20,7 @@ internal static partial class Verify
         if (user is not null)
         {
             var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserPIIProtection>();
+            userCredentialProtectionProvider.Client = user.Client;
             var userInfo = serviceProvider.GetRequiredService<UserInfo>();
 
             int issueCount = 0;

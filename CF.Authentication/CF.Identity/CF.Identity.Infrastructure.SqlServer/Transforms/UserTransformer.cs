@@ -48,11 +48,11 @@ public static class UserTransformer
 
             if (isNew)
             {
-                setIdRef(name.Id);
+                setCommonName(name);
             }
             else
             {
-                setCommonName(name);
+                setIdRef(name.Id);
             }
         }
     }
@@ -64,9 +64,9 @@ public static class UserTransformer
         bool isDbUserProvided = dbUser is not null;
         dbUser ??= user.Map<DbUser>();
 
-        await SetCommonNameAsync(commonNameRepository, user.Firstname, id => dbUser.FirstCommonNameId = id, model => dbUser.FirstCommonNameId = model.Id, cancellationToken);
-        await SetCommonNameAsync(commonNameRepository, user.Middlename, id => dbUser.MiddleCommonNameId = id, model => dbUser.MiddleCommonNameId = model.Id, cancellationToken);
-        await SetCommonNameAsync(commonNameRepository, user.Lastname, id => dbUser.LastCommonNameId = id, model => dbUser.LastCommonNameId = model.Id, cancellationToken);
+        await SetCommonNameAsync(commonNameRepository, user.Firstname, id => dbUser.FirstCommonNameId = id, model => dbUser.FirstCommonName = model, cancellationToken);
+        await SetCommonNameAsync(commonNameRepository, user.Middlename, id => dbUser.MiddleCommonNameId = id, model => dbUser.MiddleCommonName = model, cancellationToken);
+        await SetCommonNameAsync(commonNameRepository, user.Lastname, id => dbUser.LastCommonNameId = id, model => dbUser.LastCommonName = model, cancellationToken);
 
         if(isDbUserProvided)
         {
