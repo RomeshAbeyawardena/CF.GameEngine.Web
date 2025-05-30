@@ -3,8 +3,6 @@ using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.Repositories;
 using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace CF.Identity.Infrastructure.SqlServer.Transforms;
 
@@ -21,16 +19,14 @@ public static class UserTransformer
     private static async Task<(bool, DbCommonName?)> ResolveNameAsync(ICommonNameRepository commonNameRepository, string name, CancellationToken cancellationToken)
     {
         var normalised = name.Trim();
-        var upper = normalised.ToUpperInvariant();
-
-        var foundName = (await commonNameRepository.GetByNameRawAsync(upper, cancellationToken)).GetResultOrDefault();
+        
+        var foundName = (await commonNameRepository.GetByNameRawAsync(normalised, true, cancellationToken)).GetResultOrDefault();
 
         if (foundName is null)
         {
             var newName = new DbCommonName
             {
-                Value = upper,
-                ValueNormalised = normalised
+                Value = normalised,
             };
 
             var id = (await commonNameRepository.UpsertAsync(newName, cancellationToken)).GetResultOrDefault();
@@ -62,22 +58,11 @@ public static class UserTransformer
     }
 
 
-    public static async Task<DbUser> Transform(IUser user, ICommonNameRepository  commonNameRepository, IProtectionInfo protectionInfo,
+    public static async Task<DbUser> Transform(IUser user, ICommonNameRepository  commonNameRepository,
         CancellationToken cancellationToken, DbUser? dbUser = null)
     {
         bool isDbUserProvided = dbUser is not null;
         dbUser ??= user.Map<DbUser>();
-
-        var userHmac = protectionInfo.UserHmac;
-        var userCasingImpressions = protectionInfo.CasingImpressions;
-
-        dbUser.EmailAddressHmac = userHmac.EmailAddressHmac;
-        dbUser.EmailAddressCI = userCasingImpressions.EmailAddressCI;
-        dbUser.UsernameHmac = userHmac.UsernameHmac;
-        dbUser.UsernameCI = userCasingImpressions.UsernameCI;
-        dbUser.PreferredUsernameHmac = userHmac.PreferredUsernameHmac;
-        dbUser.PreferredUsernameCI = userCasingImpressions.PreferredUsernameCI;
-        dbUser.PrimaryTelephoneNumberHmac = userHmac.PrimaryTelephoneNumberHmac;
 
         await SetCommonNameAsync(commonNameRepository, user.Firstname, id => dbUser.FirstCommonNameId = id, model => dbUser.FirstCommonNameId = model.Id, cancellationToken);
         await SetCommonNameAsync(commonNameRepository, user.Middlename, id => dbUser.MiddleCommonNameId = id, model => dbUser.MiddleCommonNameId = model.Id, cancellationToken);

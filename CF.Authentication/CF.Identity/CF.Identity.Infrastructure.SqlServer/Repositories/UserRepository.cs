@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.PII;
+using CF.Identity.Infrastructure.SqlServer.Transforms;
 using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
 internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvider timeProvider, 
-    CFIdentityDbContext context, IUserPIIProtection userCredentialProtectionProvider) 
+    CFIdentityDbContext context, IUserPIIProtection userCredentialProtectionProvider, ICommonNameRepository commonNameRepository) 
     : RepositoryBase<IUser, DbUser, UserDto>(timeProvider, context), IUserRepository
 {
     private async Task EnsureUserPIIProtectionIsPrimed(Guid clientId, CancellationToken cancellationToken)
@@ -24,7 +25,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
     {
         await EnsureUserPIIProtectionIsPrimed(db.ClientId, cancellationToken);
         userCredentialProtectionProvider.Protect(db);
-        //await UserTransformer.Transform(source, Context, hMac, cancellationToken, db);
+        await UserTransformer.Transform(source, commonNameRepository, cancellationToken, db);
         await base.OnAddAsync(db, source, cancellationToken);
     }
 
@@ -34,6 +35,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         await EnsureUserPIIProtectionIsPrimed(db.ClientId, cancellationToken);
 
         userCredentialProtectionProvider.Protect(db);
+        await UserTransformer.Transform(source, commonNameRepository, cancellationToken, db);
         await base.OnUpdateAsync(db, source, cancellationToken);
     }
 
@@ -50,8 +52,8 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         {
             return UnitResult.NotFound<UserDto>(id);
         }
-        await EnsureUserPIIProtectionIsPrimed(foundUser.ClientId, cancellationToken);
 
+        await EnsureUserPIIProtectionIsPrimed(foundUser.ClientId, cancellationToken);
         userCredentialProtectionProvider.Unprotect(foundUser);
         var user = foundUser.Map<UserDto>();
 
