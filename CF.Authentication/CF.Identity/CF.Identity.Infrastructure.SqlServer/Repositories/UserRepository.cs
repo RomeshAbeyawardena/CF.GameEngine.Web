@@ -12,13 +12,17 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
     CFIdentityDbContext context, IUserPIIProtection userCredentialProtectionProvider) 
     : RepositoryBase<IUser, DbUser, UserDto>(timeProvider, context), IUserRepository
 {
+    private async Task EnsureUserPIIProtectionIsPrimed(Guid clientId, CancellationToken cancellationToken)
+    {
+        var dbClient = await Context.Clients.FindAsync([clientId], cancellationToken)
+            ?? throw new EntityNotFoundException(typeof(DbClient), clientId);
+        userCredentialProtectionProvider.Client = dbClient;
+
+    }
+
     protected override async Task OnAddAsync(DbUser db, UserDto source, CancellationToken cancellationToken)
     {
-        var dbClient = await Context.Clients.FindAsync([db.ClientId], cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(DbClient), db.ClientId);
-
-        userCredentialProtectionProvider.Set("Client", dbClient);
-
+        await EnsureUserPIIProtectionIsPrimed(db.ClientId, cancellationToken);
         userCredentialProtectionProvider.Protect(db);
         //await UserTransformer.Transform(source, Context, hMac, cancellationToken, db);
         await base.OnAddAsync(db, source, cancellationToken);
@@ -27,9 +31,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
     //it is assumed the data recieved is unencrypted, we take no assurance that the data is unencrypted as we can confirm anything we've given to the consumer is unencrypted.
     protected override async Task OnUpdateAsync(DbUser db, UserDto source, CancellationToken cancellationToken)
     {
-        var dbClient = await Context.Clients.FindAsync([db.ClientId], cancellationToken) 
-            ?? throw new EntityNotFoundException(typeof(DbClient), db.ClientId);
-        userCredentialProtectionProvider.Set("Client", dbClient);
+        await EnsureUserPIIProtectionIsPrimed(db.ClientId, cancellationToken);
 
         userCredentialProtectionProvider.Protect(db);
         await base.OnUpdateAsync(db, source, cancellationToken);
@@ -48,6 +50,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         {
             return UnitResult.NotFound<UserDto>(id);
         }
+        await EnsureUserPIIProtectionIsPrimed(foundUser.ClientId, cancellationToken);
 
         userCredentialProtectionProvider.Unprotect(foundUser);
         var user = foundUser.Map<UserDto>();
@@ -73,11 +76,19 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
             .Where(externalFilter)
             .ToListAsync(cancellationToken);
 
-        var mappedResult = MapTo(result, (db, x) => {
-            userCredentialProtectionProvider.Unprotect(db);
-        });
+        if (result.Count > 0)
+        {
+            await EnsureUserPIIProtectionIsPrimed(result.First().ClientId, cancellationToken);
 
-        return UnitResultCollection.FromResult(mappedResult);
+            var mappedResult = MapTo(result, (db, x) =>
+            {
+                userCredentialProtectionProvider.Unprotect(db);
+            });
+
+            return UnitResultCollection.FromResult(mappedResult);
+        }
+
+        return UnitResultCollection.FromResult(Array.Empty<UserDto>());
     }
 
     public async Task<IUnitResultCollection<Guid>> SynchroniseScopesAsync(Guid userId, IEnumerable<Guid> scopeIds, CancellationToken cancellationToken)

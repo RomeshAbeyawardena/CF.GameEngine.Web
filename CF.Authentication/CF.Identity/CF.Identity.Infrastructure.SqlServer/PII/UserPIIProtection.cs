@@ -1,12 +1,14 @@
-﻿using CF.Identity.Infrastructure.Features.Clients;
-using CF.Identity.Infrastructure.SqlServer.Models;
+﻿using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 
 namespace CF.Identity.Infrastructure.SqlServer.PII;
 
-public interface IUserPIIProtection : IPIIProtection<DbUser>;
+public interface IUserPIIProtection : IPIIProtection<DbUser>
+{
+    DbClient Client { get; set; }
+}
 
 internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
 {
@@ -15,10 +17,7 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
     {
         var ourValue = _configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
 
-        var client = Get<ClientDto>("client") 
-            ?? throw new NullReferenceException("Client dependency not found");
-
-        return GenerateKey(entity, 32, '|', ourValue, client.SecretHash ?? throw new NullReferenceException());
+        return GenerateKey(entity, 32, '|', ourValue, Client.SecretHash ?? throw new NullReferenceException());
     }
 
     public UserPIIProtection(IConfiguration configuration, Encoding encoding) : base(encoding)
@@ -40,5 +39,11 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
         MapProtectionInfoTo(x => x.PrimaryTelephoneNumber, BackingStore.Hmac, x => x.PrimaryTelephoneNumberHmac);
         ProtectHashed(x => x.HashedPassword, "PasswordHashSalt",
             System.Security.Cryptography.HashAlgorithmName.SHA384);
+    }
+
+    public DbClient Client { 
+        get => Get<DbClient>("client") 
+            ?? throw new NullReferenceException("Client dependency not found");
+        set => Set("client", value);
     }
 }
