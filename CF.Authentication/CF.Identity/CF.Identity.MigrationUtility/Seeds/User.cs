@@ -1,6 +1,8 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
+using CF.Identity.Infrastructure.SqlServer.PII;
+using CF.Identity.Infrastructure.SqlServer.Repositories;
 using CF.Identity.Infrastructure.SqlServer.Transforms;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
@@ -47,10 +49,13 @@ internal static partial class Seed
             IsSystem = true,
         };
 
-        var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserCredentialProtectionProvider>();
-        userCredentialProtectionProvider.Protect(userDto, client!, out var hmac);
+        var commonNameRepository = serviceProvider.GetRequiredService<ICommonNameRepository>();
+        var user = await UserTransformer.Transform(userDto, commonNameRepository, cancellationToken);
 
-        var user = await UserTransformer.Transform(userDto, context, hmac, cancellationToken);
+        var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserPIIProtection>();
+        userCredentialProtectionProvider.Client = client ?? throw new NullReferenceException("Expected client");
+
+        userCredentialProtectionProvider.Protect(user);
 
         if (!isInflight)
         {
