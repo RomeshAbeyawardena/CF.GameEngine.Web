@@ -12,6 +12,7 @@ public interface IUserPIIProtection : IPIIProtection<DbUser>
 
 internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
 {
+    private readonly ICommonNamePIIProtection _commonNamePIIProtection;
     private string GetHash(DbUser user)
     {
         var secondPart = Client.SecretHash ?? user.Id.ToString();
@@ -28,8 +29,27 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
         return $"{ApplicationKnownValue}:{Client.SecretHash}";
     }
 
-    public UserPIIProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
+    protected override void OnUnprotect(DbUser user)
     {
+        if (user.FirstCommonName is not null)
+        {
+            _commonNamePIIProtection.Unprotect(user.FirstCommonName);
+        }
+
+        if (user.MiddleCommonName is not null)
+        {
+            _commonNamePIIProtection.Unprotect(user.MiddleCommonName);
+        }
+
+        if (user.LastCommonName is not null)
+        {
+            _commonNamePIIProtection.Unprotect(user.LastCommonName);
+        }
+    }
+
+    public UserPIIProtection(ICommonNamePIIProtection commonNamePIIProtection, IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
+    {
+        _commonNamePIIProtection = commonNamePIIProtection;
         SetMetaData(x => x.Metadata);
         SetRowVersion(x => x.RowVersion);
 

@@ -183,7 +183,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return string.Empty;
     }
 
-    protected virtual void OnUnprotect()
+    protected virtual void OnUnprotect(T entry)
     {
 
     }
@@ -274,7 +274,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             value.Unprotect(this, entry, protectionInfo ?? throw new NullReferenceException());
         }
 
-        OnUnprotect();
+        OnUnprotect(entry);
     }
 
     public virtual TItem? Get<TItem>(string key)
