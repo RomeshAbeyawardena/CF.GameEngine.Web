@@ -183,6 +183,11 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return string.Empty;
     }
 
+    protected virtual void OnUnprotect()
+    {
+
+    }
+
     public IReadOnlyDictionary<string, IProtectionInfo> ExtractProtectionInfo(T entity)
     {
         var result = new Dictionary<string, IProtectionInfo>();
@@ -214,7 +219,6 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     {
         return HashWithHmac(GetHmacKey(), data.ToUpperInvariant());
     }
-
 
     public string HashWithHmac(string key, string? data)
     {
@@ -269,6 +273,8 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
             value.Unprotect(this, entry, protectionInfo ?? throw new NullReferenceException());
         }
+
+        OnUnprotect();
     }
 
     public virtual TItem? Get<TItem>(string key)
