@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer;
+using CF.Identity.Infrastructure.SqlServer.PII;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,31 +19,26 @@ internal static partial class Verify
 
         if (user is not null)
         {
-            var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserCredentialProtectionProvider>();
+            var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserPIIProtection>();
+            userCredentialProtectionProvider.Client = user.Client;
             var userInfo = serviceProvider.GetRequiredService<UserInfo>();
 
-            var expectedEmailAddressHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.EmailAddress);
-
-            var expectedUsernameHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.Username);
-
-            var expectedPreferredUsernameHmac = userCredentialProtectionProvider.HashUsingHmac(user.Client, userInfo.PreferredUsername);
-
             int issueCount = 0;
-            if (expectedEmailAddressHmac != user.EmailAddressHmac)
+            if (!userCredentialProtectionProvider.VerifyHmacUsing(user, x => x.EmailAddress, userInfo.EmailAddress))
             {
-                logger.LogWarning("Email address HMAC does not match: {expectedEmailAddressHmac} != {EmailAddressHmac}", expectedEmailAddressHmac, user.EmailAddressHmac);
+                logger.LogWarning("Email address HMAC does not match");
                 issueCount++;
             }
 
-            if (expectedUsernameHmac != user.UsernameHmac)
+            if (!userCredentialProtectionProvider.VerifyHmacUsing(user, x => x.Username, userInfo.Username))
             {
-                logger.LogWarning("Username HMAC does not match: {expectedUsernameHmac} != {UsernameHmac}", expectedUsernameHmac, user.UsernameHmac);
+                logger.LogWarning("Username HMAC does not match");
                 issueCount++;
             }
 
-            if (expectedPreferredUsernameHmac != user.PreferredUsernameHmac)
+            if (!userCredentialProtectionProvider.VerifyHmacUsing(user, x => x.PreferredUsername, userInfo.PreferredUsername))
             {
-                logger.LogWarning("Preferred username HMAC does not match: {expectedPreferredUsernameHmac} != {preferredUsernameHmac}", expectedPreferredUsernameHmac, user.PreferredUsernameHmac);
+                logger.LogWarning("Preferred username HMAC does not match");
                 issueCount++;
             }
 
@@ -52,9 +48,9 @@ internal static partial class Verify
                     "This will impact filtering encrypted fields within the system until its resolved", issueCount);
             }
 
-            var mappedUser = user.Map<UserDto>();
-            userCredentialProtectionProvider.Unprotect(mappedUser, user.Client, user);
+            userCredentialProtectionProvider.Unprotect(user);
 
+            var mappedUser = user.Map<UserDto>();
             if (userInfo.EmailAddress != mappedUser.EmailAddress)
             {
                 var expected = userInfo.EmailAddress;
@@ -76,9 +72,7 @@ internal static partial class Verify
                 issueCount++;
             }
 
-            var hashedPassword = userCredentialProtectionProvider.Hash(userInfo.Password, user);
-
-            if(user.HashedPassword != hashedPassword)
+            if(!userCredentialProtectionProvider.VerifyHashUsing(user, x => x.HashedPassword, userInfo.Password))
             {
                 logger.LogWarning("Password does not match the value stored in the database");
                 issueCount++;

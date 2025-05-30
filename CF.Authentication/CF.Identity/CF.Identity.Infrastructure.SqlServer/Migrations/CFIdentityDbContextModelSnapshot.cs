@@ -22,6 +22,35 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbAccessRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("RoleId");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId", "Key");
+
+                    b.ToTable("Role", "dbo");
+                });
+
             modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbAccessToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -131,45 +160,34 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CommonNameId");
 
+                    b.Property<string>("MetaData")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
-                    b.Property<string>("ValueNormalised")
+                    b.Property<string>("ValueCI")
                         .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasMaxLength(344)
+                        .HasColumnType("nvarchar(344)");
+
+                    b.Property<string>("ValueHmac")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.HasKey("Id");
 
                     b.ToTable("CommonName", "dbo");
-                });
-
-            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("RoleId");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("DisplayName")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId", "Key");
-
-                    b.ToTable("Role", "dbo");
                 });
 
             modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbRoleScope", b =>
@@ -179,10 +197,10 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("RoleScopeId");
 
-                    b.Property<Guid?>("DbUserRoleId")
+                    b.Property<Guid>("AccessRoleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RoleId")
+                    b.Property<Guid?>("DbUserAccessRoleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ScopeId")
@@ -190,9 +208,9 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("RoleId", "ScopeId");
+                    b.HasAlternateKey("AccessRoleId", "ScopeId");
 
-                    b.HasIndex("DbUserRoleId");
+                    b.HasIndex("DbUserAccessRoleId");
 
                     b.HasIndex("ScopeId");
 
@@ -341,14 +359,17 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.ToTable("User", "dbo");
                 });
 
-            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbUserRole", b =>
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbUserAccessRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("UserRoleId");
 
-                    b.Property<Guid>("RoleId")
+                    b.Property<Guid>("AccessRoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DbUserAccessRoleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
@@ -356,9 +377,11 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("UserId", "RoleId");
+                    b.HasAlternateKey("UserId", "AccessRoleId");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("AccessRoleId");
+
+                    b.HasIndex("DbUserAccessRoleId");
 
                     b.ToTable("UserRole", "dbo");
                 });
@@ -385,6 +408,17 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.ToTable("UserScope", "dbo");
                 });
 
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbAccessRole", b =>
+                {
+                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbClient", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbAccessToken", b =>
                 {
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbClient", "Client")
@@ -404,28 +438,17 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbRole", b =>
-                {
-                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbClient", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-                });
-
             modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbRoleScope", b =>
                 {
-                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbUserRole", null)
+                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbAccessRole", "Role")
                         .WithMany("Scopes")
-                        .HasForeignKey("DbUserRoleId");
-
-                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbRole", "Role")
-                        .WithMany("Scopes")
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("AccessRoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbUserAccessRole", null)
+                        .WithMany("Scopes")
+                        .HasForeignKey("DbUserAccessRoleId");
 
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbScope", "Scope")
                         .WithMany()
@@ -481,13 +504,17 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.Navigation("MiddleCommonName");
                 });
 
-            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbUserRole", b =>
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbUserAccessRole", b =>
                 {
-                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbRole", "Role")
+                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbAccessRole", "AccessRole")
                         .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("AccessRoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbUserAccessRole", null)
+                        .WithMany("UserRoles")
+                        .HasForeignKey("DbUserAccessRoleId");
 
                     b.HasOne("CF.Identity.Infrastructure.SqlServer.Models.DbUser", "User")
                         .WithMany()
@@ -495,7 +522,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.Navigation("AccessRole");
 
                     b.Navigation("User");
                 });
@@ -519,7 +546,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbRole", b =>
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbAccessRole", b =>
                 {
                     b.Navigation("Scopes");
 
@@ -536,9 +563,11 @@ namespace CF.Identity.Infrastructure.SqlServer.Migrations
                     b.Navigation("UserScopes");
                 });
 
-            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbUserRole", b =>
+            modelBuilder.Entity("CF.Identity.Infrastructure.SqlServer.Models.DbUserAccessRole", b =>
                 {
                     b.Navigation("Scopes");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

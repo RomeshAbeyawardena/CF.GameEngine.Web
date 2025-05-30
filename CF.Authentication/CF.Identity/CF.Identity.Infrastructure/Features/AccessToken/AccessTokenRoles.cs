@@ -1,4 +1,4 @@
-﻿using IDFCR.Shared.Abstractions;
+﻿using IDFCR.Shared.Abstractions.Roles;
 using CF.Identity.Infrastructure.Properties;
 namespace CF.Identity.Infrastructure.Features.AccessToken;
 

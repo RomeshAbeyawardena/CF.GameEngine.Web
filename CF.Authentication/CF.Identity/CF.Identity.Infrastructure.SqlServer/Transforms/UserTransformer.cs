@@ -1,8 +1,8 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer.Models;
+using CF.Identity.Infrastructure.SqlServer.Repositories;
 using IDFCR.Shared.Exceptions;
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
+using IDFCR.Shared.Extensions;
 
 namespace CF.Identity.Infrastructure.SqlServer.Transforms;
 
@@ -16,67 +16,56 @@ public static class UserTransformer
     /// <param name="setEntityRef">Callback to assign the newly created tracked entity.</param>
     /// <param name="setIdRef">Callback to assign the ID of an existing tracked entity.</param>
     /// <param name="cancellationToken">Token to cancel the async operation.</param>
-    private static async Task<(bool, DbCommonName?)> ResolveNameAsync(CFIdentityDbContext context, string name, CancellationToken cancellationToken)
+    private static async Task<(bool, DbCommonName?)> ResolveNameAsync(ICommonNameRepository commonNameRepository, string name, CancellationToken cancellationToken)
     {
         var normalised = name.Trim();
-        var upper = normalised.ToUpperInvariant();
-
-        var foundName = await context.CommonNames
-            .FirstOrDefaultAsync(x => x.Value == upper, cancellationToken);
+        
+        var foundName = (await commonNameRepository.GetByNameRawAsync(normalised, true, cancellationToken)).GetResultOrDefault();
 
         if (foundName is null)
         {
             var newName = new DbCommonName
             {
-                Value = upper,
-                ValueNormalised = normalised
+                Value = normalised,
             };
 
-            context.CommonNames.Add(newName);
+            var id = (await commonNameRepository.UpsertAsync(newName, cancellationToken)).GetResultOrDefault();
 
-            return (true, newName);
+            return (true, id);
         }
 
         return (false, foundName);
     }
 
-    private static async Task SetCommonNameAsync(CFIdentityDbContext context, string? lookupName, 
-        Action<DbCommonName> setEntityRef, Action<Guid> setIdRef, CancellationToken cancellationToken)
+    private static async Task SetCommonNameAsync(ICommonNameRepository commonNameRepository, 
+        string? lookupName, Action<Guid> setIdRef, Action<DbCommonName> setCommonName, CancellationToken cancellationToken)
     {
         if (!string.IsNullOrWhiteSpace(lookupName))
         {
-            var (isNew, name) = await ResolveNameAsync(context, lookupName, cancellationToken);
+            var (isNew, name) = await ResolveNameAsync(commonNameRepository, lookupName, cancellationToken);
             if (name is null)
                 throw new EntityNotFoundException(typeof(DbCommonName), lookupName);
 
             if (isNew)
-                setEntityRef(name);
-            else
-                setIdRef(name.Id);
+            {
+                setCommonName(name);
+                return;
+            }
+            
+            setIdRef(name.Id);
         }
     }
 
 
-    public static async Task<DbUser> Transform(IUser user, CFIdentityDbContext context, IProtectionInfo protectionInfo,
+    public static async Task<DbUser> Transform(IUser user, ICommonNameRepository  commonNameRepository,
         CancellationToken cancellationToken, DbUser? dbUser = null)
     {
         bool isDbUserProvided = dbUser is not null;
         dbUser ??= user.Map<DbUser>();
 
-        var userHmac = protectionInfo.UserHmac;
-        var userCasingImpressions = protectionInfo.CasingImpressions;
-
-        dbUser.EmailAddressHmac = userHmac.EmailAddressHmac;
-        dbUser.EmailAddressCI = userCasingImpressions.EmailAddressCI;
-        dbUser.UsernameHmac = userHmac.UsernameHmac;
-        dbUser.UsernameCI = userCasingImpressions.UsernameCI;
-        dbUser.PreferredUsernameHmac = userHmac.PreferredUsernameHmac;
-        dbUser.PreferredUsernameCI = userCasingImpressions.PreferredUsernameCI;
-        dbUser.PrimaryTelephoneNumberHmac = userHmac.PrimaryTelephoneNumberHmac;
-
-        await SetCommonNameAsync(context, user.Firstname, name => dbUser.FirstCommonName = name, id => dbUser.FirstCommonNameId = id, cancellationToken);
-        await SetCommonNameAsync(context, user.Middlename, name => dbUser.MiddleCommonName = name, id => dbUser.MiddleCommonNameId = id, cancellationToken);
-        await SetCommonNameAsync(context, user.Lastname, name => dbUser.LastCommonName = name, id => dbUser.LastCommonNameId = id, cancellationToken);
+        await SetCommonNameAsync(commonNameRepository, user.Firstname, id => dbUser.FirstCommonNameId = id, model => dbUser.FirstCommonName = model, cancellationToken);
+        await SetCommonNameAsync(commonNameRepository, user.Middlename, id => dbUser.MiddleCommonNameId = id, model => dbUser.MiddleCommonName = model, cancellationToken);
+        await SetCommonNameAsync(commonNameRepository, user.Lastname, id => dbUser.LastCommonNameId = id, model => dbUser.LastCommonName = model, cancellationToken);
 
         if(isDbUserProvided)
         {

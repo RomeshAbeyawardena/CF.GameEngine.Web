@@ -2,8 +2,8 @@
 using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Shared.Abstractions.Paging;
 using IDFCR.Shared.Mediatr;
-using IRoleRequirement = IDFCR.Shared.Abstractions.IRoleRequirement;
-using RoleRequirementType = IDFCR.Shared.Abstractions.RoleRequirementType;
+using IRoleRequirement = IDFCR.Shared.Abstractions.Roles.IRoleRequirement;
+using RoleRequirementType = IDFCR.Shared.Abstractions.Roles.RoleRequirementType;
 
 namespace CF.Identity.Api.Features.Scopes.Get;
 

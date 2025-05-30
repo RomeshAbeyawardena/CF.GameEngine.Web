@@ -1,6 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Scope;
-using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.Scopes.Post;

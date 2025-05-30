@@ -2,6 +2,8 @@
 using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.Features.Scope;
 using CF.Identity.Infrastructure.Features.Users;
+using CF.Identity.Infrastructure.SqlServer.PII;
+using CF.Identity.Infrastructure.SqlServer.Protection;
 using CF.Identity.Infrastructure.SqlServer.Repositories;
 using IDFCR.Shared.EntityFramework;
 using IDFCR.Shared.Extensions;
@@ -32,8 +34,10 @@ public static class ServiceCollectionExtensions
             .AddTransient((x) => RandomNumberGenerator.Create())
             .AddSingleton<IJwtSettings, ConfigurationDerivedJwtSettings>()
             .AddSingleton<IClientCredentialHasher, ClientCredentialHasher>()
-            .AddSingleton<IUserCredentialProtectionProvider, UserCredentialProtectionProvider>()
+            .AddSingleton<IUserPIIProtection, UserPIIProtection>()
             .AddScoped<IAccessTokenRepository, AccessTokenRepository>()
+            .AddScoped<ICommonNameRepository, CommonNameRepository>()
+            .AddScoped<ICommonNamePIIProtection, CommonNamePIIProtection>()
             .AddScoped<ITransactionalUnitOfWork>(x => x.GetRequiredService<IAccessTokenRepository>() as AccessTokenRepository ?? throw new InvalidCastException())
             .AddScoped<IClientRepository, ClientRepository>()
             .AddScoped<IScopeRepository, ScopeRepository>()

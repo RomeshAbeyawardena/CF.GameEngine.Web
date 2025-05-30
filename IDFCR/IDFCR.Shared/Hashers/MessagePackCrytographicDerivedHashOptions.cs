@@ -1,6 +1,6 @@
 ﻿using MessagePack;
 
-namespace StateManagent.Web.Infrastructure.Hashers;
+namespace IDFCR.Shared.Hashers;
 
 public record MessagePackCrytographicDerivedHashOptions(
     MessagePackSerializerOptions MessagePackSerializerOptions,
