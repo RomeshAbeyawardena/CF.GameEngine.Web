@@ -6,7 +6,7 @@ namespace IDFCR.Shared.Extensions;
 
 public static class StringExtensions
 {
-    public static string NormaliseNames(this string value)
+    public static string NormaliseName(this string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             return value;
