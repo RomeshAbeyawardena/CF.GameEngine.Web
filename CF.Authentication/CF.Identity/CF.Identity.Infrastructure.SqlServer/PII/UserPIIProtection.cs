@@ -13,11 +13,17 @@ public interface IUserPIIProtection : IPIIProtection<DbUser>
 internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
 {
     private readonly IConfiguration _configuration;
+    private string ApplicationKnownValue => _configuration
+        .GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
+    private string GetHash(DbUser user)
+    {
+        var secondPart = Client.SecretHash ?? user.Id.ToString();
+        return $"{ApplicationKnownValue}:{secondPart}";
+    }
+
     protected override string GetKey(DbUser entity)
     {
-        var ourValue = _configuration.GetValue<string>("Encryption:Key") ?? throw new InvalidOperationException("Encryption key not found in configuration.");
-
-        return GenerateKey(entity, 32, '|', ourValue, Client.SecretHash ?? throw new NullReferenceException());
+        return GenerateKey(entity, 32, '|', ApplicationKnownValue, Client.SecretHash ?? throw new NullReferenceException());
     }
 
     public UserPIIProtection(IConfiguration configuration, Encoding encoding) : base(encoding)
@@ -37,8 +43,10 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
         MapProtectionInfoTo(x => x.PreferredUsername, BackingStore.Hmac, x => x.PreferredUsernameHmac);
         ProtectSymmetric(x => x.PrimaryTelephoneNumber);
         MapProtectionInfoTo(x => x.PrimaryTelephoneNumber, BackingStore.Hmac, x => x.PrimaryTelephoneNumberHmac);
-        ProtectHashed(x => x.HashedPassword, "PasswordHashSalt",
+#pragma warning disable IDE0200 //Client part not known during instantiation
+        ProtectHashed(x => x.HashedPassword, x => GetHash(x),
             System.Security.Cryptography.HashAlgorithmName.SHA384);
+#pragma warning restore IDE0200
     }
 
     private const string ClientKey = "client";

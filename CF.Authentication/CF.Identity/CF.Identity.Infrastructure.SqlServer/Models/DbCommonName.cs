@@ -9,7 +9,12 @@ public class DbCommonName : MappableBase<ICommonName>, ICommonName
     public Guid Id { get; set; }
     public string Value { get; set; } = null!;
     public string ValueCI { get; set; } = null!;
+    public string ValueHmac { get; set; } = null!;
+    
     public string ValueNormalised { get; set; } = null!;
+    public string ValueNormalisedCI { get; set; } = null!;
+    public string ValueNormalisedHmac { get; set; } = null!;
+
     public string RowVersion { get; set; } = null!;
     public string MetaData { get; set; } = null!;
 
