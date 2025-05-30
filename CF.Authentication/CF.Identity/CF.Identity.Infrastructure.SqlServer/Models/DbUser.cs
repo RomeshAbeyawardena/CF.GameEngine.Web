@@ -3,12 +3,12 @@ using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Infrastructure.SqlServer.Models;
 
-public class DbUser : MappableBase<IUser>, IUser, IUserHmac, IUserCasingImpression
+public class DbUser : MappableBase<IUser>, IUser
 {
     protected override IUser Source => this;
-    string IUserDetail.Firstname => FirstCommonName.ValueNormalised;
-    string? IUserDetail.Middlename => MiddleCommonName?.ValueNormalised;
-    string IUserDetail.Lastname => LastCommonName.ValueNormalised;
+    string IUserDetail.Firstname => FirstCommonName.Value;
+    string? IUserDetail.Middlename => MiddleCommonName?.Value;
+    string IUserDetail.Lastname => LastCommonName.Value;
 
     public string EmailAddress { get; set; } = null!;
     public string EmailAddressHmac { get; set; } = null!;

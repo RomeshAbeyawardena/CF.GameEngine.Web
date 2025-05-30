@@ -16,9 +16,5 @@ internal class CommonNameEntityConfiguration : IEntityTypeConfiguration<DbCommon
         builder.Property(x => x.Value)
             .IsRequired()
             .HasMaxLength(32);
-
-        builder.Property(x => x.ValueNormalised)
-            .IsRequired()
-            .HasMaxLength(32);
     }
 }

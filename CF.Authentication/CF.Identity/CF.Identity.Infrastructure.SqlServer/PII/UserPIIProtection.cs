@@ -25,7 +25,7 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
 
     protected override string GetHmacKey()
     {
-        return ApplicationKnownValue;
+        return $"{ApplicationKnownValue}:{Client.SecretHash}";
     }
 
     public UserPIIProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
