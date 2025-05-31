@@ -78,7 +78,14 @@ internal static partial class Verify
                 issueCount++;
             }
 
-            return issueCount == 0;
+            var hasNoIssues = issueCount == 0;
+
+            if (hasNoIssues)
+            {
+                logger.LogInformation("User data has been successfully encrypted and decrypted");
+            }
+
+            return hasNoIssues;
         }
         return false;
     }
