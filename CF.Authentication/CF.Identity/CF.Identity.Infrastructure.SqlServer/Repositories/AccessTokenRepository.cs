@@ -1,14 +1,30 @@
 ﻿ using CF.Identity.Infrastructure.Features.AccessToken;
 using CF.Identity.Infrastructure.SqlServer.Filters;
 using CF.Identity.Infrastructure.SqlServer.Models;
+using CF.Identity.Infrastructure.SqlServer.SPA;
 using IDFCR.Shared.Abstractions.Results;
+using IDFCR.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class AccessTokenRepository(TimeProvider timeProvider, CFIdentityDbContext context)
+internal class AccessTokenRepository(IAccessTokenProtection accessTokenProtection, TimeProvider timeProvider, CFIdentityDbContext context)
     : RepositoryBase<IAccessToken, DbAccessToken, AccessTokenDto>(timeProvider, context), IAccessTokenRepository
 {
+    private async Task PrimeAccessTokenProtection(Guid clientId, CancellationToken cancellationToken)
+    {
+        var client = await Context.Clients.FindAsync([clientId], cancellationToken)
+            ?? throw new EntityNotFoundException(typeof(DbClient), clientId);
+        accessTokenProtection.Client = client;
+    }
+
+    protected override async Task OnAddAsync(DbAccessToken db, AccessTokenDto source, CancellationToken cancellationToken)
+    {
+        await PrimeAccessTokenProtection(db.ClientId, cancellationToken);
+        accessTokenProtection.Protect(db);
+        await base.OnAddAsync(db, source, cancellationToken);
+    }
+
     public async Task<IUnitResultCollection<Guid>> BulkExpireAsync(IEnumerable<Guid> ids, string? revokeReason, string? revokedBy, CancellationToken cancellationToken)
     {
         List<Guid> updatedIds = [];

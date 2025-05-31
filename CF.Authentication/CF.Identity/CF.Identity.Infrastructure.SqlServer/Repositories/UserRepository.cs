@@ -20,7 +20,6 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         var dbClient = await Context.Clients.FindAsync([clientId], cancellationToken)
             ?? throw new EntityNotFoundException(typeof(DbClient), clientId);
         userCredentialProtectionProvider.Client = dbClient;
-
     }
 
     protected override async Task OnAddAsync(DbUser db, UserDto source, CancellationToken cancellationToken)

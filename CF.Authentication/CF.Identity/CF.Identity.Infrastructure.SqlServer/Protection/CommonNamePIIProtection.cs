@@ -11,9 +11,7 @@ internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>, ICommo
     private readonly IConfiguration _configuration;
     protected override string GetKey(DbCommonName entity)
     {
-        var ourValue = _configuration.GetValue<string>("Encryption:Key") 
-            ?? throw new InvalidOperationException("Encryption key not found in configuration.");
-        return GenerateKey(entity, 32, '|', ourValue, entity.Id.ToString("N"));
+        return GenerateKey(entity, 32, '|', ApplicationKnownValue, entity.Id.ToString("N"));
     }
 
     protected override string GetHmacKey()

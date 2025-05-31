@@ -10,14 +10,10 @@ internal class ClientProtection : PIIProtectionBase<DbClient>, IClientProtection
 {
     protected override string GetKey(DbClient client)
     {
-        return $"{client.Reference}-{client.Id}";
+        return $"{base.ApplicationKnownValue}-{client.Reference}";
     }
 
-    protected override string GetHmacKey()
-    {
-        //not in use, but required by base class
-        return string.Empty;
-    }
+    protected override string GetHmacKey() => throw new NotSupportedException();
 
     public ClientProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
     {
