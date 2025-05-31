@@ -3,6 +3,7 @@ using CF.Identity.Infrastructure.SqlServer.PII;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
@@ -55,11 +56,25 @@ internal class CommonNameRepository(ICommonNamePIIProtection commonNamePIIProtec
 
         IQueryable<DbCommonName> query = needsTracking ? Context.CommonNames : Context.CommonNames.AsNoTracking();
 
-        var result = await query.Where(x => x.ValueHmac == hmacValue).FirstOrDefaultAsync(cancellationToken);
+        var result = await query.Where(x => x.ValueHmac == hmacValue && !x.IsAnonymisedMarker).FirstOrDefaultAsync(cancellationToken);
 
         if (result is null)
         {
             return UnitResult.NotFound<DbCommonName>(name);
+        }
+
+        return UnitResult.FromResult(result);
+    }
+
+    public async Task<IUnitResult<DbCommonName>> GetAnonymisedRowRawAsync(bool needsTracking = false, CancellationToken cancellationToken = default)
+    {
+        IQueryable<DbCommonName> query = needsTracking ? Context.CommonNames : Context.CommonNames.AsNoTracking();
+
+        var result = await query.Where(x => x.IsAnonymisedMarker).FirstOrDefaultAsync(cancellationToken);
+
+        if (result is null)
+        {
+            return UnitResult.NotFound<DbCommonName>(nameof(DbCommonName.IsAnonymisedMarker));
         }
 
         return UnitResult.FromResult(result);

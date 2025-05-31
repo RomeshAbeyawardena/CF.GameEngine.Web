@@ -13,6 +13,7 @@ public class DbCommonName : MappableBase<ICommonName>, ICommonName
     
     public string RowVersion { get; set; } = null!;
     public string MetaData { get; set; } = null!;
+    public bool IsAnonymisedMarker { get; set; }
 
     public override void Map(ICommonName source)
     {
@@ -20,5 +21,6 @@ public class DbCommonName : MappableBase<ICommonName>, ICommonName
         Value = source.Value;
         RowVersion = source.RowVersion;
         MetaData = source.MetaData;
+        IsAnonymisedMarker = source.IsAnonymisedMarker;
     }
 }

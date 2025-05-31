@@ -21,5 +21,12 @@ public interface ICommonNameRepository : IRepository<CommonNameDto>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IUnitResult<DbCommonName>> GetByNameRawAsync(string name, bool needsTracking, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// This is the raw object, no decryption will be performed
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IUnitResult<DbCommonName>> GetAnonymisedRowRawAsync(bool needsTracking = false, CancellationToken cancellationToken = default);
 }
 

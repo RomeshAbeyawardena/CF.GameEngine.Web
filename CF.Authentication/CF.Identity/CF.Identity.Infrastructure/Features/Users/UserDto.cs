@@ -19,6 +19,7 @@ public record UserDto : MappableBase<IUser>, IUser
     public string RowVersion { get; set; } = null!;
     public string? Metadata { get; set; }
     public string PrimaryTelephoneNumber { get; set; } = null!;
+    public DateTimeOffset? AnonymisedTimestamp { get; set; }
 
     public override void Map(IUser source)
     {
@@ -35,5 +36,6 @@ public record UserDto : MappableBase<IUser>, IUser
         RowVersion = source.RowVersion;
         Metadata = source.Metadata;
         PrimaryTelephoneNumber = source.PrimaryTelephoneNumber;
+        AnonymisedTimestamp = source.AnonymisedTimestamp;
     }
 }

@@ -43,6 +43,7 @@ public class DbUser : MappableBase<IUser>, IUser
     public virtual ICollection<DbUserScope> UserScopes { get; set; } = [];
 
     public string? Metadata { get; set; }
+    public DateTimeOffset? AnonymisedTimestamp { get; set; }
 
     public override void Map(IUser source)
     {
@@ -56,5 +57,6 @@ public class DbUser : MappableBase<IUser>, IUser
         RowVersion = source.RowVersion;
         Metadata = source.Metadata;
         PrimaryTelephoneNumber = source.PrimaryTelephoneNumber;
+        AnonymisedTimestamp = source.AnonymisedTimestamp;
     }
 }

@@ -5,7 +5,9 @@ using CF.Identity.Infrastructure.SqlServer.Transforms;
 using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
+using IDFCR.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
@@ -120,5 +122,34 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         }
 
         return UnitResultCollection.FromResult(scopesToAdd.Select(x => x.Id), UnitAction.Update);
+    }
+
+
+    public async Task<IUnitResult<Guid>> AnonymiseUserAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        //we need the database record directly without additional mapping or PII protection
+        var dbUser = await Context.Users.FindAsync([id], cancellationToken);
+
+        if (dbUser is null)
+        {
+            return UnitResult.Failed<Guid>(new EntityNotFoundException(typeof(DbUser), id));
+        }
+
+        var anonName = (await commonNameRepository.GetAnonymisedRowRawAsync(false, cancellationToken)).GetResultOrDefault();
+
+        if (anonName is null)
+        {
+            return UnitResult.Failed<Guid>(new EntityNotFoundException(typeof(DbCommonName), "Anonymised Common Name"));
+        }
+
+        dbUser.FirstCommonNameId = anonName.Id;
+        dbUser.MiddleCommonNameId = anonName.Id;
+        dbUser.LastCommonNameId = anonName.Id;
+        dbUser.EmailAddress = string.Empty;
+        dbUser.Username = string.Empty;
+        dbUser.HashedPassword = string.Empty;
+        dbUser.AnonymisedTimestamp = TimeProvider.GetUtcNow();
+
+        return UnitResult.FromResult(dbUser.Id, UnitAction.Update);
     }
 }
