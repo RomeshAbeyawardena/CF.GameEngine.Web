@@ -31,7 +31,8 @@ internal class CustomerProtectionModelWithDynamicSalt : PIIProtectionBase<Custom
 
 #pragma warning disable IDE0200
         // This must be a lambda or this will crash as ExternalSaltProvider will not be available during instantiation
-        ProtectHashed(x => x.Password, (x) => ExternalSaltProvider.GetSalt(x), System.Security.Cryptography.HashAlgorithmName.SHA384);
+        ProtectArgonHashed(x => x.Password,
+            (x) => ExternalSaltProvider.GetSalt(x), ArgonVariation.Argon2id, 64);
 #pragma warning restore IDE0200
         ProtectSymmetric(x => x.PhoneNumber);
         MapProtectionInfoTo(x => x.PhoneNumber, BackingStore.CasingImpression, x => x.PhoneNumberCI);
