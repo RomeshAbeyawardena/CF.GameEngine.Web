@@ -48,7 +48,7 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
         _commonNamePIIProtection = commonNamePIIProtection;
         SetMetaData(x => x.Metadata);
         SetRowVersion(x => x.RowVersion);
-
+        
         ProtectSymmetric(x => x.EmailAddress);
         MapProtectionInfoTo(x => x.EmailAddress, BackingStore.CasingImpression, x => x.EmailAddressCI);
         MapProtectionInfoTo(x => x.EmailAddress, BackingStore.Hmac, x => x.EmailAddressHmac);
@@ -61,8 +61,7 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
         ProtectSymmetric(x => x.PrimaryTelephoneNumber);
         MapProtectionInfoTo(x => x.PrimaryTelephoneNumber, BackingStore.Hmac, x => x.PrimaryTelephoneNumberHmac);
 #pragma warning disable IDE0200 //Client part not known during instantiation
-        ProtectHashed(x => x.HashedPassword, x => GetHash(x),
-            System.Security.Cryptography.HashAlgorithmName.SHA384);
+        ProtectArgonHashed(x => x.HashedPassword, x => GetKey(x), ArgonVariation.Argon2id);
 #pragma warning restore IDE0200
     }
 
