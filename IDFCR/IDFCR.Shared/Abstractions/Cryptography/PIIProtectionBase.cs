@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Konscious.Security.Cryptography;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -120,6 +121,29 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             (_, _, _, _) => { });
     }
 
+    protected void ProtectArgonHashed(Expression<Func<T, string?>> member, Func<T, string> saltGeneration, 
+        ArgonVariation algorithm, int length = 64, Action<Argon2>? configure = null)
+    {
+        var visitor = new LinkExpressionVisitor();
+        visitor.Visit(member);
+
+        hashingValueStore.TryAdd(visitor.MemberName!,
+            (context, value) => HashWithArgon2(algorithm, Encoding.GetBytes(value), saltGeneration(context), length, configure));
+
+        For(member,
+            (provider, value, context) =>
+            {
+                var info = GetProtectionInfo(context, value);
+                if (value is not null)
+                {
+                    var hash = HashWithArgon2(algorithm, Encoding.GetBytes(value), saltGeneration(context), length, configure);
+                    SetMemberValue(context, member, hash);
+                }
+                return info;
+            },
+            (_, _, _, _) => { });
+    }
+
     protected void ProtectHashed(Expression<Func<T, string?>> member, string salt, HashAlgorithmName algorithm, int length = 64)
     {
         ProtectHashed(member, (x) => salt, algorithm, length);
@@ -142,7 +166,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         }
     }
 
-    protected IProtectionInfo GetProtectionInfo(T context, string? value)
+    protected virtual IProtectionInfo GetProtectionInfo(T context, string? value)
     {
         var hmac = HashWithHmac(GetHmacKey(), value?.ToUpperInvariant());
         var caseImpressions = string.IsNullOrEmpty(value) ? string.Empty : CasingImpression.Calculate(value);
@@ -212,6 +236,25 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     {
         var derived = new Rfc2898DeriveBytes(Encoding.GetBytes(secret),
             Encoding.GetBytes(salt), 100_000, algorithmName);
+        return Convert.ToBase64String(derived.GetBytes(length));
+    }
+
+    private static Argon2 GetArgonImplementation(ArgonVariation argonVariation, byte[] password)
+    {
+        return argonVariation switch
+        {
+            ArgonVariation.Argon2d => new Argon2d(password),
+            ArgonVariation.Argon2i => new Argon2i(password),
+            ArgonVariation.Argon2id => new Argon2id(password),
+            _ => throw new NotSupportedException($"Argon variation '{argonVariation}' is not supported.")
+        };
+    }
+
+    public string HashWithArgon2(ArgonVariation argonVariation, byte[] password, string salt, int length, Action<Argon2>? configure = null)
+    { 
+        var derived = GetArgonImplementation(argonVariation, password);
+        configure?.Invoke(derived);
+        derived.KnownSecret = Encoding.GetBytes(salt);
         return Convert.ToBase64String(derived.GetBytes(length));
     }
 
