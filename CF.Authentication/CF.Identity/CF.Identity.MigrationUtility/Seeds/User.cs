@@ -4,6 +4,7 @@ using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.PII;
 using CF.Identity.Infrastructure.SqlServer.Repositories;
 using CF.Identity.Infrastructure.SqlServer.Transforms;
+using IDFCR.Shared.Extensions;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,24 @@ internal static partial class Seed
 {
     public static async Task TrySeedUsersAsync(ILogger logger, CFIdentityDbContext context, IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        var client = await context.Clients.FirstOrDefaultAsync(c => c.IsSystem, cancellationToken);
+        var commonNameRepository = serviceProvider.GetRequiredService<ICommonNameRepository>();
+        var anonymisedRow = (await commonNameRepository.GetAnonymisedRowRawAsync(false, cancellationToken)).GetResultOrDefault();
+
+        if(anonymisedRow is null)
+        {
+            logger.LogInformation("Common name lacks an anonymous record, creating one");
+            await commonNameRepository.UpsertAsync(new DbCommonName
+            {
+                IsAnonymisedMarker = true,
+                Value = "Anonymous"
+            }, cancellationToken);
+        }
+        else
+        {
+            logger.LogInformation("Common name exists, skipping this step");
+        }
+
+            var client = await context.Clients.FirstOrDefaultAsync(c => c.IsSystem, cancellationToken);
         bool isInflight = false;
         if (client is null)
         {
@@ -49,7 +67,7 @@ internal static partial class Seed
             IsSystem = true,
         };
 
-        var commonNameRepository = serviceProvider.GetRequiredService<ICommonNameRepository>();
+        
         var user = await UserTransformer.Transform(userDto, commonNameRepository, cancellationToken);
 
         var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserPIIProtection>();
