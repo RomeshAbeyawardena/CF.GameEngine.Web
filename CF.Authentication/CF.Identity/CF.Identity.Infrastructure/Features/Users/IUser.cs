@@ -5,6 +5,7 @@ namespace CF.Identity.Infrastructure.Features.Users;
 
 public interface IUser : IEditableUser, IPIIRowVersion
 {
+    DateTimeOffset? AnonymisedTimestamp { get; }
     string? Metadata { get; set; }
 }
 
@@ -28,5 +29,4 @@ public interface IUserDetail : IUserSummary
     string? Middlename { get; }
     string Lastname { get; }
     string PrimaryTelephoneNumber { get; }
-    DateTimeOffset? AnonymisedTimestamp { get; }
 }

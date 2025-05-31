@@ -1,4 +1,5 @@
-﻿using CF.Identity.Infrastructure.SqlServer.Models;
+﻿using CF.Identity.Infrastructure.Features.Clients;
+using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.PII;
 using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
@@ -66,8 +67,8 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
     }
 
     private const string ClientKey = "client";
-    public DbClient Client { 
-        get => Get<DbClient>(ClientKey) 
+    public IClient Client { 
+        get => Get<IClient>(ClientKey) 
             ?? throw new NullReferenceException("Client dependency not found");
         set => Set(ClientKey, value);
     }

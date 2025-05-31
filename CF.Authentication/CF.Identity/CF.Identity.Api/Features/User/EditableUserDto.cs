@@ -22,6 +22,7 @@ public class EditableUserDto : MappableBase<IUser>, IEditableUser, IUser
     public string PrimaryTelephoneNumber { get; set; } = null!;
 
     public string? Scope { get; set; }
+    public DateTimeOffset? AnonymisedTimestamp { get; set; }
 
     public override void Map(IUser source)
     {
@@ -38,5 +39,6 @@ public class EditableUserDto : MappableBase<IUser>, IEditableUser, IUser
         RowVersion = source.RowVersion;
         Metadata = source.Metadata;
         PrimaryTelephoneNumber = source.PrimaryTelephoneNumber;
+        AnonymisedTimestamp = source.AnonymisedTimestamp;
     }
 }

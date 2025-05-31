@@ -1,9 +1,10 @@
-﻿using CF.Identity.Infrastructure.SqlServer.Models;
+﻿using CF.Identity.Infrastructure.Features.Clients;
+using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Cryptography;
 
 namespace CF.Identity.Infrastructure.SqlServer.PII;
 
 public interface IUserPIIProtection : IPIIProtection<DbUser>
 {
-    DbClient Client { get; set; }
+    IClient Client { get; set; }
 }
