@@ -18,12 +18,12 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
 
     protected override string GetKey(DbUser entity)
     {
-        return GenerateKey(entity, 32, '|', ApplicationKnownValue, Client.SecretHash ?? throw new NullReferenceException());
+        return GenerateKey(entity, 32, '|', ApplicationKnownValue, Client.Reference);
     }
 
     protected override string GetHmacKey()
     {
-        return $"{ApplicationKnownValue}:{Client.SecretHash}";
+        return $"{ApplicationKnownValue}:{Client.Reference}";
     }
 
     protected override void OnUnprotect(DbUser user)

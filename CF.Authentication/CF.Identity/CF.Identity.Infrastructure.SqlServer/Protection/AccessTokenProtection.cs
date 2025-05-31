@@ -14,10 +14,7 @@ internal class AccessTokenProtection : PIIProtectionBase<DbAccessToken>, IAccess
         return $"{ApplicationKnownValue}-{Client.Reference}";
     }
 
-    protected override string GetHmacKey()
-    {
-        throw new NotSupportedException();
-    }
+    protected override string GetHmacKey() => string.Empty;
 
     public AccessTokenProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
     {

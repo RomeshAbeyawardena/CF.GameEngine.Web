@@ -122,7 +122,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         For(member,
             (provider, value, context) =>
             {
-                var info = GetProtectionInfo(context, value);
+                var info = GetProtectionInfo(context, value, true, false);
                 if (value is not null)
                 {
                     var hash = Hash(algorithm, value, saltGeneration(context), length, iterations);
@@ -145,7 +145,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         For(member,
             (provider, value, context) =>
             {
-                var info = GetProtectionInfo(context, value);
+                var info = GetProtectionInfo(context, value, true, false);
                 if (value is not null)
                 {
                     var hash = HashWithArgon2(algorithm, Encoding.GetBytes(value), saltGeneration(context), length, configure);
@@ -178,10 +178,15 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         }
     }
 
-    protected virtual IProtectionInfo GetProtectionInfo(T context, string? value)
+    protected virtual IProtectionInfo GetProtectionInfo(T context, string? value, bool calculateHmac = true, bool calculateCaseImpressions = true)
     {
-        var hmac = HashWithHmac(GetHmacKey(), value?.ToUpperInvariant());
-        var caseImpressions = string.IsNullOrEmpty(value) ? string.Empty : CasingImpression.Calculate(value);
+        var hmac = string.IsNullOrEmpty(value) || calculateHmac 
+            ? HashWithHmac(GetHmacKey(), value?.ToUpperInvariant()) 
+            : string.Empty;
+
+        var caseImpressions = string.IsNullOrEmpty(value) || calculateCaseImpressions 
+            ? string.Empty
+            : CasingImpression.Calculate(value);
 
         return new DefaultProtectionInfo(hmac, caseImpressions);
     }
