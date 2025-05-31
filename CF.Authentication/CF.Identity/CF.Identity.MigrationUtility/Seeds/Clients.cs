@@ -20,12 +20,15 @@ internal static partial class Seed
             return;
         }
 
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
         var systemClient = new DbClient
         {
             Reference = "system",
             Name = "System Client",
             ValidFrom = DateTimeOffset.UtcNow,
             ValidTo = DateTimeOffset.UtcNow.AddYears(1),
+            SecretHash = configuration.GetValue<string>("Seed:Client:SystemClientSecret"),
             IsSystem = true,
         };
 

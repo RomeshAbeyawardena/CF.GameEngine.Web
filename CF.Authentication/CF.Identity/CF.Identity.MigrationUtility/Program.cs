@@ -23,10 +23,14 @@ using var migrationUtility = EFMigrationUtility
 static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
     IServiceProvider serviceProvider, CancellationToken cancellationToken)
 {
-    var isSuccessful = await Verify
-        .VerifyUserSeedData(logger, context, serviceProvider, cancellationToken);
+    List<bool> results = [];
+    results.Add(await Verify
+        .VerifyClientSeedData(logger, context, serviceProvider, cancellationToken));
 
-    return new MigrationResult(nameof(VerifySeedData), isSuccessful ? MigrationStatus.Completed : MigrationStatus.CompletedWithErrors);
+    results.Add(await Verify
+        .VerifyUserSeedData(logger, context, serviceProvider, cancellationToken));
+
+    return new MigrationResult(nameof(VerifySeedData), results.All(x => x) ? MigrationStatus.Completed : MigrationStatus.CompletedWithErrors);
 }
 
 await migrationUtility.InitialiseAsync();
