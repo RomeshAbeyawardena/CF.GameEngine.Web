@@ -14,11 +14,10 @@ internal class AccessTokenProtection : PIIProtectionBase<DbAccessToken>, IAccess
         return $"{ApplicationKnownValue}-{Client.Reference}";
     }
 
-    protected override string GetHmacKey() => string.Empty;
-
     public AccessTokenProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
     {
-        ProtectArgonHashed(x => x.AccessToken, x => GetKey(x), ArgonVariation.Argon2id);
+        ProtectArgonHashed(x => x.ReferenceToken, x => GetKey(x), ArgonVariation.Argon2id);
+        ProtectArgonHashed(x => x.RefreshToken, x => GetKey(x), ArgonVariation.Argon2id);
     }
 
     private const string ClientIdKey = nameof(ClientIdKey);

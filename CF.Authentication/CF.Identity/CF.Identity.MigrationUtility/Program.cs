@@ -27,9 +27,17 @@ static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbCo
     results.Add(await Verify
         .VerifyClientSeedData(logger, context, serviceProvider, cancellationToken));
 
-    results.Add(await Verify
+    if (args.Any(x => x.Equals("--dev")))
+    {
+        results.Add(await Verify
         .VerifyUserSeedData(logger, context, serviceProvider, cancellationToken));
 
+        if (args.Any(x => x.Equals("--interactive")))
+        {
+            results.Add(await Verify
+                .VerifyAccessToken(logger, context, serviceProvider, cancellationToken));
+        }
+    }
     return new MigrationResult(nameof(VerifySeedData), results.All(x => x) ? MigrationStatus.Completed : MigrationStatus.CompletedWithErrors);
 }
 

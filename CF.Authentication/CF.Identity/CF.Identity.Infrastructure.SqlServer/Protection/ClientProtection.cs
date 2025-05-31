@@ -13,8 +13,6 @@ internal class ClientProtection : PIIProtectionBase<DbClient>, IClientProtection
         return $"{base.ApplicationKnownValue}-{client.Reference}";
     }
 
-    protected override string GetHmacKey() => string.Empty;
-
     public ClientProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
     {
         ProtectArgonHashed(x => x.SecretHash, x => GetKey(x), ArgonVariation.Argon2id);
