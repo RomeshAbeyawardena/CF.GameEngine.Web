@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using CF.Identity.Infrastructure.SqlServer.PII;
 
 namespace CF.Identity.MigrationUtility.Seeds;
 
@@ -27,11 +28,8 @@ internal static partial class Seed
             IsSystem = true,
         };
 
-        var clientCredentialHasher = serviceProvider.GetRequiredService<IClientCredentialHasher>();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         await context.Clients.AddAsync(systemClient, cancellationToken);
-        systemClient.SecretHash = clientCredentialHasher.Hash(configuration["Seed:Client:SystemClientSecret"]
-            ?? throw new NullReferenceException("System client secret not configured"), systemClient);
     }
 
 }

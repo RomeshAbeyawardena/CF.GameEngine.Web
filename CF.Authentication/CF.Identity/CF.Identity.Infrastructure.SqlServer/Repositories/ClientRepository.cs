@@ -1,21 +1,18 @@
 ﻿using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.SqlServer.Filters;
 using CF.Identity.Infrastructure.SqlServer.Models;
+using CF.Identity.Infrastructure.SqlServer.SPA;
 using IDFCR.Shared.Abstractions.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class ClientRepository(IClientCredentialHasher clientCredentialHasher,
+internal class ClientRepository(IClientProtection clientCredentialHasher,
     TimeProvider timeProvider, CFIdentityDbContext context) : RepositoryBase<IClient, DbClient, ClientDto>(timeProvider, context), IClientRepository
 {
     protected override void OnAdd(DbClient db, ClientDto source)
     {
-        if (!string.IsNullOrWhiteSpace(source.SecretHash))
-        {
-            db.SecretHash = clientCredentialHasher.Hash(source.SecretHash, db);
-        }
-
+        clientCredentialHasher.Protect(db);
         base.OnAdd(db, source);
     }
 

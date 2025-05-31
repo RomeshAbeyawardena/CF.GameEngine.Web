@@ -34,20 +34,17 @@ internal static partial class Seed
             var randomNumberGenerator = serviceProvider.GetRequiredService<RandomNumberGenerator>();
             var jwtSettings = serviceProvider.GetRequiredService<IJwtSettings>();
             logger.LogInformation("{fullName}", jwtSettings.GetType().FullName);
-            var clientCredentialHasher = serviceProvider.GetRequiredService<IClientCredentialHasher>();
-
+            
             var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
-            var hashedReferenceToken = clientCredentialHasher.Hash(referenceToken, client);
-
+            
             var refreshToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 16);
-            var hashedRefreshToken = clientCredentialHasher.Hash(refreshToken, client);
-
+            
             var validity = DateTimeOffset.UtcNow.AddYears(1);
             var newApiKey = new DbAccessToken
             {
                 Id = Guid.NewGuid(),
-                ReferenceToken = hashedReferenceToken,
-                RefreshToken = hashedRefreshToken,
+                ReferenceToken = referenceToken,
+                RefreshToken = refreshToken,
                 AccessToken = JwtHelper.GenerateJwt(client, string.Join(' ', Roles.Where(x => x.IsPrivileged).Select(x => x.Key))
                 , jwtSettings, validity.DateTime),
                 Type = "api_key",

@@ -1,4 +1,4 @@
-﻿using CF.Identity.Infrastructure.Features.AccessToken;
+﻿ using CF.Identity.Infrastructure.Features.AccessToken;
 using CF.Identity.Infrastructure.SqlServer.Filters;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using IDFCR.Shared.Abstractions.Results;

@@ -3,6 +3,7 @@ using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Api.Features.User.Get;
 using CF.Identity.Infrastructure.Features.Clients;
+using CF.Identity.Infrastructure.SqlServer.PII;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Extensions;
 using MediatR;
@@ -18,7 +19,8 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     private AuthenticatedClient? authenticatedClient;
-
+    private IUserPIIProtection? userPIIProtection;
+    
     private async Task AttachScopes(IClientDetails client, Guid userId, List<Claim> claims)
     {
         var scopes = (await mediator.Send(new FindScopesQuery(client.Id, userId, IncludePrivilegedScoped: client.IsSystem, Bypass: true))).GetResultOrDefault();
@@ -61,8 +63,6 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
             return AuthenticateResult.Fail("Authentication header invalid, two-part requirement is incorrect");
         }
 
-        var clientCredentialHasher = Context.RequestServices.GetRequiredService<IClientCredentialHasher>();
-
         var timeProvider = Context.RequestServices.GetRequiredService<TimeProvider>();
         var utcNow = timeProvider.GetUtcNow();
 
@@ -95,8 +95,6 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         }
 
         var accessToken = authorisation["Bearer ".Length..].Trim();
-
-        var clientCredentialHasher = Context.RequestServices.GetRequiredService<IClientCredentialHasher>();
 
         var hash = clientCredentialHasher.Hash(accessToken, client.ClientDetails.Map<ClientDto>());
 
