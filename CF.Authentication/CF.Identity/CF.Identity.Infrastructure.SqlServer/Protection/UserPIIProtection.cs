@@ -61,7 +61,7 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
         ProtectSymmetric(x => x.PrimaryTelephoneNumber);
         MapProtectionInfoTo(x => x.PrimaryTelephoneNumber, BackingStore.Hmac, x => x.PrimaryTelephoneNumberHmac);
 #pragma warning disable IDE0200 //Client part not known during instantiation
-        ProtectArgonHashed(x => x.HashedPassword, x => GetKey(x), ArgonVariation.Argon2id);
+        ProtectArgonHashed(x => x.HashedPassword, x => GetHash(x), ArgonVariation.Argon2id);
 #pragma warning restore IDE0200
     }
 

@@ -30,6 +30,18 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     protected abstract string GetKey(T entity);
     protected abstract string GetHmacKey();
 
+    protected void UpdateHashingValueStore(string member, Func<T, string, string> hashingValueFactory)
+    {
+        hashingValueStore.TryAdd(member, hashingValueFactory);
+    }
+
+    /// <summary>
+    /// Calling this underlining method does not update the hashingValueStore, so you need to use 
+    /// </summary>
+    /// <param name="member"></param>
+    /// <param name="protect"></param>
+    /// <param name="unprotect"></param>
+    /// <returns></returns>
     protected PIIProtectionBase<T> For(Expression<Func<T, string?>> member, Func<PIIProtectionProviderBase, string?, T, IProtectionInfo> protect,
     Action<PIIProtectionProviderBase, string?, T, IProtectionInfo> unprotect)
     {
@@ -104,7 +116,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         var visitor = new LinkExpressionVisitor();
         visitor.Visit(member);
 
-        hashingValueStore.TryAdd(visitor.MemberName!,
+        UpdateHashingValueStore(visitor.MemberName!,
             (context, value) => Hash(algorithm, value, saltGeneration(context), length, iterations));
 
         For(member,
@@ -127,7 +139,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         var visitor = new LinkExpressionVisitor();
         visitor.Visit(member);
 
-        hashingValueStore.TryAdd(visitor.MemberName!,
+        UpdateHashingValueStore(visitor.MemberName!,
             (context, value) => HashWithArgon2(algorithm, Encoding.GetBytes(value), saltGeneration(context), length, configure));
 
         For(member,
