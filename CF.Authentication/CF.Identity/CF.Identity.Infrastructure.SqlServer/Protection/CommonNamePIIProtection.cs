@@ -8,7 +8,6 @@ namespace CF.Identity.Infrastructure.SqlServer.Protection;
 
 internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>, ICommonNamePIIProtection
 {
-    private readonly IConfiguration _configuration;
     protected override string GetKey(DbCommonName entity)
     {
         return GenerateKey(entity, 32, '|', ApplicationKnownValue, entity.Id.ToString("N"));
@@ -21,7 +20,6 @@ internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>, ICommo
 
     public CommonNamePIIProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
     {
-        _configuration = configuration;
         SetMetaData(x => x.MetaData);
         SetRowVersion(x => x.RowVersion);
         
