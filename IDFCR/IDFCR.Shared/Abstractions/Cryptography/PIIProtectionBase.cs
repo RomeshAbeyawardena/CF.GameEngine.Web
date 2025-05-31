@@ -180,11 +180,11 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
 
     protected virtual IProtectionInfo GetProtectionInfo(T context, string? value, bool calculateHmac = true, bool calculateCaseImpressions = true)
     {
-        var hmac = string.IsNullOrEmpty(value) || calculateHmac 
-            ? HashWithHmac(GetHmacKey(), value?.ToUpperInvariant()) 
-            : string.Empty;
+        var hmac = string.IsNullOrEmpty(value) || !calculateHmac 
+            ? string.Empty
+            : HashWithHmac(GetHmacKey(), value.ToUpperInvariant());
 
-        var caseImpressions = string.IsNullOrEmpty(value) || calculateCaseImpressions 
+        var caseImpressions = string.IsNullOrEmpty(value) || !calculateCaseImpressions 
             ? string.Empty
             : CasingImpression.Calculate(value);
 
