@@ -27,8 +27,8 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     protected Expression<Func<T, string?>>? RowVersionMember { get; private set; }
     protected Expression<Func<T, string?>>? MetaDataMember { get; private set; }
 
-    protected abstract string GetKey(T entity);
-    protected abstract string GetHmacKey();
+    protected virtual string GetKey(T entity) => string.Empty;
+    protected virtual string GetHmacKey() => string.Empty;
 
     protected void UpdateHashingValueStore(string member, Func<T, string, string> hashingValueFactory)
     {
