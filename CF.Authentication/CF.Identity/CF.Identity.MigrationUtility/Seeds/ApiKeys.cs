@@ -1,7 +1,7 @@
 ﻿using CF.Identity.Infrastructure;
-using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
+using CF.Identity.Infrastructure.SqlServer.SPA;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -72,8 +72,13 @@ internal static partial class Seed
             {
                 newApiKey.User = user!;
             }
-            
+
             context.AccessTokens.Add(newApiKey);
+
+            var accessTokenProtection = serviceProvider.GetRequiredService<IAccessTokenProtection>();
+            accessTokenProtection.Client = client;
+            accessTokenProtection.Protect(newApiKey);
+
             var outputBuilder = new StringBuilder();
             outputBuilder.AppendLine($"✅ API key successfully seeded for system client.");
             outputBuilder.AppendLine($"🔑 Reference Token: {referenceToken}");

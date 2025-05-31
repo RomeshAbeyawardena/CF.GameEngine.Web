@@ -4,7 +4,7 @@ using IDFCR.Shared.Abstractions.Cryptography;
 
 namespace CF.Identity.Infrastructure.SqlServer.SPA;
 
-internal interface IAccessTokenProtection : IPIIProtection<DbAccessToken>
+public interface IAccessTokenProtection : IPIIProtection<DbAccessToken>
 {
     IClient Client { get; set; }
 }

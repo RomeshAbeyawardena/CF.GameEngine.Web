@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using CF.Identity.Infrastructure.SqlServer.PII;
+using CF.Identity.Infrastructure.SqlServer.SPA;
 
 namespace CF.Identity.MigrationUtility.Seeds;
 
@@ -28,8 +29,9 @@ internal static partial class Seed
             IsSystem = true,
         };
 
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var clientProtection = serviceProvider.GetRequiredService<IClientProtection>();
         await context.Clients.AddAsync(systemClient, cancellationToken);
+        clientProtection.Protect(systemClient);
     }
 
 }

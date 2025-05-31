@@ -70,9 +70,10 @@ internal static partial class Seed
         
         var user = await UserTransformer.Transform(userDto, commonNameRepository, cancellationToken);
 
+        context.Users.Add(user);
+
         var userCredentialProtectionProvider = serviceProvider.GetRequiredService<IUserPIIProtection>();
         userCredentialProtectionProvider.Client = client ?? throw new NullReferenceException("Expected client");
-
         userCredentialProtectionProvider.Protect(user);
 
         if (!isInflight)
@@ -119,7 +120,5 @@ internal static partial class Seed
 
             user.UserScopes.Add(userScope);
         }
-
-        context.Users.Add(user);
     }
 }
