@@ -6,7 +6,7 @@ namespace IDFCR.Shared.Abstractions.Cryptography;
 
 public interface IPIIProtection<T> : IStateBag
 {
-    string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length);
+    string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length, int? iterations = null);
     IReadOnlyDictionary<string, IProtectionInfo> Protect(T entry);
     void Unprotect(T entry, IReadOnlyDictionary<string, IProtectionInfo>? protectionData = null);
     string HashWithArgon2(ArgonVariation argonVariation, byte[] password, string salt, int length, Action<Argon2>? configure = null);

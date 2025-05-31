@@ -99,13 +99,13 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
             });
     }
 
-    protected void ProtectHashed(Expression<Func<T, string?>> member, Func<T, string> saltGeneration, HashAlgorithmName algorithm, int length = 64)
+    protected void ProtectHashed(Expression<Func<T, string?>> member, Func<T, string> saltGeneration, HashAlgorithmName algorithm, int length = 64, int? iterations = null)
     {
         var visitor = new LinkExpressionVisitor();
         visitor.Visit(member);
 
         hashingValueStore.TryAdd(visitor.MemberName!,
-            (context, value) => Hash(algorithm, value, saltGeneration(context), length));
+            (context, value) => Hash(algorithm, value, saltGeneration(context), length, iterations));
 
         For(member,
             (provider, value, context) =>
@@ -113,7 +113,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
                 var info = GetProtectionInfo(context, value);
                 if (value is not null)
                 {
-                    var hash = Hash(algorithm, value, saltGeneration(context), length);
+                    var hash = Hash(algorithm, value, saltGeneration(context), length, iterations);
                     SetMemberValue(context, member, hash);
                 }
                 return info;
@@ -232,10 +232,10 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         return result;
     }
 
-    public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length)
+    public string Hash(HashAlgorithmName algorithmName, string secret, string salt, int length, int? iterations = null)
     {
         var derived = new Rfc2898DeriveBytes(Encoding.GetBytes(secret),
-            Encoding.GetBytes(salt), 100_000, algorithmName);
+            Encoding.GetBytes(salt), iterations.GetValueOrDefault(100_000), algorithmName);
         return Convert.ToBase64String(derived.GetBytes(length));
     }
 
