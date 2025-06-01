@@ -1,4 +1,5 @@
 ﻿using Konscious.Security.Cryptography;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -355,7 +356,7 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         stateBag.Set(key, value);
     }
 
-    public bool VerifyHashUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest)
+    public string GetHashUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest, out string value)
     {
         var visitor = new LinkExpressionVisitor();
         visitor.Visit(member);
@@ -364,8 +365,14 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
         {
             throw new KeyNotFoundException($"Hashing function for member '{memberName}' not found.");
         }
-        var value = GetMemberValue(hashedEntry, member);
-        var hashedValue = hashFunc(hashedEntry, valueToTest);
+
+        value = GetMemberValue(hashedEntry, member);
+        return hashFunc(hashedEntry, valueToTest);
+    }
+
+    public bool VerifyHashUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest)
+    {
+        var hashedValue = GetHashUsing(hashedEntry, member, valueToTest, out var value);
         return CryptographicOperations.FixedTimeEquals(Convert.FromBase64String(value),
             Convert.FromBase64String(hashedValue));
     }

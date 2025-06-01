@@ -12,6 +12,7 @@ public interface IPIIProtection<T> : IStateBag
     string HashWithArgon2(ArgonVariation argonVariation, byte[] password, string salt, int length, Action<Argon2>? configure = null);
     string HashWithHmac(string key, string data);
     string HashWithHmac(string data);
+    string GetHashUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest, out string value);
     bool VerifyHashUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest);
     bool VerifyHmacUsing(T hashedEntry, Expression<Func<T, string?>> member, string valueToTest);
 }

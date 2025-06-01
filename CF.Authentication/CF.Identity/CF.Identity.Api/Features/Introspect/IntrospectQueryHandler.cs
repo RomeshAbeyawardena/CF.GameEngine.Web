@@ -1,7 +1,6 @@
 ﻿using CF.Identity.Api.Features.AccessTokens.Get;
 using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure;
-using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
@@ -13,7 +12,7 @@ using System.Text;
 
 namespace CF.Identity.Api.Features.Introspect;
 
-public class IntrospectQueryHandler(IMediator mediator, IClientCredentialHasher clientCredentialHasher, TimeProvider timeProvider, IJwtSettings jwtSettings) 
+public class IntrospectQueryHandler(IMediator mediator, TimeProvider timeProvider, IJwtSettings jwtSettings) 
     : IUnitRequestHandler<IntrospectQuery, IntrospectResponse>
 {
     public async Task<IUnitResult<IntrospectResponse>> Handle(IntrospectQuery request, CancellationToken cancellationToken)

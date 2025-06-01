@@ -8,7 +8,7 @@ namespace CF.Identity.Api.Endpoints.Connect;
 
 public static class UserInfoEndpoint
 {
-    public static async Task<IResult> GetUserInfoAsync(IAuthenticatedUserContext authenticatedUserContext, IClientCredentialHasher clientCredentialHasher, CancellationToken cancellationToken)
+    public static async Task<IResult> GetUserInfoAsync(IAuthenticatedUserContext authenticatedUserContext, CancellationToken cancellationToken)
     {
         await Task.CompletedTask;
         
