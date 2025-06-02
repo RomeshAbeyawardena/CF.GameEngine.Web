@@ -7,15 +7,19 @@ using System.Text;
 
 namespace CF.Identity.Api.Extensions;
 
-public static class ClientSecretMiddleware 
+public class ClientSecretMiddleware 
 {
     public async static Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        var services = context.RequestServices;
+        var logger = services.GetRequiredService<ILogger<ClientSecretMiddleware>>();
+
         try
         {
+            
             string[] requiredPaths = ["api", "connect"];
             var path = (context.Request.Path.Value ?? string.Empty).ToLowerInvariant();
-            if (!requiredPaths.Prepend("/").Any(path.StartsWith))
+            if (!requiredPaths.Any(p => path.StartsWith($"/{p}")))
             {
                 await next(context);
             }
@@ -27,7 +31,7 @@ public static class ClientSecretMiddleware
                 throw new NullReferenceException("Authentication header missing");
             }
 
-            var services = context.RequestServices;
+            
             var encoding = services.GetRequiredService<Encoding>();
 
             var raw = encoding.GetString(Convert.FromBase64String(auth));
@@ -67,7 +71,8 @@ public static class ClientSecretMiddleware
         catch (Exception ex)
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsync(ex.Message);
+            await context.Response.WriteAsync("Authentication failed");
+            logger.LogError(ex, "Client secret authentication failed: {Message}", ex.Message);
             return;
         }
     }
