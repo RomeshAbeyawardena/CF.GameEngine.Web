@@ -4,7 +4,6 @@ using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Api.Features.User.Get;
 using CF.Identity.Infrastructure.Features.AccessToken;
 using CF.Identity.Infrastructure.Features.Clients;
-using CF.Identity.Infrastructure.SqlServer.PII;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Extensions;
 using MediatR;
@@ -20,9 +19,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     private AuthenticatedClient? authenticatedClient;
-    private IClientProtection? clientProtection;
-    private IClientProtection ClientProtection(IServiceProvider services) => clientProtection ??= services.GetRequiredService<IClientProtection>();
-
+    
     private IAccessTokenProtection? accessTokenProtection;
     private IAccessTokenProtection AccessTokenProtection(IServiceProvider service, IClientDetails clientDetails)  {
         accessTokenProtection ??= service.GetRequiredService<IAccessTokenProtection>();
@@ -43,51 +40,6 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
             claims.Add(new(ClaimTypes.Role, scope.Key));
         }
         
-    }
-
-    protected async Task<AuthenticateResult?> ExtractAndValidateClientHeaderAsync()
-    {        
-        var auth = Context.Request.Headers["x-auth"].FirstOrDefault();
-
-        if (string.IsNullOrWhiteSpace(auth))
-        {
-            return AuthenticateResult.Fail("Authentication header missing");
-        }
-
-        var raw = encoding.GetString(Convert.FromBase64String(auth));
-
-        var parts = raw.Split(':', 2);
-        if (parts.Length != 2)
-        {
-            return AuthenticateResult.Fail("Authentication header invalid");
-        }
-
-        var clientId = parts[0];
-        var clientSecret = parts[1];
-
-        if (string.IsNullOrWhiteSpace(clientId)
-             || string.IsNullOrWhiteSpace(clientSecret))
-        {
-            return AuthenticateResult.Fail("Authentication header invalid, two-part requirement is incorrect");
-        }
-        var services = Context.RequestServices;
-        var timeProvider = services.GetRequiredService<TimeProvider>();
-        var utcNow = timeProvider.GetUtcNow();
-
-        var range = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
-
-        var clientResult = (await mediator.Send(new FindClientQuery(clientId, range.FromValue, range.ToValue, Bypass: true))).GetOneOrDefault();
-
-        if (clientResult is null
-            || !ClientProtection(services).VerifySecret(clientResult, clientSecret))
-        {
-            return AuthenticateResult.Fail("Client authentication failed");
-        }
-
-        authenticatedClient = new(clientId,
-                    clientResult);
-
-        return null;
     }
 
     private async Task<AuthenticateResult> ExtractAndValidateBearingTokenAsync()
@@ -155,10 +107,13 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var result = await ExtractAndValidateClientHeaderAsync();
-        if(result is not null)
+        authenticatedClient = Context.Items.TryGetValue((nameof(AuthenticatedClient)), out var client) 
+            ? client as AuthenticatedClient
+            : null;
+
+        if (authenticatedClient is null)
         {
-            return result;
+            return AuthenticateResult.Fail("Client not authenticated");
         }
 
         return await ExtractAndValidateBearingTokenAsync();

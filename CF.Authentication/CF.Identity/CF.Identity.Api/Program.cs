@@ -1,7 +1,6 @@
 using CF.Identity.Api;
 using CF.Identity.Api.Endpoints;
 using CF.Identity.Api.Extensions;
-using CF.Identity.Api.Features;
 using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
 using FluentValidation;
@@ -46,6 +45,7 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 app
+    .Use(ClientSecretMiddleware.InvokeAsync)
     .UseAuthentication()
     .UseAuthorization();
 
