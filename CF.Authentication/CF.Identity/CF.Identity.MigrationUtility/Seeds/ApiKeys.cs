@@ -75,7 +75,7 @@ internal static partial class Seed
 
             context.AccessTokens.Add(newApiKey);
 
-            var accessTokenProtection = serviceProvider.GetRequiredService<IAccessTokenProtection>();
+            var accessTokenProtection = serviceProvider.GetRequiredService<IAccessTokenSpaProtection>();
             accessTokenProtection.Client = client;
             accessTokenProtection.Protect(newApiKey);
 

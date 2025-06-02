@@ -20,7 +20,6 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     private AuthenticatedClient? authenticatedClient;
-    private IUserPIIProtection? userPIIProtection;
     private IClientProtection? clientProtection;
     private IClientProtection ClientProtection(IServiceProvider services) => clientProtection ??= services.GetRequiredService<IClientProtection>();
 

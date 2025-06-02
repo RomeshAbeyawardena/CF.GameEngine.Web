@@ -19,7 +19,7 @@ internal static partial class Verify
             return false;
         }
 
-        var clientProtection = serviceProvider.GetRequiredService<IClientProtection>();
+        var clientProtection = serviceProvider.GetRequiredService<IClientSpaProtection>();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var expectedValue = configuration.GetValue<string>("Seed:Client:SystemClientSecret") ?? throw new NullReferenceException("");
 

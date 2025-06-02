@@ -34,7 +34,7 @@ If you are running this in a non-interactive context, please remove the --intera
             return false;
         }
 
-        var accessTokenProtection = serviceProvider.GetRequiredService<IAccessTokenProtection>();
+        var accessTokenProtection = serviceProvider.GetRequiredService<IAccessTokenSpaProtection>();
         accessTokenProtection.Client = foundAccessToken.Client;
 
         return accessTokenProtection.VerifyHashUsing(foundAccessToken, x => x.ReferenceToken, accessToken)

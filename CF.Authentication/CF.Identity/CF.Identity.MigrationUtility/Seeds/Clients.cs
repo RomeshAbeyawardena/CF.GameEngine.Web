@@ -32,7 +32,7 @@ internal static partial class Seed
             IsSystem = true,
         };
 
-        var clientProtection = serviceProvider.GetRequiredService<IClientProtection>();
+        var clientProtection = serviceProvider.GetRequiredService<IClientSpaProtection>();
         await context.Clients.AddAsync(systemClient, cancellationToken);
         clientProtection.Protect(systemClient);
     }
