@@ -20,7 +20,7 @@ using System.Security.Cryptography;
 
 namespace CF.Identity.Api.Features.TokenExchange;
 
-public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediator, IClientProtection clientProtection, 
+public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediator, IClientProtection clientProtection, IHttpContextAccessor httpContextAccessor,
     TimeProvider timeProvider, RandomNumberGenerator randomNumberGenerator) : IUnitRequestHandler<TokenRequestQuery, TokenResponse>
 {
     private string GenerateJwt(ClientDetailResponse client, string scope)
@@ -38,6 +38,18 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
 
         var utcNow = timeProvider.GetUtcNow();
         var dateRange = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
+
+        if (httpContextAccessor.HttpContext!.Items.TryGetValue(nameof(AuthenticatedClient), out var authClient)
+            && authClient is AuthenticatedClient authenticatedClient)
+        {
+            
+        }
+
+
+        if (string.IsNullOrWhiteSpace(request.TokenRequest.ClientId))
+        {
+            
+        }
 
         var clientResult = await mediator.Send(new FindClientQuery(request.TokenRequest.ClientId, dateRange.FromValue, dateRange.ToValue, Bypass: true), cancellationToken);
 

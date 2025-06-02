@@ -2,11 +2,10 @@
 
 public record TokenRequest(
     string GrantType,
-    string ClientId,
-    string ClientSecret,
     string Scope,
-    string Username
-)
+    string Username)
 {
+    public string? ClientId { get; set; }
+    public string? ClientSecret { get; set; }
     public string? RedirectUri { get; init; }
 }
