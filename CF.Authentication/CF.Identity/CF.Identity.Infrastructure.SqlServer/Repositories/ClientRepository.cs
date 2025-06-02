@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class ClientRepository(IClientProtection clientCredentialHasher,
+internal class ClientRepository(IClientSpaProtection clientCredentialHasher,
     TimeProvider timeProvider, CFIdentityDbContext context) : RepositoryBase<IClient, DbClient, ClientDto>(timeProvider, context), IClientRepository
 {
     protected override void OnAdd(DbClient db, ClientDto source)

@@ -5,7 +5,6 @@ using CF.Identity.Infrastructure.Features.Users;
 using CF.Identity.Infrastructure.SqlServer.PII;
 using CF.Identity.Infrastructure.SqlServer.Protection;
 using CF.Identity.Infrastructure.SqlServer.Repositories;
-using CF.Identity.Infrastructure.SqlServer.SPA;
 using IDFCR.Shared.EntityFramework;
 using IDFCR.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;

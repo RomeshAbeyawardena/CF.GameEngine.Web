@@ -9,6 +9,7 @@ using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.PII;
+using CF.Identity.Infrastructure.SqlServer.SPA;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
@@ -19,8 +20,8 @@ using System.Security.Cryptography;
 
 namespace CF.Identity.Api.Features.TokenExchange;
 
-public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediator, IUserPIIProtection userCredentialProtectionProvider, 
-    IClientCredentialHasher clientCredentialHasher, TimeProvider timeProvider, RandomNumberGenerator randomNumberGenerator) : IUnitRequestHandler<TokenRequestQuery, TokenResponse>
+public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediator, IClientProtection clientProtection, 
+    TimeProvider timeProvider, RandomNumberGenerator randomNumberGenerator) : IUnitRequestHandler<TokenRequestQuery, TokenResponse>
 {
     private string GenerateJwt(ClientDetailResponse client, string scope)
     {
@@ -47,7 +48,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             return new UnitResult(new UnauthorizedAccessException("Client not found")).As<TokenResponse>();
         }
 
-        if (!clientCredentialHasher.Verify(request.TokenRequest.ClientSecret, clientDetail))
+        if (!clientProtection.VerifySecret(clientDetail, request.TokenRequest.ClientSecret))
         {
             return new UnitResult(new UnauthorizedAccessException("Invalid client secret")).As<TokenResponse>();
         }
@@ -59,14 +60,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
 
         var isSystemUser = string.IsNullOrEmpty(request.TokenRequest.Username);
 
-        string? username = null;
-        if (!isSystemUser)
-        {
-            userCredentialProtectionProvider.Client = clientDetail;
-            username = userCredentialProtectionProvider.HashWithHmac(request.TokenRequest.Username);
-        }
-
-        var userResult = await mediator.Send(new FindUsersQuery(clientDetail.Id, Username: username, IsSystem: isSystemUser, Bypass: true), cancellationToken);
+        var userResult = await mediator.Send(new FindUsersQuery(clientDetail.Id, Username: request.TokenRequest.Username, IsSystem: isSystemUser, Bypass: true), cancellationToken);
 
         var systemUser = userResult.GetOneOrDefault();
 
@@ -98,16 +92,14 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         var accessToken = GenerateJwt(clientDetail, request.TokenRequest.Scope);
 
         var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
-        var hashedReferenceToken = clientCredentialHasher.Hash(referenceToken, clientDetail);
-
+        
         var refreshToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 16);
-        var hashedRefreshToken = clientCredentialHasher.Hash(refreshToken, clientDetail);
-
+        
         await mediator.Send(new UpsertAccessTokenCommand(new AccessTokenDto
         {
             Type = request.TokenRequest.GrantType,
-            ReferenceToken = hashedReferenceToken,
-            RefreshToken = hashedRefreshToken,
+            ReferenceToken = referenceToken,
+            RefreshToken = refreshToken,
             AccessToken = accessToken,
             ClientId = clientDetail.Id,
             ValidFrom = utcNow,

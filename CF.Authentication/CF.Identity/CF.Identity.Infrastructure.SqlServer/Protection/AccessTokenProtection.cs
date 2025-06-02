@@ -1,6 +1,6 @@
-﻿using CF.Identity.Infrastructure.Features.Clients;
+﻿using CF.Identity.Infrastructure.Features.AccessToken;
+using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.SqlServer.Models;
-using CF.Identity.Infrastructure.SqlServer.SPA;
 using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
 using System.Text;
@@ -12,6 +12,16 @@ internal class AccessTokenProtection : PIIProtectionBase<DbAccessToken>, IAccess
     protected override string GetKey(DbAccessToken entity)
     {
         return $"{ApplicationKnownValue}-{Client.Reference}";
+    }
+
+    public string GetHashedAccessToken(string accessToken)
+    {
+        return GetHashUsing(null!, x => x.ReferenceToken, accessToken, out _);
+    }
+
+    public bool VerifyAccessToken(string accessToken)
+    {
+        return VerifyHashUsing(null!, x => x.ReferenceToken, accessToken);
     }
 
     public AccessTokenProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)

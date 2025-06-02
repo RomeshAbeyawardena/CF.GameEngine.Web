@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class AccessTokenRepository(IAccessTokenProtection accessTokenProtection, TimeProvider timeProvider, CFIdentityDbContext context)
+internal class AccessTokenRepository(IAccessTokenSpaProtection accessTokenProtection, TimeProvider timeProvider, CFIdentityDbContext context)
     : RepositoryBase<IAccessToken, DbAccessToken, AccessTokenDto>(timeProvider, context), IAccessTokenRepository
 {
     private async Task PrimeAccessTokenProtection(Guid clientId, CancellationToken cancellationToken)

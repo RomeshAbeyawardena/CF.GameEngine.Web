@@ -2,6 +2,7 @@
 using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Api.Features.User.Get;
+using CF.Identity.Infrastructure.Features.AccessToken;
 using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.SqlServer.PII;
 using IDFCR.Shared.Abstractions;
@@ -20,7 +21,15 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 {
     private AuthenticatedClient? authenticatedClient;
     private IUserPIIProtection? userPIIProtection;
-    
+    private IClientProtection? clientProtection;
+    private IClientProtection ClientProtection(IServiceProvider services) => clientProtection ??= services.GetRequiredService<IClientProtection>();
+
+    private IAccessTokenProtection? accessTokenProtection;
+    private IAccessTokenProtection AccessTokenProtection(IServiceProvider service, IClientDetails clientDetails)  {
+        accessTokenProtection ??= service.GetRequiredService<IAccessTokenProtection>();
+        accessTokenProtection.Client = clientDetails.Map<ClientDto>();
+        return accessTokenProtection;
+    }
     private async Task AttachScopes(IClientDetails client, Guid userId, List<Claim> claims)
     {
         var scopes = (await mediator.Send(new FindScopesQuery(client.Id, userId, IncludePrivilegedScoped: client.IsSystem, Bypass: true))).GetResultOrDefault();
@@ -62,8 +71,8 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         {
             return AuthenticateResult.Fail("Authentication header invalid, two-part requirement is incorrect");
         }
-
-        var timeProvider = Context.RequestServices.GetRequiredService<TimeProvider>();
+        var services = Context.RequestServices;
+        var timeProvider = services.GetRequiredService<TimeProvider>();
         var utcNow = timeProvider.GetUtcNow();
 
         var range = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
@@ -71,7 +80,7 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
         var clientResult = (await mediator.Send(new FindClientQuery(clientId, range.FromValue, range.ToValue, Bypass: true))).GetOneOrDefault();
 
         if (clientResult is null
-            || !clientCredentialHasher.Verify(clientSecret, clientResult))
+            || !ClientProtection(services).VerifySecret(clientResult, clientSecret))
         {
             return AuthenticateResult.Fail("Client authentication failed");
         }
@@ -96,7 +105,10 @@ public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<
 
         var accessToken = authorisation["Bearer ".Length..].Trim();
 
-        var hash = clientCredentialHasher.Hash(accessToken, client.ClientDetails.Map<ClientDto>());
+        var services = Context.RequestServices;
+        
+        var hash = AccessTokenProtection(services, client.ClientDetails)
+            .GetHashedAccessToken(accessToken);
 
         var timeProvider = Context.RequestServices.GetRequiredService<TimeProvider>();
         var utcNow = timeProvider.GetUtcNow();
