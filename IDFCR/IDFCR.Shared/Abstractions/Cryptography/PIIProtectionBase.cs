@@ -271,9 +271,10 @@ public abstract class PIIProtectionBase<T>(Encoding encoding) : PIIProtectionPro
     public string HashWithArgon2(ArgonVariation argonVariation, byte[] password, string salt, int length, Action<Argon2>? configure = null)
     { 
         var derived = GetArgonImplementation(argonVariation, password);
-        derived.DegreeOfParallelism = Environment.ProcessorCount;
-        derived.MemorySize = 4 * Environment.ProcessorCount;
-        derived.Iterations = 10_000; // Default iterations, can be overridden in configure
+        var cores = Environment.ProcessorCount;
+        derived.DegreeOfParallelism = Math.Max(1, cores / 2);
+        derived.MemorySize = Math.Max(64 * 1024, cores * cores * 1024); // ensure minimum 64MB
+        derived.Iterations = 4;
         configure?.Invoke(derived);
         derived.KnownSecret = Encoding.GetBytes(salt);
         return Convert.ToBase64String(derived.GetBytes(length));
