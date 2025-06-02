@@ -26,7 +26,7 @@ If you are running this in a non-interactive context, please remove the --intera
 
         var foundAccessToken = await context.AccessTokens.AsNoTracking()
             .Include(x => x.Client)
-            .FirstOrDefaultAsync(x => x.Client.IsSystem);
+            .FirstOrDefaultAsync(x => x.Client.IsSystem, cancellationToken);
 
         if (foundAccessToken is null)
         {
@@ -37,7 +37,11 @@ If you are running this in a non-interactive context, please remove the --intera
         var accessTokenProtection = serviceProvider.GetRequiredService<IAccessTokenSpaProtection>();
         accessTokenProtection.Client = foundAccessToken.Client;
 
-        return accessTokenProtection.VerifyHashUsing(foundAccessToken, x => x.ReferenceToken, accessToken)
-            && accessTokenProtection.VerifyHashUsing(foundAccessToken, x => x.RefreshToken, refreshToken);
+        var results = new List<bool>();
+
+        results.AddRange(accessTokenProtection.VerifyHashUsing(foundAccessToken, x => x.ReferenceToken, accessToken)
+            ,accessTokenProtection.VerifyHashUsing(foundAccessToken, x => x.RefreshToken, refreshToken));
+
+        return results.TrueForAll(x => x);
     }
 }
