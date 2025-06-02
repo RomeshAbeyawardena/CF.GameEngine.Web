@@ -22,6 +22,7 @@ public class ClientSecretMiddleware
             if (!requiredPaths.Any(p => path.StartsWith($"/{p}")))
             {
                 await next(context);
+                return;
             }
 
             var auth = context.Request.Headers["x-auth"].FirstOrDefault();
