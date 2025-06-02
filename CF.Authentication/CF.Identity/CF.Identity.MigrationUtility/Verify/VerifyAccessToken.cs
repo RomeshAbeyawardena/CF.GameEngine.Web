@@ -39,8 +39,21 @@ If you are running this in a non-interactive context, please remove the --intera
 
         var results = new List<bool>();
 
-        results.AddRange(accessTokenProtection.VerifyHashUsing(foundAccessToken, x => x.ReferenceToken, accessToken)
-            ,accessTokenProtection.VerifyHashUsing(foundAccessToken, x => x.RefreshToken, refreshToken));
+        var isReferenceTokenValid = accessTokenProtection.VerifyHashUsing(foundAccessToken, x => x.ReferenceToken, accessToken);
+
+        if (!isReferenceTokenValid)
+        {
+            logger.LogError("Reference token does not match");
+        }
+
+        var isRefreshTokenValid = accessTokenProtection.VerifyHashUsing(foundAccessToken, x => x.RefreshToken, refreshToken);
+
+        if (!isReferenceTokenValid)
+        {
+            logger.LogError("Refresh token does not match");
+        }
+
+        results.AddRange(isReferenceTokenValid, isRefreshTokenValid);
 
         return results.TrueForAll(x => x);
     }
