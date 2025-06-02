@@ -1,4 +1,5 @@
-﻿using CF.Identity.Infrastructure.Features.AccessToken;
+﻿using CF.Identity.Infrastructure.Features.AccessRoles;
+using CF.Identity.Infrastructure.Features.AccessToken;
 using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.Features.Scope;
 using CF.Identity.Infrastructure.Features.Users;
@@ -34,6 +35,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton(Encoding.UTF8)
             .AddTransient((x) => RandomNumberGenerator.Create())
             .AddSingleton<IJwtSettings, ConfigurationDerivedJwtSettings>()
+            .AddScoped<IAccessRoleRepository, AccessRoleRepository>()
             .AddScoped<IAccessTokenProtection, AccessTokenProtection>()
             .AddScoped<IAccessTokenSpaProtection, AccessTokenProtection>()
             .AddScoped<IAccessTokenRepository, AccessTokenRepository>()

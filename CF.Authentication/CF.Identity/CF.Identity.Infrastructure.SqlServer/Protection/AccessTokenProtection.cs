@@ -16,12 +16,12 @@ internal class AccessTokenProtection : PIIProtectionBase<DbAccessToken>, IAccess
 
     public string GetHashedAccessToken(string accessToken)
     {
-        return GetHashUsing(null!, x => x.ReferenceToken, accessToken, out _);
+        return GetHashUsing(new(), x => x.ReferenceToken, accessToken, out _);
     }
 
     public bool VerifyAccessToken(string accessToken)
     {
-        return VerifyHashUsing(null!, x => x.ReferenceToken, accessToken);
+        return VerifyHashUsing(new(), x => x.ReferenceToken, accessToken);
     }
 
     public AccessTokenProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)

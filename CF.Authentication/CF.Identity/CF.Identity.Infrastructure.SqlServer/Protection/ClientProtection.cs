@@ -21,7 +21,7 @@ internal class ClientProtection : PIIProtectionBase<DbClient>, IClientSpaProtect
 
     public string HashSecret(string secret)
     {
-        return GetHashUsing(null!, x => x.SecretHash, secret, out _);
+        return GetHashUsing(new(), x => x.SecretHash, secret, out _);
     }
 
     public ClientProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
