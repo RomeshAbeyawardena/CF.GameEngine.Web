@@ -1,13 +1,13 @@
-﻿using CF.Identity.Infrastructure.Features.AccessToken;
-using CF.Identity.Infrastructure.Features.Clients;
+﻿using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.SqlServer.Models;
+using CF.Identity.Infrastructure.SqlServer.SPA;
 using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 
 namespace CF.Identity.Infrastructure.SqlServer.Protection;
 
-internal class AccessTokenProtection : PIIProtectionBase<DbAccessToken>, IAccessTokenProtection
+internal class AccessTokenProtection : PIIProtectionBase<DbAccessToken>, IAccessTokenSpaProtection
 {
     protected override string GetKey(DbAccessToken entity)
     {

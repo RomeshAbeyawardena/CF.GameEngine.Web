@@ -1,13 +1,13 @@
 ﻿using CF.Identity.Infrastructure.Features.Clients;
 using CF.Identity.Infrastructure.SqlServer.Models;
-
+using CF.Identity.Infrastructure.SqlServer.SPA;
 using IDFCR.Shared.Abstractions.Cryptography;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 
 namespace CF.Identity.Infrastructure.SqlServer.Protection;
 
-internal class ClientProtection : PIIProtectionBase<DbClient>, IClientProtection
+internal class ClientProtection : PIIProtectionBase<DbClient>, IClientSpaProtection
 {
     protected override string GetKey(DbClient client)
     {
@@ -21,7 +21,7 @@ internal class ClientProtection : PIIProtectionBase<DbClient>, IClientProtection
 
     public string HashSecret(string secret)
     {
-        return GetHashUsing(null, x => x.SecretHash, secret, out _);
+        return GetHashUsing(null!, x => x.SecretHash, secret, out _);
     }
 
     public ClientProtection(IConfiguration configuration, Encoding encoding) : base(configuration, encoding)
