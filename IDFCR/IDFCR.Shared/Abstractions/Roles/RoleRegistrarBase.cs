@@ -8,7 +8,7 @@ public static class RoleRegistrar
         var registrar = new T();
 
         return category.HasValue 
-            ? registrar.Where(r => r.Category == category).Select(role => role.Key)
+            ? registrar.Where(r => r.Category == category).Select(role => role.Key).Union(additionalRoles)
             : registrar.Select(role => role.Key).Union(additionalRoles);
     }
 

@@ -24,6 +24,8 @@ public static class Endpoint
 
     public static IEndpointRouteBuilder AddPostClientEndpoint(this IEndpointRouteBuilder builder)
     {
+        var s = Authorise.Using<ClientRoles>(RoleCategory.Write, SystemRoles.GlobalWrite);
+
         builder.MapPost(Route.BaseUrl, SaveClientAsync)
             .DisableAntiforgery()
             .Produces<Guid>(StatusCodes.Status201Created)
@@ -31,7 +33,7 @@ public static class Endpoint
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status409Conflict)
             .WithDescription("Creates a new client.")
-            .RequireAuthorization(Authorise.Using<ClientRoles>(RoleCategory.Write, SystemRoles.GlobalWrite));
+            .RequireAuthorization(s);
         return builder;
     }
 }
