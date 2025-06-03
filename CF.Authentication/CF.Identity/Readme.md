@@ -8,7 +8,7 @@ Use `CF.Identity.MigrationUtility` to apply EntityFramework migration scripts to
 
 ```
 cd CF.Identity.MigrationUtility
-dotnet run --project CF.Identity.MigrationUtility.csproj -- --migrate -seed
+dotnet run --project CF.Identity.MigrationUtility.csproj -- --migrate --seed
 ```
 
 ### Optional seeding
@@ -28,12 +28,42 @@ Example secrets.json
   "Seed:User:Lastname": "User",
   "Seed:User:Firstname": "Admin",
   "Seed:User:EmailAddress": "admin@identity.co",
+  "Seed:Client:Reference": "dev-system",
+  "Seed:Client:Name": "Dev System",
   "Seed:Client:SystemClientSecret": "dev-client-secret",
   "Kestrel:Certificates:Development:Password": "<unique-id>",
   "JwtSettings:SigningKey": "dev-Only-Signing-Key_thatIsSecureEnough!2025",
   "JwtSettings:Issuer": "https://localhost:7234",
   "JwtSettings:Audience": "https://localhost:8224",
-  "Encryption:Key": "<unique-id>",
+  "Encryption:Key": "<unique-id-min-15-length>",
   "ConnectionStrings:CFIdentity": "Server=localhost,5060;Database=CFIdentity;User Id=sa;Password=<password>;MultipleActiveResultSets=true;TrustServerCertificate=true"
 }
 ```
+
+---
+## Api Features
+
+Each endpoint will follow the structure of
+- Feature
+  - [Entity]
+     - Endpoints/CommandHandlers
+
+### Structure
+The API is structured around the following main components:
+
+#### Delete
+- Delete (by id) - returns non-return type unit result 
+- Extension delete methods may live here too with a non-return type unit result 
+#### Get
+- List (paged list)
+-- Accepts paged filters - hard limit 50
+- Get (non-paged list) not to exposed publicly - hard limit 500
+- Get (by id) - single entity/null
+
+#### Post
+
+- Post (with payload) - returns id
+
+#### Put
+
+- Post (with payload + ID in query) - returns id

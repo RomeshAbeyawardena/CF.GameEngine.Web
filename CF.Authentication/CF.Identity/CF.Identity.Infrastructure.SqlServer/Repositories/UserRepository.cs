@@ -7,7 +7,6 @@ using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 

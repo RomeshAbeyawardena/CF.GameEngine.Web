@@ -24,8 +24,8 @@ internal static partial class Seed
 
         var systemClient = new DbClient
         {
-            Reference = "system",
-            Name = "System Client",
+            Reference = configuration.GetValue<string>("Seed:Client:Reference") ?? throw new NullReferenceException("Seed client reference missing"),
+            Name = configuration.GetValue<string>("Seed:Client:Name") ?? throw new NullReferenceException("Seed client name missing"),
             ValidFrom = DateTimeOffset.UtcNow,
             ValidTo = DateTimeOffset.UtcNow.AddYears(1),
             SecretHash = configuration.GetValue<string>("Seed:Client:SystemClientSecret"),
