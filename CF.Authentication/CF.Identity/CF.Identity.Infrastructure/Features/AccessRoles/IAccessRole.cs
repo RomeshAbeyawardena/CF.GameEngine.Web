@@ -2,11 +2,18 @@
 
 namespace CF.Identity.Infrastructure.Features.AccessRoles;
 
-public interface IAccessRole : IMappable<IAccessRole>, IIdentifer
+public interface IAccessRole : IAccessRoleDetail
+{   
+}
+
+public interface IAccessRoleSummary : IMappable<IAccessRole>, IIdentifer
 {
-    //Non-optional, these will belong to a given a client and no-one else
     Guid ClientId { get; }
     string Key { get; }
     string? DisplayName { get; }
+}
+
+public interface IAccessRoleDetail : IAccessRoleSummary
+{
     string? Description { get; }
 }

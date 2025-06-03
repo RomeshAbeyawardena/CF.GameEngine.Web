@@ -1,13 +1,18 @@
 ﻿using CF.Identity.Infrastructure.Features.AccessRoles;
 using IDFCR.Shared.Abstractions;
 
-namespace CF.Identity.Api.Features.AccessRoles;
+namespace CF.Identity.Api.Features.AccessRoles.List;
 
-public class AccessRoleDto : MappableBase<IAccessRole>, IAccessRole
+public class AccessRoleSummary : MappableBase<IAccessRole>, IAccessRoleSummary
 {
-    protected override IAccessRole Source => this;
+    protected override IAccessRole Source => new AccessRoleDto
+    {
+        ClientId = ClientId,
+        Key = Key,
+        DisplayName = DisplayName,
+        Id = Id
+    };
 
-    public string? Description { get; set; }
     public Guid ClientId { get; set; }
     public string Key { get; set; } = null!;
     public string? DisplayName { get; set; }
@@ -18,7 +23,6 @@ public class AccessRoleDto : MappableBase<IAccessRole>, IAccessRole
         ClientId = source.ClientId;
         Key = source.Key;
         DisplayName = source.DisplayName;
-        Description = source.Description;
         Id = source.Id;
     }
 }

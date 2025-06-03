@@ -1,4 +1,5 @@
-﻿using CF.Identity.Api.Features.Clients.Get;
+﻿using CF.Identity.Api.Features.AccessTokens.Get;
+using CF.Identity.Api.Features.Clients.Get;
 using FluentValidation;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.FluentValidation.Constants;
@@ -36,6 +37,26 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
                 .WithMessage("Client or Client ID must be a valid value")
                 .WithErrorCode(Errorcodes.Conflict);
         }
+
+        public async Task<bool> MustBeUnique(EditableAccessRoleDto model, CancellationToken cancellationToken)
+        {
+            if (model.Id != default)
+            {
+                var existingRole = await _mediator.Send(
+                    new FindAccessTokenQuery(model.Id, true), cancellationToken);
+                if (existingRole is null)
+                {
+                    return false;
+                }
+                if (existingRole.Key == model.Key && existingRole.ClientId == model.ClientId)
+                {
+                    return true;
+                }
+            }
+            var result = await _mediator.Send(
+                new FindAccessRoleQuery(model.Key, model.ClientId, Bypass: true), cancellationToken);
+            return result.IsEmpty();
+
         public async Task<bool> HaveValidClient(
             EditableAccessRoleDto model, CancellationToken cancellationToken)
         {
