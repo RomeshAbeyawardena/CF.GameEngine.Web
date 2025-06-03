@@ -25,7 +25,7 @@ public class ClientSecretMiddleware
                 return;
             }
 
-            var auth = context.Request.Headers["x-auth"].FirstOrDefault();
+            var auth = context.Request.Headers["x-api-key"].FirstOrDefault();
 
             if (string.IsNullOrWhiteSpace(auth))
             {

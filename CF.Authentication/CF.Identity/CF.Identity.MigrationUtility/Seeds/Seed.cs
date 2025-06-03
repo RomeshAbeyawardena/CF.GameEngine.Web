@@ -23,7 +23,7 @@ internal static partial class Seed
 
         await TrySeedScopesAsync(logger, context, cancellationToken);
 
-        await TrySeedSystemClientAsync(logger, context, serviceProvider, cancellationToken);
+        await TrySeedSystemClientAsync(logger, context, args, serviceProvider, cancellationToken);
 
         if (args.Any(x => x.StartsWith("--seed:", StringComparison.InvariantCultureIgnoreCase)))
         {
