@@ -1,4 +1,5 @@
-﻿using CF.Identity.Api.Features.AccessTokens;
+﻿using CF.Identity.Api.Extensions;
+using CF.Identity.Api.Features.AccessTokens;
 using CF.Identity.Api.Features.AccessTokens.Delete;
 using CF.Identity.Api.Features.AccessTokens.Get;
 using CF.Identity.Api.Features.Clients;
@@ -39,16 +40,17 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         var utcNow = timeProvider.GetUtcNow();
         var dateRange = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
 
-        if (httpContextAccessor.HttpContext!.Items.TryGetValue(nameof(AuthenticatedClient), out var authClient)
-            && authClient is AuthenticatedClient authenticatedClient)
-        {
-            
-        }
+        var authenticatedClient = httpContextAccessor.HttpContext?.GetAuthenticatedClient();
 
-
-        if (string.IsNullOrWhiteSpace(request.TokenRequest.ClientId))
+        var clientId = request.TokenRequest.ClientId;
+        
+        //we can only help with the client ID, the client secret is not available in its plaintext value
+        if (authenticatedClient is not null)
         {
-            
+            if (string.IsNullOrWhiteSpace(clientId))
+            {
+                clientId = authenticatedClient.ClientDetails.Reference;
+            }
         }
 
         var clientResult = await mediator.Send(new FindClientQuery(request.TokenRequest.ClientId, dateRange.FromValue, dateRange.ToValue, Bypass: true), cancellationToken);
@@ -60,7 +62,8 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             return new UnitResult(new UnauthorizedAccessException("Client not found")).As<TokenResponse>();
         }
 
-        if (!clientProtection.VerifySecret(clientDetail, request.TokenRequest.ClientSecret))
+        if (string.IsNullOrEmpty(request.TokenRequest.ClientSecret) 
+            || !clientProtection.VerifySecret(clientDetail, request.TokenRequest.ClientSecret))
         {
             return new UnitResult(new UnauthorizedAccessException("Invalid client secret")).As<TokenResponse>();
         }

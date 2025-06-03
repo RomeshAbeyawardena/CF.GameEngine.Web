@@ -10,12 +10,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Encodings.Web;
 
 namespace CF.Identity.Api.Extensions;
 
-public class AuthHandler(Encoding encoding, IMediator mediator, IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder) 
+public class AuthHandler(IMediator mediator, IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder) 
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     private AuthenticatedClient? authenticatedClient;
