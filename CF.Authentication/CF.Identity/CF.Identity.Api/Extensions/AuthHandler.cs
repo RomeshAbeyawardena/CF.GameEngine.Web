@@ -106,9 +106,7 @@ public class AuthHandler(IMediator mediator, IOptionsMonitor<AuthenticationSchem
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        authenticatedClient = Context.Items.TryGetValue((nameof(AuthenticatedClient)), out var client) 
-            ? client as AuthenticatedClient
-            : null;
+        authenticatedClient = Context.GetAuthenticatedClient();
 
         if (authenticatedClient is null)
         {

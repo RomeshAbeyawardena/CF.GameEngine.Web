@@ -44,7 +44,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
 
         var clientId = request.TokenRequest.ClientId;
         
-        //we can only help with the client ID, the client secret is not available in its plaintext value
+        //we can only help with the client ID, the client secret is not available in its plaintext value as its thrown away
         if (authenticatedClient is not null)
         {
             if (string.IsNullOrWhiteSpace(clientId))
