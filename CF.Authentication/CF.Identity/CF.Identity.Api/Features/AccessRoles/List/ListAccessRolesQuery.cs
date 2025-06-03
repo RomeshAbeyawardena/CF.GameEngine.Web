@@ -6,7 +6,7 @@ using IDFCR.Shared.Abstractions.Paging;
 
 namespace CF.Identity.Api.Features.AccessRoles.List;
 
-public record ListAccessRolesQuery(Guid? ClientId = null, string? NameContains = null,
+public record ListAccessRolesQuery(Guid? ClientId = null, string? NameContains = null, string? Name = null,
     bool NoTracking = true, bool Bypass = false) 
     : PagedQuery, IUnitPagedRequest<AccessRoleDto>, IPagedAccessRoleFilter, IRoleRequirement
 {
