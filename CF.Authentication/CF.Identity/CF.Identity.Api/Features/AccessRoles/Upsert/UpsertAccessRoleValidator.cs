@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Api.Features.AccessRoles.Get;
-using CF.Identity.Api.Features.AccessTokens.Get;
 using CF.Identity.Api.Features.Clients.Get;
 using FluentValidation;
 using IDFCR.Shared.Extensions;
