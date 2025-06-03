@@ -44,7 +44,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
 
         var clientId = request.TokenRequest.ClientId;
         
-        //we can only help with the client ID, the client secret is not available in its plaintext value as its thrown away
+        //we can only help with the client ID, the client secret is not available in its plaintext value as its thrown away upon use
         if (authenticatedClient is not null)
         {
             if (string.IsNullOrWhiteSpace(clientId))
@@ -53,7 +53,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             }
         }
 
-        var clientResult = await mediator.Send(new FindClientQuery(request.TokenRequest.ClientId, dateRange.FromValue, dateRange.ToValue, Bypass: true), cancellationToken);
+        var clientResult = await mediator.Send(new FindClientQuery(clientId, dateRange.FromValue, dateRange.ToValue, Bypass: true), cancellationToken);
 
         var clientDetail = clientResult.GetOneOrDefault();
 
@@ -91,7 +91,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
 
         if (!requestedScopes.All(y => scopes.Any(x => x.Key.Equals(y, StringComparison.InvariantCultureIgnoreCase))))
         {
-            return new UnitResult(new Exception("Invalid scope requested")).As<TokenResponse>();
+            return new UnitResult(new UnauthorizedAccessException("Invalid scope requested")).As<TokenResponse>();
         }
 
         var existingAccessTokens = await mediator.Send(new FindAccessTokenQuery(ClientId: clientDetail.Id, UserId: systemUser.Id,

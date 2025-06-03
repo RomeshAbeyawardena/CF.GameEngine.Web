@@ -89,7 +89,7 @@ internal static partial class Seed
 
             if (args.Any(x => x.Equals("--output", StringComparison.InvariantCultureIgnoreCase)))
             {
-                await File.WriteAllTextAsync("ApiKey.txt", output, cancellationToken);
+                await File.AppendAllTextAsync("ApiKey.txt", output,  cancellationToken);
             }
         }
         else
