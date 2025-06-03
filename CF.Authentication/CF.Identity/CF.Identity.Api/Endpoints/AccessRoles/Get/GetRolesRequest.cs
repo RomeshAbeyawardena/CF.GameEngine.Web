@@ -1,0 +1,37 @@
+﻿using CF.Identity.Api.Features.AccessRoles.List;
+using CF.Identity.Infrastructure.Features.AccessRoles;
+using IDFCR.Shared.Abstractions.Paging;
+
+namespace CF.Identity.Api.Endpoints.AccessRoles.Get;
+
+public record GetRolesRequest : MappablePagedQuery<IPagedAccessRoleFilter>, IPagedAccessRoleFilter
+{
+    protected override IPagedAccessRoleFilter Source => new ListAccessRolesQuery()
+    {
+        ClientId = ClientId,
+        Name = Name,
+        NameContains = NameContains,
+        NoTracking = NoTracking,
+        SortField = SortField,
+        SortOrder = SortOrder
+    };
+
+    public Guid? ClientId { get; set; }
+    public string Name { get; set; } = null!;
+    public string? NameContains { get; set; }
+    public bool NoTracking { get; set; }
+    public string? SortField { get; set; }
+    public string? SortOrder { get; set; }
+
+    public ListAccessRolesQuery ToQuery()
+    {
+        var result = this.Map<ListAccessRolesQuery>();
+
+        return result;
+    }
+
+    public override void Map(IPagedAccessRoleFilter source)
+    {
+        throw new NotSupportedException();
+    }
+}
