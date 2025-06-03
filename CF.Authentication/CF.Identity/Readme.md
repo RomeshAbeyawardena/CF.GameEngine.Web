@@ -15,10 +15,12 @@ dotnet run --project CF.Identity.MigrationUtility.csproj -- --migrate --seed
 If you want to seed the database with some test data, you can use the `-seed` option. This will create a user with the username `admin` and password `admin`. You can change this in the `Program.cs` file.
 cd CF.Identity.MigrationUtility
 ```
-dotnet run --project CF.Identity.MigrationUtility.csproj -- --migrate -seed-[seed]
+dotnet run --project CF.Identity.MigrationUtility.csproj -- --migrate -seed-[seed-type]
 ```
+Consult with --help for all available options.
 
-Example secrets.json
+
+#### Example secrets.json
 ```json
 {
   "Seed:User:Username": "admin",
