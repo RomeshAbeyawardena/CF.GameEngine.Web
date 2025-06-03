@@ -4,6 +4,11 @@ namespace IDFCR.Shared.Extensions;
 
 public static class UnitCollectionExtensions
 {
+    public static IUnitResultCollection<T> ToUnitCollection<T>(this IEnumerable<T> items, UnitAction action = UnitAction.Get, bool isSuccess = true)
+    {
+        return UnitResultCollection.FromResult(items, action, isSuccess);
+    }
+
     public static List<T> AsList<T>(this IUnitResultCollection<T> collection) where T : class
     {
         if (!collection.HasValue)

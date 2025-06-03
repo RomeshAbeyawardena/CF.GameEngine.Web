@@ -4,7 +4,7 @@ public static class UnitResultCollection
 {
     public static IUnitResultCollection<T> FromResult<T>(IEnumerable<T>? result, UnitAction action = UnitAction.Get, bool isSuccess = true)
     {
-        return new UnitResultCollection<T>(result, action, isSuccess);
+        return new UnitResultCollection<T>(result?.ToArray(), action, isSuccess);
     }
 
     public static IUnitResultCollection<T> Failed<T>(Exception exception, UnitAction action = UnitAction.None)
