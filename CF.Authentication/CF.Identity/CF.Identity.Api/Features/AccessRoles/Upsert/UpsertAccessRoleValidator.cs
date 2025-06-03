@@ -1,4 +1,5 @@
-﻿using CF.Identity.Api.Features.AccessTokens.Get;
+﻿using CF.Identity.Api.Features.AccessRoles.Get;
+using CF.Identity.Api.Features.AccessTokens.Get;
 using CF.Identity.Api.Features.Clients.Get;
 using FluentValidation;
 using IDFCR.Shared.Extensions;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace CF.Identity.Api.Features.AccessRoles.Upsert
 {
-    public class UpsertAccessRoleValidator 
+    public class UpsertAccessRoleValidator
         : AbstractValidator<UpsertAccessRoleCommand>
     {
         private readonly IMediator _mediator;
@@ -36,31 +37,36 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
                 .WithName("ClientId")
                 .WithMessage("Client or Client ID must be a valid value")
                 .WithErrorCode(Errorcodes.Conflict);
+
+            RuleFor(x => x.AccessRole).MustAsync(MustBeUnique)
+                .WithName("Key")
+                .WithMessage("An access role with the same key already exists.")
+                .WithErrorCode(Errorcodes.Conflict);
         }
 
         public async Task<bool> MustBeUnique(EditableAccessRoleDto model, CancellationToken cancellationToken)
         {
-            if (model.Id != default)
+            var existingRole = (await _mediator.Send(
+                new GetAccessRolesQuery(model.ClientId, model.Key, Bypass: true),
+                    cancellationToken)).GetOneOrDefault();
+
+            if (existingRole is null)
             {
-                var existingRole = await _mediator.Send(
-                    new FindAccessTokenQuery(model.Id, true), cancellationToken);
-                if (existingRole is null)
-                {
-                    return false;
-                }
-                if (existingRole.Key == model.Key && existingRole.ClientId == model.ClientId)
-                {
-                    return true;
-                }
+                return true;
             }
-            var result = await _mediator.Send(
-                new FindAccessRoleQuery(model.Key, model.ClientId, Bypass: true), cancellationToken);
-            return result.IsEmpty();
+
+            if (existingRole.Key == model.Key && existingRole.Id == model.Id)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         public async Task<bool> HaveValidClient(
             EditableAccessRoleDto model, CancellationToken cancellationToken)
         {
-            if(model.ClientId != default)
+            if (model.ClientId != default)
             {
                 var result = (await _mediator.Send(new FindClientQueryById(model.ClientId, true), cancellationToken)).GetResultOrDefault();
 
@@ -74,7 +80,7 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
 
             var clientResult = (await _mediator.Send(new FindClientQuery(model.Client, Bypass: true), cancellationToken)).GetOneOrDefault();
 
-            if(clientResult is null)
+            if (clientResult is null)
             {
                 return false;
             }

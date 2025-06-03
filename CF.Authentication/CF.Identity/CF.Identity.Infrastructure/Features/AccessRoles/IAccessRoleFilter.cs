@@ -7,6 +7,7 @@ namespace CF.Identity.Infrastructure.Features.AccessRoles;
 public interface IAccessRoleFilter : IFilter<IAccessRoleFilter>
 {
     Guid? ClientId { get; }
+    string? Name { get; }
     string? NameContains { get; }
 }
 
