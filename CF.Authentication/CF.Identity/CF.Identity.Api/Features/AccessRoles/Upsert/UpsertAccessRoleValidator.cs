@@ -1,4 +1,5 @@
-﻿using CF.Identity.Api.Features.AccessRoles.Get;
+﻿using CF.Identity.Api.Features.AccessRoles.Find;
+using CF.Identity.Api.Features.AccessRoles.Get;
 using CF.Identity.Api.Features.Clients.Get;
 using FluentValidation;
 using IDFCR.Shared.Extensions;
@@ -14,6 +15,11 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
         public UpsertAccessRoleValidator(IMediator mediator)
         {
             _mediator = mediator;
+
+            RuleFor(x => x.AccessRole)
+                .MustAsync(HaveValidId)
+                .When(x => x.AccessRole.Id == default);
+
             RuleFor(x => x.AccessRole.Key)
                 .NotEmpty()
                 .WithMessage("Key is required.")
@@ -41,6 +47,13 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
                 .WithName("Key")
                 .WithMessage("An access role with the same key already exists.")
                 .WithErrorCode(Errorcodes.Conflict);
+        }
+
+        private async Task<bool> HaveValidId(EditableAccessRoleDto dto, CancellationToken token)
+        {
+            var existingRole = (await _mediator.Send(new FindAccessRoleQuery(dto.Id, true), token)).GetResultOrDefault();
+
+            return existingRole is not null;
         }
 
         public async Task<bool> MustBeUnique(EditableAccessRoleDto model, CancellationToken cancellationToken)
