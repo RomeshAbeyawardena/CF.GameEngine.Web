@@ -11,7 +11,7 @@ public record ApiCollectionResult<T>
 {
     private readonly bool _buildNestedLinks;
     public ApiCollectionResult(IEnumerable<T> Data, int StatusCode, bool buildNestedLinks = true)
-        : base(Data.Select(x => x.AsEntryWrapper()), StatusCode, false)
+        : base([.. Data.Select(x => x.AsEntryWrapper())], StatusCode, false)
     {
         _buildNestedLinks = buildNestedLinks;
     }
