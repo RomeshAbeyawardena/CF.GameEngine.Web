@@ -1,16 +1,25 @@
-﻿using IDFCR.Shared.Http.Links;
+﻿using IDFCR.Shared.Http.Extensions;
+using IDFCR.Shared.Http.Links;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IDFCR.Shared.Http.Results;
 
-public record ApiCollectionResult<T>(IEnumerable<T> Data, int StatusCode, bool BuildNestedLinks = true) : ApiResult<IEnumerable<T>>(Data, StatusCode, false), IApiResult<IEnumerable<T>>
+public record ApiCollectionResult<T>
+    : ApiResult<IEnumerable<IEntryWrapper<T>>>, IApiResult<IEnumerable<IEntryWrapper<T>>>
 {
+    private readonly bool _buildNestedLinks;
+    public ApiCollectionResult(IEnumerable<T> Data, int StatusCode, bool buildNestedLinks = true)
+        : base(Data.Select(x => x.AsEntryWrapper()), StatusCode, false)
+    {
+        _buildNestedLinks = buildNestedLinks;
+    }
+
     protected override void OnExecuteAsync(HttpContext httpContext)
     {
         base.OnExecuteAsync(httpContext);
-        if (this.BuildNestedLinks)
+        if (this._buildNestedLinks)
         {
             var services = httpContext.RequestServices;
             var linkBuilders = services.GetServices<ILinkBuilder<T>>();
@@ -29,14 +38,11 @@ public record ApiCollectionResult<T>(IEnumerable<T> Data, int StatusCode, bool B
                     if (entry is not null)
                     {
                         var links = firstBuilder.Build(
-                            services.GetRequiredService<LinkGenerator>()).GenerateLinks(entry);
+                            services.GetRequiredService<LinkGenerator>()).GenerateLinks(entry.Entry);
 
                         foreach (var (key, value) in links)
                         {
-                            if (!MutableLinks.TryAdd(key, value))
-                            {
-                                MutableLinks[key] = value;
-                            }
+                            entry.AddLink(key, value);
                         }
                     }
                 }

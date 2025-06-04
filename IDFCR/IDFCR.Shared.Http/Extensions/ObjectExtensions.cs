@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using IDFCR.Shared.Http.Results;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace IDFCR.Shared.Http.Extensions;
@@ -6,6 +7,11 @@ namespace IDFCR.Shared.Http.Extensions;
 public static class ObjectExtensions
 {
     private static readonly Lazy<Dictionary<Type, Func<object, Dictionary<string, object?>>>> _cache = new(() => []);
+
+    public static IEntryWrapper<T> AsEntryWrapper<T>(this T entry)
+    {
+        return new EntryWrapper<T>(entry);
+    }
 
     private static Func<object, Dictionary<string, object?>> BuildConverter(Type type)
     {

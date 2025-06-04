@@ -2,11 +2,22 @@
 using IDFCR.Shared.Http.Links;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 
 namespace IDFCR.Shared.Http.Results;
 
-public record EntryWrapper<T>(T Entry) : IReadOnlyDictionary<string, object?>
-    where T : notnull
+public interface IEntryWrapper<T>: IReadOnlyDictionary<string, object?>
+{
+    [JsonIgnore]
+    T Entry { get; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull
+        | JsonIgnoreCondition.WhenWritingDefault)]
+    IReadOnlyDictionary<string, ILink>? Links { get; }
+    void AddLink(string key, ILink link);
+}
+
+public record EntryWrapper<T>(T Entry) : IEntryWrapper<T>
 {
     public void AddLink(string key, ILink link)
     {
@@ -16,7 +27,10 @@ public record EntryWrapper<T>(T Entry) : IReadOnlyDictionary<string, object?>
             dictionary.Add("_links", links);
         }
 
-        links.Add(key, link);
+        if(!links.TryAdd(key, link))
+        {
+            links[key] = link;
+        }
     }
 
     public IReadOnlyDictionary<string, ILink>? Links
@@ -32,7 +46,7 @@ public record EntryWrapper<T>(T Entry) : IReadOnlyDictionary<string, object?>
         }
     }
 
-    private readonly IDictionary<string, object?> dictionary = Entry.AsDictionary();
+    private readonly IDictionary<string, object?> dictionary = Entry?.AsDictionary() ?? new Dictionary<string, object?>();
     object? IReadOnlyDictionary<string, object?>.this[string key] => dictionary[key];
 
     IEnumerable<string> IReadOnlyDictionary<string, object?>.Keys => dictionary.Keys;
