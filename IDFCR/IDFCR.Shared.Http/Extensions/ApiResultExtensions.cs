@@ -60,6 +60,11 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
+    public static IApiResult ToApiCollectionResult<T>(this IUnitPagedResult<T> result, string location)
+    {
+        return ToApiCollectionResult(result, location);
+    }
+
     public static IApiResult ToApiCollectionResult<T>(this IUnitResultCollection<T> result, string location)
     {
         var statusCode = GetStatusCode(result);

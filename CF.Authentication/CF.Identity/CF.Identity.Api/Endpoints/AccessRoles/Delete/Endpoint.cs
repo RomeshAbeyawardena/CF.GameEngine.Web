@@ -1,4 +1,4 @@
-﻿namespace CF.Identity.Api.Endpoints.Roles.Delete
+﻿namespace CF.Identity.Api.Endpoints.AccessRoles.Delete
 {
     public class Endpoint
     {

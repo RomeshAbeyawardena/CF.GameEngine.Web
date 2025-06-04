@@ -1,4 +1,4 @@
-﻿namespace CF.Identity.Api.Endpoints.Roles.Put
+﻿namespace CF.Identity.Api.Endpoints.AccessRoles.Put
 {
     public class Endpoint
     {
