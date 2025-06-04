@@ -17,6 +17,7 @@ namespace CF.Identity.Api.Features.AccessRoles
             ClientId = source.ClientId;
             Key = source.Key;
             DisplayName = source.DisplayName;
+            Description = source.Description;
             Id = source.Id;
         }
     }
