@@ -2,6 +2,7 @@
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Http.Results;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace IDFCR.Shared.Http.Extensions;
 
@@ -14,7 +15,7 @@ public static class ApiResultExtensions
 
     private static int GetStatusCode(this UnitAction action, Exception? exception, FailureReason? failureReason = null)
     {
-        if(action != UnitAction.Conflict && exception is ValidationException)
+        if (action != UnitAction.Conflict && exception is ValidationException)
         {
             return StatusCodes.Status400BadRequest;
         }
@@ -68,13 +69,25 @@ public static class ApiResultExtensions
         {
             apiResult = new ApiCollectionResult<T>(result.Result, statusCode);
 
+            List<string> locationValuesList = [];
+            if (result.Action == UnitAction.Add || result.Action == UnitAction.Update || result.Action == UnitAction.Pending)
+            {
+                foreach (var resultItem in result.Result)
+                {
+                    locationValuesList.Add($"{location}/{resultItem}");
+                }
+            }
+
+            StringValues locationValues = locationValuesList.ToArray();
+
             if (result.Action == UnitAction.Add || result.Action == UnitAction.Update)
             {
-                apiResult.AddHeader("Location", $"{location}/{result.Result}");
+                apiResult.AddHeader("Location", locationValues);
             }
             else if (result.Action == UnitAction.Pending)
             {
-                apiResult.AddHeader("Status-Location", $"{location}/{result.Result}/status");
+                locationValues = locationValuesList.Select(x => x + "/status").ToArray();
+                apiResult.AddHeader("Status-Location",  locationValues);
             }
         }
 
@@ -99,7 +112,7 @@ public static class ApiResultExtensions
             {
                 apiResult.AddHeader("Location", $"{location}/{result.Result}");
             }
-            else if(result.Action == UnitAction.Pending)
+            else if (result.Action == UnitAction.Pending)
             {
                 apiResult.AddHeader("Status-Location", $"{location}/{result.Result}/status");
             }
@@ -156,7 +169,7 @@ public static class ApiResultExtensions
             if (result.Result.GetType().IsCollection(out var t))
             {
                 var genericHyperMediaType = typeof(HypermediaApiListResult<>).MakeGenericType(t ?? throw new NullReferenceException("No generic type found"));
-                var instance = Activator.CreateInstance(genericHyperMediaType, [result.Result, statusCode]) 
+                var instance = Activator.CreateInstance(genericHyperMediaType, [result.Result, statusCode])
                     ?? throw new InvalidOperationException($"Failed to create instance of {nameof(HypermediaApiListResult<T>)}");
                 var listResult = (ApiResult)instance;
                 listResult.AppendMeta(result.ToDictionary());
