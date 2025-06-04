@@ -3,6 +3,8 @@ using CF.Identity.Infrastructure.Features;
 using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Mediatr;
 using IDFCR.Shared.Abstractions.Paging;
+using IDFCR.Shared.Abstractions.Results;
+using IDFCR.Shared.Extensions;
 
 namespace CF.Identity.Api.Features.AccessRoles.List;
 
@@ -29,5 +31,15 @@ public record ListAccessRolesQuery
         NameContains = source.NameContains;
         Name = source.Name;
         NoTracking = source.NoTracking;
+    }
+}
+
+public class ListAccessRolesQueryHandler(IAccessRoleRepository accessRoleRepository) : IUnitPagedRequestHandler<ListAccessRolesQuery, AccessRoleDto>
+{
+    public async Task<IUnitPagedResult<AccessRoleDto>> Handle(ListAccessRolesQuery request, CancellationToken cancellationToken)
+    {
+        var result = await accessRoleRepository.ListRolesAsync(request, cancellationToken);
+
+        return result.Convert(x => x.Map<AccessRoleDto>());
     }
 }

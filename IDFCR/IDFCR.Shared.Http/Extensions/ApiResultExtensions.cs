@@ -62,7 +62,7 @@ public static class ApiResultExtensions
 
     public static IApiResult ToApiCollectionResult<T>(this IUnitPagedResult<T> result, string location)
     {
-        return ToApiCollectionResult(result, location);
+        return ToApiCollectionResult((IUnitResultCollection<T>)result, location);
     }
 
     public static IApiResult ToApiCollectionResult<T>(this IUnitResultCollection<T> result, string location)
