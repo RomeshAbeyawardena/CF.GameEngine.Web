@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace IDFCR.Shared.Http.Results;
 
 public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode)
-    : ApiResult<IHypermediaCollection<T>>(new HypermediaCollection<T>(RawData), StatusCode)
+    : ApiResult<IHypermediaCollection<T>>(new HypermediaCollection<T>(RawData), StatusCode, false)
 {
     protected override void OnExecuteAsync(HttpContext httpContext)
     {
@@ -45,7 +45,7 @@ public record HypermediaApiListResult<T>(IEnumerable<T> RawData, int StatusCode)
     }
 }
 
-public record HypermediaApiResult<T>(T? RawData, int StatusCode) : ApiResult<IHypermedia<T>>(new Hypermedia<T>(RawData), StatusCode), IApiResult<IHypermedia<T>>
+public record HypermediaApiResult<T>(T? RawData, int StatusCode) : ApiResult<IHypermedia<T>>(new Hypermedia<T>(RawData), StatusCode, false), IApiResult<IHypermedia<T>>
 {
     protected override void OnExecuteAsync(HttpContext httpContext)
     {
