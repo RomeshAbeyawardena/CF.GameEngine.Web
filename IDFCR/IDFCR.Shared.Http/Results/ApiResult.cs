@@ -8,46 +8,6 @@ using Microsoft.Extensions.Primitives;
 
 namespace IDFCR.Shared.Http.Results;
 
-public record ApiCollectionResult<T>(IEnumerable<T> Data, int StatusCode, bool buildLinks = true) : ApiResult<IEnumerable<T>>(Data, StatusCode, false), IApiResult<IEnumerable<T>>
-{
-    protected override void OnExecuteAsync(HttpContext httpContext)
-    {
-        base.OnExecuteAsync(httpContext);
-        if (buildLinks)
-        {
-            var services = httpContext.RequestServices;
-            var linkBuilders = services.GetServices<ILinkBuilder<T>>();
-            var firstBuilder = linkBuilders.FirstOrDefault();
-
-            if (firstBuilder is not null && Data is not null)
-            {
-                if (linkBuilders.Count() > 1)
-                {
-                    firstBuilder.Merge(linkBuilders.Skip(1));
-                }
-
-                foreach (var entry in Data)
-                {
-                    
-                    if (entry is not null)
-                    {
-                        var links = firstBuilder.Build(
-                            services.GetRequiredService<LinkGenerator>()).GenerateLinks(entry);
-
-                        foreach (var (key, value) in links)
-                        {
-                            if (!MutableLinks.TryAdd(key, value))
-                            {
-                                MutableLinks[key] = value;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 public record ApiResult<T>(T Data, int StatusCode, bool BuildLinks = true) : ApiResult(StatusCode), IApiResult<T>
 {
     private readonly Dictionary<string, ILink> _links = [];
