@@ -19,6 +19,8 @@ public interface IEntryWrapper<T>: IReadOnlyDictionary<string, object?>
 
 public record EntryWrapper<T>(T Entry) : IEntryWrapper<T>
 {
+    private readonly IDictionary<string, object?> dictionary = Entry?.AsDictionary() ?? new Dictionary<string, object?>();
+
     public void AddLink(string key, ILink link)
     {
         if (!(dictionary.TryGetValue("_links", out var value) && value is Dictionary<string, ILink> links))
@@ -39,14 +41,13 @@ public record EntryWrapper<T>(T Entry) : IEntryWrapper<T>
         {
             if (dictionary.TryGetValue("_links", out var value) && value is IDictionary<string, ILink> links)
             {
-                return links.Count > 0 ?  new ReadOnlyDictionary<string, ILink>(links) : null;
+                return links.Count > 1 ?  new ReadOnlyDictionary<string, ILink>(links) : null;
             }
 
             return null;
         }
     }
 
-    private readonly IDictionary<string, object?> dictionary = Entry?.AsDictionary() ?? new Dictionary<string, object?>();
     object? IReadOnlyDictionary<string, object?>.this[string key] => dictionary[key];
 
     IEnumerable<string> IReadOnlyDictionary<string, object?>.Keys => dictionary.Keys;

@@ -94,6 +94,8 @@ public static class ApiResultExtensions
                 locationValues = locationValuesList.Select(x => x + "/status").ToArray();
                 apiResult.AddHeader("Status-Location",  locationValues);
             }
+
+            return apiResult;
         }
 
         apiResult ??= new ApiResult(statusCode, result.Exception);
