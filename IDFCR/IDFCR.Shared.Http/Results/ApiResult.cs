@@ -1,19 +1,50 @@
 ﻿using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Http.Abstractions;
-using IDFCR.Shared.Http.Extensions;
 using IDFCR.Shared.Http.Links;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 
 namespace IDFCR.Shared.Http.Results;
 
-public record ApiResultCollection<T>(IEnumerable<T> Data, int StatusCode, bool buildLinks = true) : ApiResult<IEnumerable<T>>(Data, StatusCode, buildLinks), IApiResult<IEnumerable<T>>
+public record ApiCollectionResult<T>(IEnumerable<T> Data, int StatusCode, bool buildLinks = true) : ApiResult<IEnumerable<T>>(Data, StatusCode, false), IApiResult<IEnumerable<T>>
 {
     protected override void OnExecuteAsync(HttpContext httpContext)
     {
         base.OnExecuteAsync(httpContext);
+        if (buildLinks)
+        {
+            var services = httpContext.RequestServices;
+            var linkBuilders = services.GetServices<ILinkBuilder<T>>();
+            var firstBuilder = linkBuilders.FirstOrDefault();
 
+            if (firstBuilder is not null && Data is not null)
+            {
+                if (linkBuilders.Count() > 1)
+                {
+                    firstBuilder.Merge(linkBuilders.Skip(1));
+                }
+
+                foreach (var entry in Data)
+                {
+                    
+                    if (entry is not null)
+                    {
+                        var links = firstBuilder.Build(
+                            services.GetRequiredService<LinkGenerator>()).GenerateLinks(entry);
+
+                        foreach (var (key, value) in links)
+                        {
+                            if (!MutableLinks.TryAdd(key, value))
+                            {
+                                MutableLinks[key] = value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -28,7 +59,34 @@ public record ApiResult<T>(T Data, int StatusCode, bool BuildLinks = true) : Api
     public override async Task ExecuteAsync(HttpContext httpContext)
     {
         OnExecuteAsync(httpContext);
+        if(BuildLinks)
+        {
+            var services = httpContext.RequestServices;
+            var linkBuilders = services.GetServices<ILinkBuilder<T>>();
+            var firstBuilder = linkBuilders.FirstOrDefault();
 
+            if (firstBuilder is not null)
+            {
+                if (linkBuilders.Count() > 1)
+                {
+                    firstBuilder.Merge(linkBuilders.Skip(1));
+                }
+
+                if (Data is not null)
+                {
+                    var links = firstBuilder.Build(
+                        services.GetRequiredService<LinkGenerator>()).GenerateLinks(Data);
+
+                    foreach (var (key, value) in links)
+                    {
+                        if (!MutableLinks.TryAdd(key, value))
+                        {
+                            MutableLinks[key] = value;
+                        }
+                    }
+                }
+            }
+        }
         await httpContext.Response.WriteAsJsonAsync<IApiResult<T>>(this);
     }
 }
