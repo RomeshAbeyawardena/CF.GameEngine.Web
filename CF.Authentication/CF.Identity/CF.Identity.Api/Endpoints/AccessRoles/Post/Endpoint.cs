@@ -20,7 +20,7 @@ public static class Endpoint
         return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }
 
-    public static IEndpointRouteBuilder AddPostEndpoint(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder AddPostRoleEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost(Endpoints.BaseUrl, SaveRoleAsync)
             .DisableAntiforgery()
