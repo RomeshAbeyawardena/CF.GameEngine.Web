@@ -59,6 +59,32 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
+    public static IApiResult ToApiCollectionResult<T>(this IUnitResultCollection<T> result, string location)
+    {
+        var statusCode = GetStatusCode(result);
+        ApiResult? apiResult = null;
+
+        if (result.Result is not null && result.IsSuccess)
+        {
+            apiResult = new ApiCollectionResult<T>(result.Result, statusCode);
+
+            if (result.Action == UnitAction.Add || result.Action == UnitAction.Update)
+            {
+                apiResult.AddHeader("Location", $"{location}/{result.Result}");
+            }
+            else if (result.Action == UnitAction.Pending)
+            {
+                apiResult.AddHeader("Status-Location", $"{location}/{result.Result}/status");
+            }
+        }
+
+        apiResult ??= new ApiResult(statusCode, result.Exception);
+
+        apiResult.AppendMeta(result.ToDictionary());
+
+        return apiResult;
+    }
+
     public static IApiResult ToApiResult<T>(this IUnitResult<T> result, string location)
     {
         var statusCode = GetStatusCode(result);
