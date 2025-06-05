@@ -106,7 +106,7 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
-    public static IApiResult ToApiResult<T>(this IUnitResult<T> result, string location)
+    public static IApiResult ToApiResult<T>(this IUnitResult<T> result, string? location = null)
     {
         var statusCode = GetStatusCode(result);
 
@@ -133,6 +133,7 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
+
     public static IApiResult NegotiateResult<T>(this IUnitResultCollection<T> result, IHttpContextAccessor contextAccessor, string? location = null)
     {
         var context = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
@@ -141,11 +142,7 @@ public static class ApiResultExtensions
         {
             return result.ToHypermediaCollectionResult(location);
         }
-        //Defaults to JSON
-        if (string.IsNullOrWhiteSpace(location))
-        {
-            return result.ToApiCollectionResult(location);
-        }
+        
         return result.ToApiCollectionResult(location);
     }
 
@@ -160,13 +157,12 @@ public static class ApiResultExtensions
             return result.ToHypermediaResult(location);
         }
 
-        //Defaults to JSON
-        if (string.IsNullOrWhiteSpace(location))
-        {
-            return result.ToApiResult();
-        }
-
         return result.ToApiResult(location);
+    }
+
+    public static IApiResult NegotiateResult<T>(this IUnitPagedResult<T> result, IHttpContextAccessor contextAccessor, string? location = null)
+    {
+        return NegotiateResult<T>((IUnitResultCollection<T>)result, contextAccessor, location);
     }
 
     public static IApiResult ToHypermediaCollectionResult<T>(this IUnitResultCollection<T> result, string? location = null)
@@ -184,6 +180,11 @@ public static class ApiResultExtensions
         apiResult = new ApiResult(statusCode, result.Exception);
         apiResult.AppendMeta(result.ToDictionary());
         return apiResult;
+    }
+
+    public static IApiResult ToHypermediaCollectionResult<T>(this IUnitPagedResult<T> result, string? location = null)
+    {
+        return ToHypermediaCollectionResult((IUnitResultCollection<T>)result, location);
     }
 
     public static IApiResult ToHypermediaResult<T>(this IUnitResult<T> result, string? location = null)
