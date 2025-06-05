@@ -17,7 +17,7 @@ public static class Endpoint
     {
         var result = await mediator.Send(request.Map<ListAccessRolesQuery>(), cancellationToken);
 
-        return result.ToApiCollectionResult(Endpoints.BaseUrl);//NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
+        return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }
 
     public static async Task<IResult> GetRoleAsync(Guid id, IMediator mediator,
@@ -25,7 +25,7 @@ public static class Endpoint
     {
         var result = await mediator.Send(new FindAccessRoleQuery(id), cancellationToken);
 
-        return result.ToApiResult(Endpoints.BaseUrl);
+        return result.NegotiateResult(Endpoints.BaseUrl);
     }
 
     public static IEndpointRouteBuilder AddGetRolesEndpoint(this IEndpointRouteBuilder builder)

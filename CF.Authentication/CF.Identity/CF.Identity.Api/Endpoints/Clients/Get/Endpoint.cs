@@ -13,11 +13,11 @@ namespace CF.Identity.Api.Endpoints.Clients.Get;
 
 public static class Endpoint
 {
-    public static async Task<IResult> GetClientAsync([FromRoute]Guid id,
+    public static async Task<IResult> GetClientAsync([FromRoute]Guid id, IHttpContextAccessor httpContextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new FindClientByIdQuery(id), cancellationToken);
-        return result.ToApiResult(Endpoints.BaseUrl);
+        return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }
 
     //public static async Task<IResult> GetPagedClientsAsync()

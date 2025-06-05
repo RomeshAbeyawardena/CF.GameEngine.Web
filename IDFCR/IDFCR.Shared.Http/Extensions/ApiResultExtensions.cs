@@ -63,9 +63,12 @@ public static class ApiResultExtensions
         List<string> locationValuesList = [];
         if (result.Action == UnitAction.Add || result.Action == UnitAction.Update || result.Action == UnitAction.Pending)
         {
-            foreach (var resultItem in result.Result)
+            if (result.Result is not null)
             {
-                locationValuesList.Add($"{location}/{resultItem}");
+                foreach (var resultItem in result.Result)
+                {
+                    locationValuesList.Add($"{location}/{resultItem}");
+                }
             }
         }
 
