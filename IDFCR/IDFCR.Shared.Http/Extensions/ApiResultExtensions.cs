@@ -46,6 +46,42 @@ public static class ApiResultExtensions
         };
     }
 
+    private static void ConfigureHeaders<T>(this IApiResult apiResult, IUnitResult<T> result, string? location = null)
+    {
+        if (result.Action == UnitAction.Add || result.Action == UnitAction.Update)
+        {
+            apiResult.AddHeader("Location", $"{location}/{result.Result}");
+        }
+        else if (result.Action == UnitAction.Pending)
+        {
+            apiResult.AddHeader("Status-Location", $"{location}/{result.Result}/status");
+        }
+    }
+
+    private static void ConfigureHeaders<T>(this IApiResult apiResult, IUnitResultCollection<T> result, string? location = null)
+    {
+        List<string> locationValuesList = [];
+        if (result.Action == UnitAction.Add || result.Action == UnitAction.Update || result.Action == UnitAction.Pending)
+        {
+            foreach (var resultItem in result.Result)
+            {
+                locationValuesList.Add($"{location}/{resultItem}");
+            }
+        }
+
+        StringValues locationValues = locationValuesList.ToArray();
+
+        if (result.Action == UnitAction.Add || result.Action == UnitAction.Update)
+        {
+            apiResult.AddHeader("Location", locationValues);
+        }
+        else if (result.Action == UnitAction.Pending)
+        {
+            locationValues = locationValuesList.Select(x => x + "/status").ToArray();
+            apiResult.AddHeader("Status-Location", locationValues);
+        }
+    }
+
     public static IApiResult ToApiResult(this IUnitResult result)
     {
         var statusCode = GetStatusCode(result);
@@ -73,30 +109,7 @@ public static class ApiResultExtensions
         if (result.Result is not null && result.IsSuccess)
         {
             apiResult = new ApiCollectionResult<T>(result.Result, statusCode);
-
-            List<string> locationValuesList = [];
-            if (result.Action == UnitAction.Add || result.Action == UnitAction.Update || result.Action == UnitAction.Pending)
-            {
-                foreach (var resultItem in result.Result)
-                {
-                    locationValuesList.Add($"{location}/{resultItem}");
-                }
-            }
-
-            StringValues locationValues = locationValuesList.ToArray();
-
-            if (result.Action == UnitAction.Add || result.Action == UnitAction.Update)
-            {
-                apiResult.AddHeader("Location", locationValues);
-            }
-            else if (result.Action == UnitAction.Pending)
-            {
-                locationValues = locationValuesList.Select(x => x + "/status").ToArray();
-                apiResult.AddHeader("Status-Location",  locationValues);
-            }
-
-            apiResult.AppendMeta(result.ToDictionary());
-            return apiResult;
+            ConfigureHeaders(apiResult, result, location);
         }
 
         apiResult ??= new ApiResult(statusCode, result.Exception);
@@ -116,14 +129,7 @@ public static class ApiResultExtensions
         {
             apiResult = new ApiResult<T>(result.Result, statusCode);
 
-            if (result.Action == UnitAction.Add || result.Action == UnitAction.Update)
-            {
-                apiResult.AddHeader("Location", $"{location}/{result.Result}");
-            }
-            else if (result.Action == UnitAction.Pending)
-            {
-                apiResult.AddHeader("Status-Location", $"{location}/{result.Result}/status");
-            }
+            ConfigureHeaders(apiResult, result, location);
         }
 
         apiResult ??= new ApiResult(statusCode, result.Exception);
@@ -132,7 +138,6 @@ public static class ApiResultExtensions
 
         return apiResult;
     }
-
 
     public static IApiResult NegotiateResult<T>(this IUnitResultCollection<T> result, IHttpContextAccessor contextAccessor, string? location = null)
     {
@@ -162,28 +167,23 @@ public static class ApiResultExtensions
 
     public static IApiResult NegotiateResult<T>(this IUnitPagedResult<T> result, IHttpContextAccessor contextAccessor, string? location = null)
     {
-        return NegotiateResult<T>((IUnitResultCollection<T>)result, contextAccessor, location);
+        return NegotiateResult((IUnitResultCollection<T>)result, contextAccessor, location);
     }
 
     public static IApiResult ToHypermediaCollectionResult<T>(this IUnitResultCollection<T> result, string? location = null)
     {
         var statusCode = GetStatusCode(result);
 
-        IApiResult apiResult;
+        IApiResult? apiResult = null;
         if(result.IsSuccess && result.Result is not null)
         {
             apiResult = new HypermediaApiListResult<T>(result.Result, statusCode);
             apiResult.AppendMeta(result.ToDictionary());
 
-            if (location is not null && result.Action == UnitAction.Add)
-            {
-                apiResult.AddHeader("Location", $"{location}/{result.Result}");
-            }
-
-            return apiResult;
+            ConfigureHeaders(apiResult, result, location);
         }
 
-        apiResult = new ApiResult(statusCode, result.Exception);
+        apiResult ??= new ApiResult(statusCode, result.Exception);
         apiResult.AppendMeta(result.ToDictionary());
         return apiResult;
     }
@@ -197,23 +197,18 @@ public static class ApiResultExtensions
     {
         var statusCode = GetStatusCode(result);
 
+        IApiResult? apiResult = null;
         if (result.IsSuccess && result.Result is not null)
         {
-            var singleResult = new HypermediaApiResult<T>(result.Result, statusCode);
-            singleResult.AppendMeta(result.ToDictionary());
-
-            if (location is not null && result.Action == UnitAction.Add)
-            {
-                singleResult.AddHeader("Location", $"{location}/{result.Result}");
-            }
-
-            return singleResult;
+            apiResult = new HypermediaApiResult<T>(result.Result, statusCode);
+            
+            ConfigureHeaders(apiResult, result, location);
         }
 
-        // Failure fallback
-        var errorResult = new ApiResult(statusCode, result.Exception);
-        errorResult.AppendMeta(result.ToDictionary());
-        return errorResult;
+        apiResult ??= new ApiResult(statusCode, result.Exception);
+        apiResult.AppendMeta(result.ToDictionary());
+
+        return apiResult;
     }
 
 }
