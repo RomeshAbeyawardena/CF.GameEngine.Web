@@ -44,11 +44,4 @@ public sealed record UnitPagedResult<TResult> : UnitResultCollection<TResult>, I
             }
         }
     }
-
-    public UnitPagedResult(IEnumerable<TResult>? result, UnitAction action = UnitAction.None, bool isSuccess = true, Exception? exception = null,
-        FailureReason? failureReason = null) 
-        : this(result, 0, null!, action, isSuccess, exception, failureReason)
-    {
-
-    }
 }
