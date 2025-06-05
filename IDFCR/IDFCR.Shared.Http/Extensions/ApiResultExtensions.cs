@@ -60,12 +60,12 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
-    public static IApiResult ToApiCollectionResult<T>(this IUnitPagedResult<T> result, string location)
+    public static IApiResult ToApiCollectionResult<T>(this IUnitPagedResult<T> result, string? location = null)
     {
         return ToApiCollectionResult((IUnitResultCollection<T>)result, location);
     }
 
-    public static IApiResult ToApiCollectionResult<T>(this IUnitResultCollection<T> result, string location)
+    public static IApiResult ToApiCollectionResult<T>(this IUnitResultCollection<T> result, string? location = null)
     {
         var statusCode = GetStatusCode(result);
         ApiResult? apiResult = null;
@@ -133,6 +133,22 @@ public static class ApiResultExtensions
         return apiResult;
     }
 
+    public static IApiResult NegotiateResult<T>(this IUnitResultCollection<T> result, IHttpContextAccessor contextAccessor, string? location = null)
+    {
+        var context = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
+        var acceptHeader = context.Request.Headers.Accept.ToString();
+        if (acceptHeader.Contains("application/hal+json"))
+        {
+            return result.ToHypermediaCollectionResult(location);
+        }
+        //Defaults to JSON
+        if (string.IsNullOrWhiteSpace(location))
+        {
+            return result.ToApiCollectionResult(location);
+        }
+        return result.ToApiCollectionResult(location);
+    }
+
     public static IApiResult NegotiateResult<T>(this IUnitResult<T> result, IHttpContextAccessor contextAccessor, string? location = null)
     {
         var context = contextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(contextAccessor));
@@ -153,18 +169,21 @@ public static class ApiResultExtensions
         return result.ToApiResult(location);
     }
 
-    internal static IApiResult ToHypermediaResultSingleton<T>(this IUnitResult<T> result, string? location = null)
+    public static IApiResult ToHypermediaCollectionResult<T>(this IUnitResultCollection<T> result, string? location = null)
     {
         var statusCode = GetStatusCode(result);
-        var singleResult = new HypermediaApiResult<T>(result.Result, statusCode);
-        singleResult.AppendMeta(result.ToDictionary());
 
-        if (location is not null && result.Action == UnitAction.Add)
+        IApiResult apiResult;
+        if(result.IsSuccess && result.Result is not null)
         {
-            singleResult.AddHeader("Location", $"{location}/{result.Result}");
+            apiResult = new HypermediaApiListResult<T>(result.Result, statusCode);
+            apiResult.AppendMeta(result.ToDictionary());
+            return apiResult;
         }
 
-        return singleResult;
+        apiResult = new ApiResult(statusCode, result.Exception);
+        apiResult.AppendMeta(result.ToDictionary());
+        return apiResult;
     }
 
     public static IApiResult ToHypermediaResult<T>(this IUnitResult<T> result, string? location = null)
@@ -173,19 +192,15 @@ public static class ApiResultExtensions
 
         if (result.IsSuccess && result.Result is not null)
         {
-            // Handle collection
-            if (result.Result.GetType().IsCollection(out var t))
+            var singleResult = new HypermediaApiResult<T>(result.Result, statusCode);
+            singleResult.AppendMeta(result.ToDictionary());
+
+            if (location is not null && result.Action == UnitAction.Add)
             {
-                var genericHyperMediaType = typeof(HypermediaApiListResult<>).MakeGenericType(t ?? throw new NullReferenceException("No generic type found"));
-                var instance = Activator.CreateInstance(genericHyperMediaType, [result.Result, statusCode])
-                    ?? throw new InvalidOperationException($"Failed to create instance of {nameof(HypermediaApiListResult<T>)}");
-                var listResult = (ApiResult)instance;
-                listResult.AppendMeta(result.ToDictionary());
-                return listResult;
+                singleResult.AddHeader("Location", $"{location}/{result.Result}");
             }
 
-            Console.WriteLine("Is Singleton Result, creating HypermediaApiResult");
-            return ToHypermediaResultSingleton(result, location);
+            return singleResult;
         }
 
         // Failure fallback
