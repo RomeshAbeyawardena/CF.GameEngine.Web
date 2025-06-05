@@ -84,7 +84,12 @@ internal class LinkGenerator<T>(LinkGenerator linkGenerator, ILinkKeyDirective l
             href = linkGenerator.GetPathByName(link.RouteName ?? throw new NullReferenceException(), routeValues);
         }
 
-        return new Link(href ?? throw new NullReferenceException(), link.Method, link.Type);
+        if (string.IsNullOrEmpty(href))
+        {
+            return Link.Empty;
+        }
+
+        return new Link(href, link.Method, link.Type);
     }
 #pragma warning restore CA1859
     private readonly Dictionary<string, ILink<T>> links = ResolveLinks(links);

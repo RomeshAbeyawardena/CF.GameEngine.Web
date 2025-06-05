@@ -19,12 +19,12 @@ public static class Endpoint
         var data = request.Map<EditableClientDto>();
         
         var result = await mediator.Send(new PostClientCommand(data), cancellationToken);
-        return result.NegotiateResult(httpContextAccessor, Endpoints.Url);
+        return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }
 
     public static IEndpointRouteBuilder AddPostClientEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapPost(Route.BaseUrl, SaveClientAsync)
+        builder.MapPost(Endpoints.BaseUrl, SaveClientAsync)
             .DisableAntiforgery()
             .Produces<Guid>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)

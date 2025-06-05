@@ -8,5 +8,6 @@ public class ScopeLinkBuilder : DeferredLinkBuilder<ScopeDto>
     public ScopeLinkBuilder(ILinkKeyDirective linkKeyDirective) : base(linkKeyDirective)
     {
         AddDeferredSelfLink(Endpoints.GetScope, expressions: x => x.Id);
+        AddDeferredLink(Clients.Endpoints.GetClient, expressions: x => x.ClientId!);
     }
 }

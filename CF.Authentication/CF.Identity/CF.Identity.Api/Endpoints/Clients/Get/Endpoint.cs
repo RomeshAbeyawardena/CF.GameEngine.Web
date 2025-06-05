@@ -10,25 +10,25 @@ using MediatR;
 
 namespace CF.Identity.Api.Endpoints.Clients.Get;
 
-public static class Endpoints
+public static class Endpoint
 {
     public static async Task<IResult> GetClientAsync(Guid id,
         IMediator mediator, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new FindClientByIdQuery(id), cancellationToken);
-        return result.ToApiResult(Route.BaseUrl);
+        return result.ToApiResult(Endpoints.BaseUrl);
     }
 
     //public static async Task<IResult> GetPagedClientsAsync()
 
     public static IEndpointRouteBuilder AddGetClientEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("{id:guid}".PrependUrl(Route.BaseUrl), GetClientAsync)
-            .WithName(nameof(GetClientAsync))
+        app.MapGet("{id:guid}".PrependUrl(Endpoints.BaseUrl), GetClientAsync)
+            .WithName(Endpoints.GetClient)
             .Produces<ClientDetailResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .RequireAuthorization(Authorise.Using<ClientRoles>(RoleCategory.Read, SystemRoles.GlobalRead))
-            .WithTags(Route.Tag);
+            .WithTags(Endpoints.Tag);
         return app;
     }
 }
