@@ -31,6 +31,8 @@ public record ListAccessRolesQuery
         NameContains = source.NameContains;
         Name = source.Name;
         NoTracking = source.NoTracking;
+        PageIndex = source.PageIndex;
+        PageSize = source.PageSize;
     }
 }
 

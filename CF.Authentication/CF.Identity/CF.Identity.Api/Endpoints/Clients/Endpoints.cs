@@ -1,4 +1,5 @@
-﻿using CF.Identity.Api.Endpoints.Clients.Post;
+﻿using CF.Identity.Api.Endpoints.Clients.Get;
+using CF.Identity.Api.Endpoints.Clients.Post;
 
 namespace CF.Identity.Api.Endpoints.Clients;
 
@@ -10,6 +11,7 @@ public static class Endpoints
     public static IEndpointRouteBuilder AddClientEndpoints(this IEndpointRouteBuilder builder)
     {
         return builder
+            .AddGetClientEndpoints()
             .AddPostClientEndpoint();
     }
 }

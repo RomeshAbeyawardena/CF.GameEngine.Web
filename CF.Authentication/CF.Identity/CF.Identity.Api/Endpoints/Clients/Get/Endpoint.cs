@@ -8,6 +8,7 @@ using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace CF.Identity.Api.Endpoints.Clients.Get;
 
@@ -24,7 +25,8 @@ public static class Endpoint
 
     public static IEndpointRouteBuilder AddGetClientEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("{id:guid}".PrependUrl(Endpoints.BaseUrl), GetClientAsync)
+        var url = "{id:guid}".PrependUrl(Endpoints.BaseUrl);
+        app.MapGet(url, GetClientAsync)
             .WithName(Endpoints.GetClient)
             .Produces<ClientDetailResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)

@@ -15,8 +15,8 @@ internal class ScopeRepository(TimeProvider timeProvider, CFIdentityDbContext co
     {
         var query = new ScopeFilter(filter);
 
-        return GetPagedAsync(filter, new EntityOrder(filter, 
-            nameof(ScopeDto.Name)), 
+        return GetPagedAsync(filter, 
+            new EntityOrder(filter, nameof(ScopeDto.Name)), 
             Set<DbScope>(filter).Where(query.ApplyFilter(Builder)),
             cancellation);
     }

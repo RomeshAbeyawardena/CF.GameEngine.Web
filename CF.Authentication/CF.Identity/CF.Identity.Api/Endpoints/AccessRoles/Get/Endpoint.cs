@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Api.Features.AccessRoles.Find;
-using CF.Identity.Api.Features.AccessRoles.List;
 using CF.Identity.Infrastructure.Features;
 using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.Abstractions;
@@ -15,17 +14,18 @@ public static class Endpoint
         [AsParameters] GetRolesRequest request, IHttpContextAccessor httpContextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(request.Map<ListAccessRolesQuery>(), cancellationToken);
+        var query = request.ToQuery();
+        var result = await mediator.Send(query, cancellationToken);
 
         return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }
 
-    public static async Task<IResult> GetRoleAsync(Guid id, IMediator mediator,
+    public static async Task<IResult> GetRoleAsync(Guid id, IMediator mediator, IHttpContextAccessor httpContextAccessor,
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new FindAccessRoleQuery(id), cancellationToken);
 
-        return result.NegotiateResult(Endpoints.BaseUrl);
+        return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }
 
     public static IEndpointRouteBuilder AddGetRolesEndpoint(this IEndpointRouteBuilder builder)

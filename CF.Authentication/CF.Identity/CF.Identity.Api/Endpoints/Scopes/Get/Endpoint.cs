@@ -10,12 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.Scopes.Get;
 
-public class MyModel
-{
-    public int PageSize { get; set; }
-    public int PageIndex { get; set; }
-}
-
 public static class Endpoint
 {
     //public static async Task<IResult> GetScopePagedAsync([AsParameters] MyModel model)
@@ -23,7 +17,8 @@ public static class Endpoint
     //    return Results.Ok();
     //}
 
-    public static async Task<IResult> GetScopePagedAsync([AsParameters] GetScopesRequest request, int? pageSize, int? pageIndex,
+    public static async Task<IResult> GetScopePagedAsync(
+        [AsParameters] GetScopesRequest request,
         IAuthenticatedUserContext userContext, IMediator mediator, IHttpContextAccessor contextAccessor, CancellationToken cancellationToken)
     {
         //Non-system clients should not be accessing other tenant data!
