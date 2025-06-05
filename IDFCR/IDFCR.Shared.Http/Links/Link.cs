@@ -11,5 +11,5 @@ internal record Link<T>(string? Href, string Method, string Type, IEnumerable<Ex
 
 internal record Link(string Href, string Method, string Type) : ILink
 {
-    public static ILink Empty => new Link(string.Empty, string.Empty, string.Empty);
+    public static ILink Empty = new Link(string.Empty, string.Empty, string.Empty);
 }

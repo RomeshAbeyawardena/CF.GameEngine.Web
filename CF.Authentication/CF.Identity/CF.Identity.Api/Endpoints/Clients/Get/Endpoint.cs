@@ -7,12 +7,13 @@ using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.Clients.Get;
 
 public static class Endpoint
 {
-    public static async Task<IResult> GetClientAsync(Guid id,
+    public static async Task<IResult> GetClientAsync([FromRoute]Guid id,
         IMediator mediator, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new FindClientByIdQuery(id), cancellationToken);
