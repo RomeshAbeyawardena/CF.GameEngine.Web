@@ -34,8 +34,8 @@ public static class Endpoint
 
         var query = request.ToQuery();
         var result = await mediator.Send(query, cancellationToken);
-        //return result.NegotiateResult(contextAccessor, Endpoints.BaseUrl);
-        return result.ToApiCollectionResult(Endpoints.BaseUrl);
+        return result.NegotiateResult(contextAccessor, Endpoints.BaseUrl);
+        //return result.ToApiCollectionResult(Endpoints.BaseUrl);
     }
 
     public static IEndpointRouteBuilder AddGetScopesEndpoint(this IEndpointRouteBuilder builder)
