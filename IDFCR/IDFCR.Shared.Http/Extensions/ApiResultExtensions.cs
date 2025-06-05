@@ -95,6 +95,7 @@ public static class ApiResultExtensions
                 apiResult.AddHeader("Status-Location",  locationValues);
             }
 
+            apiResult.AppendMeta(result.ToDictionary());
             return apiResult;
         }
 
