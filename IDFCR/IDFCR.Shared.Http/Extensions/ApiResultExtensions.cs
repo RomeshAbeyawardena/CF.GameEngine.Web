@@ -174,6 +174,12 @@ public static class ApiResultExtensions
         {
             apiResult = new HypermediaApiListResult<T>(result.Result, statusCode);
             apiResult.AppendMeta(result.ToDictionary());
+
+            if (location is not null && result.Action == UnitAction.Add)
+            {
+                apiResult.AddHeader("Location", $"{location}/{result.Result}");
+            }
+
             return apiResult;
         }
 
