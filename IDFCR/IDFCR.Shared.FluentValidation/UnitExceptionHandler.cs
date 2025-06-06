@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.FluentValidation.Constants;
 using MediatR.Pipeline;
@@ -40,12 +41,12 @@ public class UnitExceptionHandler<TRequest, TResponse, TException> : IRequestExc
 
         if (isHandled && typeof(TResponse).IsAssignableTo(typeof(IUnitResult)))
         {
-            Dictionary<string, object?> errors = [];
+            IIncrementalKeyDictionary<string>? errors = null;
 
             if (exception is ValidationException validationException)
             {
                 errors = validationException.Errors
-                    .ToDictionary(x => x.PropertyName, x => (object?)x.ErrorMessage);
+                    .ToIncrementalKeyDictionary(x => x.PropertyName, x => x.ErrorMessage);
 
                 var conflictErrorCode = validationException.Data[Errorcodes.Conflict];
                 
