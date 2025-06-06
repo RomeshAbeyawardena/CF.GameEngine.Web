@@ -3,28 +3,36 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace IDFCR.Shared.Http.Links;
 
-public record LinkCollection(IReadOnlyDictionary<string, ILink> linkDictionary) : ILinkCollection
+public record LinkCollection : ILinkCollection
 {
-    public ILink this[string key] => linkDictionary[key];
+    private readonly IReadOnlyDictionary<string, ILink> _linkDictionary;
+    public LinkCollection(IReadOnlyDictionary<string, ILink> linkDictionary)
+    {
+        _linkDictionary = linkDictionary
+            .Where(x => x.Value != Link.Empty)
+            .ToDictionary();
+    }
 
-    public IEnumerable<string> Keys => linkDictionary.Keys;
-    public IEnumerable<ILink> Values => linkDictionary.Values;
-    public int Count => linkDictionary.Count;
+    public ILink this[string key] => _linkDictionary[key];
+
+    public IEnumerable<string> Keys => _linkDictionary.Keys;
+    public IEnumerable<ILink> Values => _linkDictionary.Values;
+    public int Count => _linkDictionary.Count;
 
     public bool ContainsKey(string key)
     {
-        return linkDictionary.ContainsKey(key);
+        return _linkDictionary.ContainsKey(key);
     }
 
     public IEnumerator<KeyValuePair<string, ILink>> GetEnumerator()
     {
-        return linkDictionary.GetEnumerator();
+        return _linkDictionary.GetEnumerator();
     }
 
     public bool TryGetValue(string key, [MaybeNullWhen(false)] out ILink value)
     {
-        return linkDictionary.TryGetValue(key, out value);
-    }
+        return _linkDictionary.TryGetValue(key, out value);
+    }   
 
     IEnumerator IEnumerable.GetEnumerator()
     {

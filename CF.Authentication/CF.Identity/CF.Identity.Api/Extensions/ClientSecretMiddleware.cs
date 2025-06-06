@@ -1,16 +1,41 @@
 ﻿using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
 using MediatR;
 using System.Text;
 
 namespace CF.Identity.Api.Extensions;
 
+public class ClientSecretException(string message, Exception? innerException = null, string? exposableMessage = null, string? details = null) 
+    : Exception(message, innerException), IExposableException
+{
+    string IExposableException.Message => exposableMessage ?? Message;
+    string? IExposableException.Details => details;
+}
+
 public class ClientSecretMiddleware 
 {
+    private static async Task AuthenticationFailed(Exception exception, HttpContext context, ILogger logger)
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+        var message = string.Empty;
+        
+        if(exception is IExposableException exposableException)
+        {
+            message = exposableException.Message;
+        }
+
+        await context.Response.WriteAsync($"Authentication failed {(string.IsNullOrEmpty(message) ? string.Empty : ":" + message)}");
+        logger.LogError(exception, "Client secret authentication failed: {Message}", exception.Message);
+    }
+
     public async static Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        const string exposableMessage = "Client authentication failed. Please check your client ID and secret header parameters.";
+
         var services = context.RequestServices;
         var logger = services.GetRequiredService<ILogger<ClientSecretMiddleware>>();
 
@@ -29,7 +54,7 @@ public class ClientSecretMiddleware
 
             if (string.IsNullOrWhiteSpace(auth))
             {
-                throw new NullReferenceException("Authentication header missing");
+                throw new ClientSecretException("Authentication header missing", exposableMessage: exposableMessage);
             }
 
             
@@ -40,7 +65,7 @@ public class ClientSecretMiddleware
             var parts = raw.Split(':', 2);
             if (parts.Length != 2)
             {
-                throw new NullReferenceException("Authentication header invalid");
+                throw new ClientSecretException("Authentication header invalid", exposableMessage: exposableMessage);
             }
 
             var clientId = parts[0];
@@ -49,7 +74,7 @@ public class ClientSecretMiddleware
             if (string.IsNullOrWhiteSpace(clientId)
                  || string.IsNullOrWhiteSpace(clientSecret))
             {
-                throw new NullReferenceException("Authentication header invalid, two-part requirement is incorrect");
+                throw new ClientSecretException("Authentication header invalid, two-part requirement is incorrect", exposableMessage: exposableMessage);
             }
 
             var timeProvider = services.GetRequiredService<TimeProvider>();
@@ -63,18 +88,19 @@ public class ClientSecretMiddleware
             if (clientResult is null
                 || !clientProtection.VerifySecret(clientResult, clientSecret))
             {
-                throw new UnauthorizedAccessException("Client authentication failed");
+                throw new ClientSecretException("Client authentication failed", exposableMessage: exposableMessage);
             }
 
             context.Items.Add(nameof(AuthenticatedClient), new AuthenticatedClient(clientId, clientResult));
             await next(context);
         }
-        catch (Exception ex)
+        catch (ClientSecretException ex)
         {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsync("Authentication failed");
-            logger.LogError(ex, "Client secret authentication failed: {Message}", ex.Message);
-            return;
+            await AuthenticationFailed(ex, context, logger);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            await AuthenticationFailed(ex, context, logger);
         }
     }
 }

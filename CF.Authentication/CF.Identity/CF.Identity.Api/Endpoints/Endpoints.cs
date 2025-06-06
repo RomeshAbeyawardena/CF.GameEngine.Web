@@ -1,4 +1,5 @@
-﻿using CF.Identity.Api.Endpoints.Clients;
+﻿using CF.Identity.Api.Endpoints.AccessRoles;
+using CF.Identity.Api.Endpoints.Clients;
 using CF.Identity.Api.Endpoints.Connect;
 using CF.Identity.Api.Endpoints.Scopes;
 using CF.Identity.Api.Endpoints.Users;
@@ -12,6 +13,7 @@ public static class Endpoints
         return builder
             .AddClientEndpoints()
             .AddConnectEndpoints()
+            .AddAccessRoleEndpoints()
             .AddScopeEndpoints()
             .AddUserEndpoints();
     }

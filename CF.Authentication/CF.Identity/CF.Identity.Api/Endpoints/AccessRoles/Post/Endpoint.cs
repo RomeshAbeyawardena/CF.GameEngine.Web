@@ -1,10 +1,7 @@
 ﻿using CF.Identity.Api.Features.AccessRoles.Post;
-using CF.Identity.Api.Features.Scopes.Post;
 using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.AccessRoles;
-using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Http.Authentication.Extensions;
-using IDFCR.Shared;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
@@ -23,11 +20,11 @@ public static class Endpoint
         return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }
 
-    public static IEndpointRouteBuilder AddPostEndpoint(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder AddPostRoleEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost(Endpoints.BaseUrl, SaveRoleAsync)
             .DisableAntiforgery()
-            .RequireAuthorization(Authorise.Using<Infrastructure.Features.AccessRoles.Roles>(RoleCategory.Write, SystemRoles.GlobalWrite));
+            .RequireAuthorization(Authorise.Using<Roles>(RoleCategory.Write, SystemRoles.GlobalWrite));
         return builder;
     }
 }

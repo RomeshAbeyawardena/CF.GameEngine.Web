@@ -7,6 +7,7 @@ using FluentValidation;
 using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
+using IDFCR.Shared.Http.Middleware;
 using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +46,7 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 app
+    .UseMiddleware<ExceptionMiddleware>()
     .Use(ClientSecretMiddleware.InvokeAsync)
     .UseAuthentication()
     .UseAuthorization();

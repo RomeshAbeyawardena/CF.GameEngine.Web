@@ -16,9 +16,9 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
         {
             _mediator = mediator;
 
-            RuleFor(x => x.AccessRole)
+            RuleFor(x => x.AccessRole.Id)
                 .MustAsync(HaveValidId)
-                .When(x => x.AccessRole.Id == default);
+                .When(x => x.AccessRole.Id != default);
 
             RuleFor(x => x.AccessRole.Key)
                 .NotEmpty()
@@ -29,12 +29,10 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
                 .WithMessage("Key can only contain alphanumeric characters, underscores, and hyphens.");
 
             RuleFor(x => x.AccessRole.DisplayName)
-                .NotEmpty()
-                .WithMessage("Name is required.")
                 .MaximumLength(100)
                 .WithMessage("Name must not exceed 100 characters.");
 
-            RuleFor(x => x.AccessRole.DisplayName)
+            RuleFor(x => x.AccessRole.Description)
                 .MaximumLength(500)
                 .WithMessage("Description must not exceed 500 characters.");
 
@@ -49,9 +47,9 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
                 .WithErrorCode(Errorcodes.Conflict);
         }
 
-        private async Task<bool> HaveValidId(EditableAccessRoleDto dto, CancellationToken token)
+        private async Task<bool> HaveValidId(Guid id, CancellationToken token)
         {
-            var existingRole = (await _mediator.Send(new FindAccessRoleQuery(dto.Id, true), token)).GetResultOrDefault();
+            var existingRole = (await _mediator.Send(new FindAccessRoleQuery(id, true), token)).GetResultOrDefault();
 
             return existingRole is not null;
         }

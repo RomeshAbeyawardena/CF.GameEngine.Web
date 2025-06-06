@@ -21,6 +21,7 @@ public static class Endpoint
     public static IEndpointRouteBuilder AddPostScopeEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost(Endpoints.BaseUrl, SaveScopeAsync)
+            .DisableAntiforgery()
             .RequireAuthorization(Authorise.Using<ScopeRoles>(RoleCategory.Write, SystemRoles.GlobalWrite));
 
         return builder;

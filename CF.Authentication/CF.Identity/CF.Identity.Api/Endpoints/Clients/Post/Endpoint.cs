@@ -19,21 +19,19 @@ public static class Endpoint
         var data = request.Map<EditableClientDto>();
         
         var result = await mediator.Send(new PostClientCommand(data), cancellationToken);
-        return result.NegotiateResult(httpContextAccessor, Endpoints.Url);
+        return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }
 
     public static IEndpointRouteBuilder AddPostClientEndpoint(this IEndpointRouteBuilder builder)
     {
-        var s = Authorise.Using<ClientRoles>(RoleCategory.Write, SystemRoles.GlobalWrite);
-
-        builder.MapPost(Route.BaseUrl, SaveClientAsync)
+        builder.MapPost(Endpoints.BaseUrl, SaveClientAsync)
             .DisableAntiforgery()
             .Produces<Guid>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status409Conflict)
             .WithDescription("Creates a new client.")
-            .RequireAuthorization(s);
+            .RequireAuthorization(Authorise.Using<ClientRoles>(RoleCategory.Write, SystemRoles.GlobalWrite));
         return builder;
     }
 }

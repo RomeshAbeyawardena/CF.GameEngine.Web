@@ -1,4 +1,5 @@
 ﻿using IDFCR.Shared.Http.Abstractions;
+using IDFCR.Shared.Http.Links;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System.Text.Json.Serialization;
@@ -24,5 +25,8 @@ public interface IApiResult : IResult
 
 public interface IApiResult<T> : IApiResult
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull
+        | JsonIgnoreCondition.WhenWritingDefault)]
+    IReadOnlyDictionary<string, ILink>? Links { get; }
     T Data { get; }
 }

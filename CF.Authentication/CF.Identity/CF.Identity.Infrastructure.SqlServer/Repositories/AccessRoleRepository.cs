@@ -1,6 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features.AccessRoles;
 using CF.Identity.Infrastructure.SqlServer.Filters;
 using CF.Identity.Infrastructure.SqlServer.Models;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,5 +29,14 @@ internal class AccessRoleRepository(TimeProvider timeProvider, CFIdentityDbConte
             .ToListAsync(cancellationToken);
 
         return UnitResultCollection.FromResult(query.Select(x => x.Map<AccessRoleDto>()));
+    }
+
+    public Task<IUnitPagedResult<AccessRoleDto>> ListRolesAsync(IPagedAccessRoleFilter filter, CancellationToken cancellationToken)
+    {
+        var queryFilter = new AccessRoleFilter(filter);
+        return GetPagedAsync(filter, 
+            new EntityOrder(filter, nameof(AccessRoleDto.Key)),
+            Set<DbAccessRole>(filter)
+            .Where(queryFilter.ApplyFilter(Builder)), cancellationToken);
     }
 }
