@@ -1,9 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Scope;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Mediatr;
-
-using IRoleRequirement = IDFCR.Shared.Abstractions.Roles.IRoleRequirement;
-using RoleRequirementType = IDFCR.Shared.Abstractions.Roles.RoleRequirementType;
 
 namespace CF.Identity.Api.Features.Scopes.Get;
 

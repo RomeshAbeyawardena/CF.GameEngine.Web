@@ -21,6 +21,18 @@ internal class ScopeRepository(TimeProvider timeProvider, CFIdentityDbContext co
             cancellation);
     }
 
+    public async Task<IUnitResult<ScopeDto>> GetScopeByIdAsync(Guid scopeId, CancellationToken cancellationToken)
+    {
+        var scope = await FindAsync(cancellationToken, [scopeId]);
+
+        if (scope is null)
+        {
+            return UnitResult.NotFound<ScopeDto>(scopeId);
+        }
+
+        return UnitResult.FromResult(scope);
+    }
+
     public async Task<IUnitResultCollection<ScopeDto>> GetScopesAsync(IScopeFilter filter, CancellationToken cancellationToken)
     {
         var result = await Set<DbScope>(filter)

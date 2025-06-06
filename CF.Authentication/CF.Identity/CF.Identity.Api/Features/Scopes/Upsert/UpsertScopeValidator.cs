@@ -23,7 +23,7 @@ public class UpsertScopeValidator : AbstractValidator<UpsertScopeCommand>
 
         RuleFor(x => x.Scope.ClientId)
             .NotNull()
-            .When(x => !string.IsNullOrWhiteSpace(x.Scope.Client))
+            .When(x => string.IsNullOrWhiteSpace(x.Scope.Client))
             .MustAsync(ExistAsync)
             .WithName("ClientId_Exists");
 
@@ -42,7 +42,7 @@ public class UpsertScopeValidator : AbstractValidator<UpsertScopeCommand>
     {
         if (!clientId.HasValue)
         {
-            return false;
+            return true;
         }
 
         var client = (await _mediator.Send(new FindClientByIdQuery(clientId.Value), token)).GetResultOrDefault();

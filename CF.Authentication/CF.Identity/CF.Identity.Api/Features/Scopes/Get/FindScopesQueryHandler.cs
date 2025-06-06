@@ -5,7 +5,7 @@ using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.Scopes.Get;
 
-public class FindScopeQueryHandler(IScopeRepository repository)
+public class FindScopesQueryHandler(IScopeRepository repository)
     : IUnitRequestCollectionHandler<FindScopesQuery, ScopeDto>
 {
     public async Task<IUnitResultCollection<ScopeDto>> Handle(FindScopesQuery request, CancellationToken cancellationToken)
