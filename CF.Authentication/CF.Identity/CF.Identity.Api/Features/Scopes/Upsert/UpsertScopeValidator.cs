@@ -23,9 +23,9 @@ public class UpsertScopeValidator : AbstractValidator<UpsertScopeCommand>
 
         RuleFor(x => x.Scope.ClientId)
             .NotNull()
+            .When(x => !string.IsNullOrWhiteSpace(x.Scope.Client))
             .MustAsync(ExistAsync)
-            .WithName("ClientId")
-            .When(x => !string.IsNullOrWhiteSpace(x.Scope.Client));
+            .WithName("ClientId_Exists");
 
         RuleFor(x => x.Scope.Client)
             .NotNull()
@@ -45,9 +45,9 @@ public class UpsertScopeValidator : AbstractValidator<UpsertScopeCommand>
             return false;
         }
 
-        var scope = await _mediator.Send(new FindClientByIdQuery(clientId.Value), token);
+        var client = (await _mediator.Send(new FindClientByIdQuery(clientId.Value), token)).GetResultOrDefault();
 
-        return scope is not null;
+        return client is not null;
     }
 
     private async Task<bool> ExistAsync(EditableScopeDto scope, CancellationToken token)
