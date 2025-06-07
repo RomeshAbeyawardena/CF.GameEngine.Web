@@ -25,7 +25,7 @@ public static class RoleRequirementAttributeReader
         {
             var bypassValue = member.GetValue(value);
 
-            if (bypassValue is bool b && b)
+            if (bypassValue is bool b)
             {
                 bypass = b;
             }
