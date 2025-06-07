@@ -4,10 +4,12 @@ using IDFCR.Shared.Abstractions.Paging;
 using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Mediatr;
 
+using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
+
 namespace CF.Identity.Api.Features.AccessRoles.List;
 
 public record ListAccessRolesQuery
-    : MappablePagedQuery<IPagedAccessRoleFilter>, IUnitPagedRequest<AccessRoleDto>, IPagedAccessRoleFilter, IRoleRequirement
+    : MappablePagedQuery<IPagedAccessRoleFilter>, IUnitPagedRequest<AccessRoleDto>, IPagedAccessRoleFilter 
 {
     IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<Roles>(RoleCategory.Read);
 
