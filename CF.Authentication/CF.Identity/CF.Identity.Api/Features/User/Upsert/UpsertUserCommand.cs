@@ -1,13 +1,9 @@
 ﻿using CF.Identity.Infrastructure.Features.Users;
 using IDFCR.Shared.Abstractions;
-using IDFCR.Shared.Abstractions.Roles;
+using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
+using IDFCR.Shared.Abstractions.Roles.Records;
 using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.User.Upsert;
 
-public record UpsertUserCommand(EditableUserDto User) : IUnitRequest<Guid>, IRoleRequirement
-{
-    bool IRoleRequirement.Bypass => false;
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<UserRoles>(RoleCategory.Write);
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
-}
+public record UpsertUserCommand(EditableUserDto User, bool Bypass = false) : RoleRequirementBase(() => RoleRegistrar.List<UserRoles>(RoleCategory.Write)), IUnitRequest<Guid>;

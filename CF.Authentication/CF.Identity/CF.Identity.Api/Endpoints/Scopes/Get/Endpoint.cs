@@ -4,6 +4,7 @@ using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Http.Authentication.Abstractions;
 using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
@@ -30,6 +31,9 @@ public static class Endpoint
         }
 
         var query = request.ToQuery();
+
+        var roles = RoleRegistrar.List<ScopeRoles>(RoleCategory.Read);
+
         var result = await mediator.Send(query, cancellationToken);
         return result.NegotiateResult(contextAccessor, Endpoints.BaseUrl);
     }
