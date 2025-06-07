@@ -10,6 +10,7 @@ using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using IDFCR.Shared.Http.Middleware;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,41 @@ builder.Services.AddBackendDependencies("CFIdentity")
             Title = "Identity API",
             Version = "v1",
             Description = "Identity API"
+        });
+
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+
+        // X-API-KEY header
+        options.AddSecurityDefinition("XApiKey", new OpenApiSecurityScheme
+        {
+            Description = "Client API Key needed to determine trust. Example: \"X-API-KEY: {key}\"",
+            Name = "x-api-key",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "ApiKeyScheme"
+        });
+
+        // Apply both globally
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "XApiKey"
+                    }
+                },
+                Array.Empty<string>()
+            }
         });
 
         options
