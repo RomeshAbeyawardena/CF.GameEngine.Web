@@ -1,6 +1,6 @@
-﻿using PIIProtection = IDFCR.Shared.Abstractions.Cryptography;
+﻿using Microsoft.Extensions.Configuration;
 using System.Text;
-using Microsoft.Extensions.Configuration;
+using PIIProtection = IDFCR.Shared.Abstractions.Cryptography;
 
 namespace CF.Identity.Infrastructure.SqlServer.Protection;
 

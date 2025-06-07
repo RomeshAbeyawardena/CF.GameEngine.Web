@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Api.Features.AccessTokens.Get;
-using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Api.Features.User.Get;
 using CF.Identity.Infrastructure.Features.AccessToken;
@@ -14,13 +13,14 @@ using System.Text.Encodings.Web;
 
 namespace CF.Identity.Api.Extensions;
 
-public class AuthHandler(IMediator mediator, IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder) 
+public class AuthHandler(IMediator mediator, IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     private AuthenticatedClient? authenticatedClient;
-    
+
     private IAccessTokenProtection? accessTokenProtection;
-    private IAccessTokenProtection AccessTokenProtection(IServiceProvider service, IClientDetails clientDetails)  {
+    private IAccessTokenProtection AccessTokenProtection(IServiceProvider service, IClientDetails clientDetails)
+    {
         accessTokenProtection ??= service.GetRequiredService<IAccessTokenProtection>();
         accessTokenProtection.Client = clientDetails.Map<ClientDto>();
         return accessTokenProtection;
@@ -29,16 +29,16 @@ public class AuthHandler(IMediator mediator, IOptionsMonitor<AuthenticationSchem
     {
         var scopes = (await mediator.Send(new FindScopesQuery(client.Id, userId, IncludePrivilegedScoped: client.IsSystem, Bypass: true))).GetResultOrDefault();
 
-        if(scopes is null || !scopes.Any())
+        if (scopes is null || !scopes.Any())
         {
             return;
         }
 
-        foreach(var scope in scopes)
+        foreach (var scope in scopes)
         {
             claims.Add(new(ClaimTypes.Role, scope.Key));
         }
-        
+
     }
 
     private async Task<AuthenticateResult> ExtractAndValidateBearingTokenAsync()
@@ -56,7 +56,7 @@ public class AuthHandler(IMediator mediator, IOptionsMonitor<AuthenticationSchem
         var accessToken = authorisation["Bearer ".Length..].Trim();
 
         var services = Context.RequestServices;
-        
+
         var hash = AccessTokenProtection(services, client.ClientDetails)
             .GetHashedAccessToken(accessToken);
 
@@ -86,7 +86,7 @@ public class AuthHandler(IMediator mediator, IOptionsMonitor<AuthenticationSchem
 
         var user = (await mediator.Send(new FindUserByIdQuery(validAccessToken.UserId, Bypass: true))).GetResultOrDefault();
 
-        if(user is null)
+        if (user is null)
         {
             return AuthenticateResult.Fail("User not found");
         }

@@ -88,7 +88,7 @@ public class RemoteAuthHandler(
 
         var response = await _httpClient.PostAsJsonAsync("auth/authenticate/refresh", payload);
         var body = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
-        
+
         var identity = new ClaimsIdentity(Scheme.Name);
 
         if (!response.IsSuccessStatusCode || body is null || string.IsNullOrWhiteSpace(body.Token))
@@ -110,7 +110,7 @@ public class RemoteAuthHandler(
         {
             return await PreAuthenticatedClientRequest(authToken);
         }
-        
+
         return await FreshClientRequest();
     }
 }

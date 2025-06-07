@@ -7,7 +7,8 @@ namespace CF.Identity.Api.Endpoints.Clients.Post;
 public record PostClientRequest(string Reference, string Name, string? Secret, DateTimeOffset ValidFrom)
     : MappableBase<IClient>
 {
-    protected override IClient Source => new EditableClientDto {
+    protected override IClient Source => new EditableClientDto
+    {
         Reference = Reference,
         Name = Name,
         SecretHash = Secret,

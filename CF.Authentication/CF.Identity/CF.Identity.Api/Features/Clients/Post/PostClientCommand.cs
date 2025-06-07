@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Api.Features.Clients.Upsert;
-using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
@@ -10,7 +9,7 @@ using MediatR;
 
 namespace CF.Identity.Api.Features.Clients.Post;
 
-public record PostClientCommand(EditableClientDto Client, bool Bypass = false) 
+public record PostClientCommand(EditableClientDto Client, bool Bypass = false)
     : IUnitRequest<Guid>, IRoleRequirement
 {
     IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ClientRoles>(RoleCategory.Write);

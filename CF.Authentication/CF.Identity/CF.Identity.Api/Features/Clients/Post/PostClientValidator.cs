@@ -1,7 +1,4 @@
-﻿using CF.Identity.Api.Features.Clients.Get;
-using FluentValidation;
-using IDFCR.Shared.Extensions;
-using MediatR;
+﻿using FluentValidation;
 
 namespace CF.Identity.Api.Features.Clients.Post;
 

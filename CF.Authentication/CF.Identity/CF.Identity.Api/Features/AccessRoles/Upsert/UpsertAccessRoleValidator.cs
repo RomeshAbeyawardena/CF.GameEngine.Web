@@ -78,7 +78,7 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert
         {
             if (model.ClientId != default)
             {
-                var result = (await _mediator.Send(new FindClientQueryById(model.ClientId, true), cancellationToken)).GetResultOrDefault();
+                var result = (await _mediator.Send(new FindClientByIdQuery(model.ClientId, true), cancellationToken)).GetResultOrDefault();
 
                 return result is not null;
             }

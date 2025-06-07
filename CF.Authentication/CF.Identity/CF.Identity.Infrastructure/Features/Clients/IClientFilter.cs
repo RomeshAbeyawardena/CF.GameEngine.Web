@@ -1,5 +1,4 @@
-﻿using IDFCR.Shared.Abstractions;
-using IDFCR.Shared.Abstractions.Filters;
+﻿using IDFCR.Shared.Abstractions.Filters;
 using IDFCR.Shared.Abstractions.Paging;
 
 namespace CF.Identity.Infrastructure.Features.Clients;

@@ -1,5 +1,4 @@
-﻿using CF.Identity.Infrastructure.Features.Clients;
-using IDFCR.Shared.Mediatr;
+﻿using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.Introspect;
 

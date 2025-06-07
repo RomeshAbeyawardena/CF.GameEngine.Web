@@ -8,22 +8,22 @@ using System.Text;
 
 namespace CF.Identity.Api.Extensions;
 
-public class ClientSecretException(string message, Exception? innerException = null, string? exposableMessage = null, string? details = null) 
+public class ClientSecretException(string message, Exception? innerException = null, string? exposableMessage = null, string? details = null)
     : Exception(message, innerException), IExposableException
 {
     string IExposableException.Message => exposableMessage ?? Message;
     string? IExposableException.Details => details;
 }
 
-public class ClientSecretMiddleware 
+public class ClientSecretMiddleware
 {
     private static async Task AuthenticationFailed(Exception exception, HttpContext context, ILogger logger)
     {
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 
         var message = string.Empty;
-        
-        if(exception is IExposableException exposableException)
+
+        if (exception is IExposableException exposableException)
         {
             message = exposableException.Message;
         }
@@ -41,7 +41,7 @@ public class ClientSecretMiddleware
 
         try
         {
-            
+
             string[] requiredPaths = ["api", "connect"];
             var path = (context.Request.Path.Value ?? string.Empty).ToLowerInvariant();
             if (!requiredPaths.Any(p => path.StartsWith($"/{p}")))
@@ -57,7 +57,7 @@ public class ClientSecretMiddleware
                 throw new ClientSecretException("Authentication header missing", exposableMessage: exposableMessage);
             }
 
-            
+
             var encoding = services.GetRequiredService<Encoding>();
 
             var raw = encoding.GetString(Convert.FromBase64String(auth));

@@ -8,9 +8,6 @@ using CF.Identity.Api.Features.Scopes.Get;
 using CF.Identity.Api.Features.User.Get;
 using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.Clients;
-using CF.Identity.Infrastructure.SqlServer.Models;
-using CF.Identity.Infrastructure.SqlServer.PII;
-using CF.Identity.Infrastructure.SqlServer.SPA;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
@@ -43,7 +40,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
         var authenticatedClient = httpContextAccessor.HttpContext?.GetAuthenticatedClient();
 
         var clientId = request.TokenRequest.ClientId;
-        
+
         //we can only help with the client ID, the client secret is not available in its plaintext value as its thrown away upon use
         if (authenticatedClient is not null)
         {
@@ -62,7 +59,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             return new UnitResult(new UnauthorizedAccessException("Client not found")).As<TokenResponse>();
         }
 
-        if (string.IsNullOrEmpty(request.TokenRequest.ClientSecret) 
+        if (string.IsNullOrEmpty(request.TokenRequest.ClientSecret)
             || !clientProtection.VerifySecret(clientDetail, request.TokenRequest.ClientSecret))
         {
             return new UnitResult(new UnauthorizedAccessException("Invalid client secret")).As<TokenResponse>();
@@ -100,16 +97,16 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
 
         if (existingAccessTokens.HasValue)
         {
-            await mediator.Send(new BulkExpireAccessTokenCommand(existingAccessTokens.Result.Select(x => x.Id), 
+            await mediator.Send(new BulkExpireAccessTokenCommand(existingAccessTokens.Result.Select(x => x.Id),
                 "Replaced by new token", "System", true), cancellationToken);
         }
 
         var accessToken = GenerateJwt(clientDetail, request.TokenRequest.Scope);
 
         var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
-        
+
         var refreshToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 16);
-        
+
         await mediator.Send(new UpsertAccessTokenCommand(new AccessTokenDto
         {
             Type = request.TokenRequest.GrantType,
@@ -122,7 +119,7 @@ public class TokenRequestQueryHandler(IJwtSettings jwtSettings, IMediator mediat
             UserId = systemUser.Id,
         }, true), cancellationToken);
 
-        
+
         var result = new UnitResult<TokenResponse>(new TokenResponse(referenceToken,
                 "Bearer",
                 Convert.ToInt32(TimeSpan.FromHours(1).TotalSeconds),

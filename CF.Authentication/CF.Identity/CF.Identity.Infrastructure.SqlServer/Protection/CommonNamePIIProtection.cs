@@ -22,7 +22,7 @@ internal class CommonNamePIIProtection : PIIProtectionBase<DbCommonName>, ICommo
     {
         SetMetaData(x => x.MetaData);
         SetRowVersion(x => x.RowVersion);
-        
+
         ProtectSymmetric(x => x.Value);
         MapProtectionInfoTo(x => x.Value, BackingStore.CasingImpression, x => x.ValueCI);
         MapProtectionInfoTo(x => x.Value, BackingStore.Hmac, x => x.ValueHmac);

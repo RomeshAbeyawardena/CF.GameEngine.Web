@@ -19,7 +19,7 @@ public static class UserTransformer
     private static async Task<(bool, DbCommonName?)> ResolveNameAsync(ICommonNameRepository commonNameRepository, string name, CancellationToken cancellationToken)
     {
         var normalised = name.Trim();
-        
+
         var foundName = (await commonNameRepository.GetByNameRawAsync(normalised, true, cancellationToken)).GetResultOrDefault();
 
         if (foundName is null)
@@ -37,7 +37,7 @@ public static class UserTransformer
         return (false, foundName);
     }
 
-    private static async Task SetCommonNameAsync(ICommonNameRepository commonNameRepository, 
+    private static async Task SetCommonNameAsync(ICommonNameRepository commonNameRepository,
         string? lookupName, Action<Guid> setIdRef, Action<DbCommonName> setCommonName, CancellationToken cancellationToken)
     {
         if (!string.IsNullOrWhiteSpace(lookupName))
@@ -51,13 +51,13 @@ public static class UserTransformer
                 setCommonName(name);
                 return;
             }
-            
+
             setIdRef(name.Id);
         }
     }
 
 
-    public static async Task<DbUser> Transform(IUser user, ICommonNameRepository  commonNameRepository,
+    public static async Task<DbUser> Transform(IUser user, ICommonNameRepository commonNameRepository,
         CancellationToken cancellationToken, DbUser? dbUser = null)
     {
         bool isDbUserProvided = dbUser is not null;
@@ -67,7 +67,7 @@ public static class UserTransformer
         await SetCommonNameAsync(commonNameRepository, user.Middlename, id => dbUser.MiddleCommonNameId = id, model => dbUser.MiddleCommonName = model, cancellationToken);
         await SetCommonNameAsync(commonNameRepository, user.Lastname, id => dbUser.LastCommonNameId = id, model => dbUser.LastCommonName = model, cancellationToken);
 
-        if(isDbUserProvided)
+        if (isDbUserProvided)
         {
             dbUser.Map(user);
             dbUser.RowVersion = user.RowVersion;

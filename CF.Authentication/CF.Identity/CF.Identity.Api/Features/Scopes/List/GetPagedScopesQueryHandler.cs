@@ -10,7 +10,7 @@ public class GetPagedScopesQueryHandler(IScopeRepository scopeRepository) : IUni
     public async Task<IUnitPagedResult<ScopeDto>> Handle(GetPagedScopesQuery request, CancellationToken cancellationToken)
     {
         var scopes = await scopeRepository.GetPagedScopesAsync(request, cancellationToken);
-        
+
         return scopes.Convert(e => e.Map<ScopeDto>());
     }
 }

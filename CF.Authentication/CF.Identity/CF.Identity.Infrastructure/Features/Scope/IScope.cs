@@ -4,16 +4,16 @@ namespace CF.Identity.Infrastructure.Features.Scope;
 
 public interface IScope : IEditableScope
 {
-    
+
 }
 
 public interface IEditableScope : IMappable<IScope>, IScopeDetail, IIdentifer
 {
     string Key { get; }
-    
+
 }
 
-public interface  IScopeSummary
+public interface IScopeSummary
 {
     Guid? ClientId { get; }
     string Name { get; }

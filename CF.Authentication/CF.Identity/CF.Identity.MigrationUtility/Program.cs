@@ -1,10 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using CF.Identity.Infrastructure.Extensions;
 using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
 using CF.Identity.MigrationUtility;
 using CF.Identity.MigrationUtility.Seeds;
 using CF.Identity.MigrationUtility.Verify;
-using CF.Identity.Infrastructure.Extensions;
 using IDFCR.Utility.Shared;
 using IDFCR.Utility.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +20,7 @@ using var migrationUtility = EFMigrationUtility
     .Extend("--flush-seed-data", "Flushes seeded data, only touches tables the seed touches, if there are additional relational bindings this will fail.",
         Flush.FlushSeedAsync);
 
-static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
+static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args,
     IServiceProvider serviceProvider, CancellationToken cancellationToken)
 {
     List<bool> results = [];

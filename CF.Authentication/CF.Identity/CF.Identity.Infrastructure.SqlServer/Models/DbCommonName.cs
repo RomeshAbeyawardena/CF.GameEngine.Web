@@ -10,7 +10,7 @@ public class DbCommonName : MappableBase<ICommonName>, ICommonName
     public string Value { get; set; } = null!;
     public string ValueCI { get; set; } = null!;
     public string ValueHmac { get; set; } = null!;
-    
+
     public string RowVersion { get; set; } = null!;
     public string MetaData { get; set; } = null!;
     public bool IsAnonymisedMarker { get; set; }

@@ -1,7 +1,7 @@
 ﻿using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.AccessToken;
-using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Abstractions.Results;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.AccessTokens;

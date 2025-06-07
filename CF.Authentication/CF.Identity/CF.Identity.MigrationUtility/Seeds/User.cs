@@ -19,7 +19,7 @@ internal static partial class Seed
         var commonNameRepository = serviceProvider.GetRequiredService<ICommonNameRepository>();
         var anonymisedRow = (await commonNameRepository.GetAnonymisedRowRawAsync(false, cancellationToken)).GetResultOrDefault();
 
-        if(anonymisedRow is null)
+        if (anonymisedRow is null)
         {
             logger.LogInformation("Common name lacks an anonymous record, creating one");
             await commonNameRepository.UpsertAsync(new DbCommonName
@@ -33,7 +33,7 @@ internal static partial class Seed
             logger.LogInformation("Common name exists, skipping this step");
         }
 
-            var client = await context.Clients.FirstOrDefaultAsync(c => c.IsSystem, cancellationToken);
+        var client = await context.Clients.FirstOrDefaultAsync(c => c.IsSystem, cancellationToken);
         bool isInflight = false;
         if (client is null)
         {
@@ -67,7 +67,7 @@ internal static partial class Seed
             IsSystem = true,
         };
 
-        
+
         var user = await UserTransformer.Transform(userDto, commonNameRepository, cancellationToken);
 
         context.Users.Add(user);
@@ -97,9 +97,9 @@ internal static partial class Seed
             scopes.ForEach(s => scopesToAdd.Add(new(false, s)));
         }
 
-        foreach(var (inflight, scope) in scopesToAdd)
+        foreach (var (inflight, scope) in scopesToAdd)
         {
-            if(user.UserScopes.Any(x=> x.Scope.Name == scope.Name))
+            if (user.UserScopes.Any(x => x.Scope.Name == scope.Name))
             {
                 continue;
             }

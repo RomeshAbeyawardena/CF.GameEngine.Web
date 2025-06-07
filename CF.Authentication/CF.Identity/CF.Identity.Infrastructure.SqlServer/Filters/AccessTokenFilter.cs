@@ -9,7 +9,7 @@ namespace CF.Identity.Infrastructure.SqlServer.Filters;
 internal class AccessTokenFilter(IAccessTokenFilter filter) : MappableFilterBase<IAccessTokenFilter, DbAccessToken>(filter), IAccessTokenFilter
 {
     protected override IAccessTokenFilter Source => this;
-    public string? ReferenceToken { get; set;}
+    public string? ReferenceToken { get; set; }
     public Guid? ClientId { get; set; }
     public string? Type { get; set; }
     public DateTimeOffset? ValidFrom { get; set; }

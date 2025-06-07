@@ -12,12 +12,12 @@ namespace CF.Identity.Api.Endpoints.Clients.Post;
 
 public static class Endpoint
 {
-    public static async Task<IResult> SaveClientAsync([FromForm] PostClientRequest request, 
+    public static async Task<IResult> SaveClientAsync([FromForm] PostClientRequest request,
         IMediator mediator, IHttpContextAccessor httpContextAccessor,
         CancellationToken cancellationToken)
     {
         var data = request.Map<EditableClientDto>();
-        
+
         var result = await mediator.Send(new PostClientCommand(data), cancellationToken);
         return result.NegotiateResult(httpContextAccessor, Endpoints.BaseUrl);
     }

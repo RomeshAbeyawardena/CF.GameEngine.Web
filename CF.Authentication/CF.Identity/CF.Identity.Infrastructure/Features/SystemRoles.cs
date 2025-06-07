@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Infrastructure.Properties;
-using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Roles;
 
 namespace CF.Identity.Infrastructure.Features;
@@ -11,7 +10,7 @@ public class SystemRoles : RoleRegistrarBase
 
     public SystemRoles()
     {
-        TryRegisterRole(GlobalRead, b => 
+        TryRegisterRole(GlobalRead, b =>
             b.AddDisplayName(Resources.GlobalReadRoleName)
             .AddDescription(Resources.GlobalReadRoleDescription)
             .Privileged());

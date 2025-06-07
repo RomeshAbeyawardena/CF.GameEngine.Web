@@ -10,7 +10,7 @@ public class Roles : RoleRegistrarBase
     public const string RoleWrite = "api:role:write";
     public Roles()
     {
-        TryRegisterRole(RoleRead, RoleCategory.Read , b => b
+        TryRegisterRole(RoleRead, RoleCategory.Read, b => b
             .AddDisplayName(Resources.AccessRoleReadRoleName)
             .AddDescription(Resources.AccessRoleReadRoleDescription));
 

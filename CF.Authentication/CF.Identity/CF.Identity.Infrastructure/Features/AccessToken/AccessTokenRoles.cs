@@ -1,5 +1,5 @@
-﻿using IDFCR.Shared.Abstractions.Roles;
-using CF.Identity.Infrastructure.Properties;
+﻿using CF.Identity.Infrastructure.Properties;
+using IDFCR.Shared.Abstractions.Roles;
 namespace CF.Identity.Infrastructure.Features.AccessToken;
 
 public class AccessTokenRoles : RoleRegistrarBase
@@ -9,7 +9,7 @@ public class AccessTokenRoles : RoleRegistrarBase
 
     public AccessTokenRoles()
     {
-        TryRegisterRole(AccessTokenRead, b =>b
+        TryRegisterRole(AccessTokenRead, b => b
             .AddDisplayName(Resources.AccessTokenReadRoleName)
             .AddDescription(Resources.AccessTokenWriteRoleDescription));
 

@@ -72,7 +72,7 @@ internal static partial class Verify
                 issueCount++;
             }
 
-            if(!userCredentialProtectionProvider.VerifyHashUsing(user, x => x.HashedPassword, userInfo.Password))
+            if (!userCredentialProtectionProvider.VerifyHashUsing(user, x => x.HashedPassword, userInfo.Password))
             {
                 logger.LogWarning("Password does not match the value stored in the database");
                 issueCount++;

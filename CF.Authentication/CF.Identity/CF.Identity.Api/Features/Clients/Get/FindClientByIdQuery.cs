@@ -1,5 +1,4 @@
-﻿using CF.Identity.Infrastructure.Features;
-using CF.Identity.Infrastructure.Features.Clients;
+﻿using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Mediatr;

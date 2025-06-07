@@ -15,7 +15,7 @@ public class DbScope : MappableBase<IScope>, IScope
 
     public virtual DbClient? Client { get; set; }
     public virtual ICollection<DbUserScope> UserScopes { get; set; } = [];
-    
+
 
     public override void Map(IScope source)
     {

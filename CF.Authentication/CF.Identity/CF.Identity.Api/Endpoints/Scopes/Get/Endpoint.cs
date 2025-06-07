@@ -13,7 +13,7 @@ namespace CF.Identity.Api.Endpoints.Scopes.Get;
 
 public static class Endpoint
 {
-    public static async Task<IResult> GetScopeAsync([FromRoute]Guid id, IMediator mediator, IHttpContextAccessor contextAccessor, CancellationToken cancellationToken)
+    public static async Task<IResult> GetScopeAsync([FromRoute] Guid id, IMediator mediator, IHttpContextAccessor contextAccessor, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new FindScopeByIdQuery(id), cancellationToken);
         return result.NegotiateResult(contextAccessor, Endpoints.BaseUrl);

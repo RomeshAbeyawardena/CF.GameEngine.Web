@@ -3,11 +3,10 @@ using CF.Identity.Infrastructure.SqlServer.PII;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class CommonNameRepository(ICommonNamePIIProtection commonNamePIIProtection, TimeProvider timeProvider, CFIdentityDbContext context) 
+internal class CommonNameRepository(ICommonNamePIIProtection commonNamePIIProtection, TimeProvider timeProvider, CFIdentityDbContext context)
     : RepositoryBase<ICommonName, DbCommonName, CommonNameDto>(timeProvider, context), ICommonNameRepository
 {
     protected async Task<IUnitResult<DbCommonName>> UpsertAsync(DbCommonName commonName, CancellationToken cancellationToken)
@@ -38,10 +37,10 @@ internal class CommonNameRepository(ICommonNamePIIProtection commonNamePIIProtec
     {
         //we're not tracking this because it brings risk we may accidentally update the database with unencrypted values
         var result = await GetByNameRawAsync(name, false, cancellationToken);
-            
+
         var commonName = result.GetResultOrDefault();
 
-        if(commonName is null)
+        if (commonName is null)
         {
             return result.As<CommonNameDto>();
         }

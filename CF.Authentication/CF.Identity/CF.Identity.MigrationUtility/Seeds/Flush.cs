@@ -10,12 +10,12 @@ public static class Flush
     public static async Task<MigrationResult> FlushSeedAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args,
         IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        if(!args.Any(a => a.Equals("--force", StringComparison.OrdinalIgnoreCase)))
+        if (!args.Any(a => a.Equals("--force", StringComparison.OrdinalIgnoreCase)))
         {
             logger.LogWarning("You must pass the --force flag to flush seed data. This is a destructive operation and cannot be undone.");
             return new MigrationResult(nameof(FlushSeedAsync), MigrationStatus.Failed, "Operation cancelled: --force flag not provided.");
         }
-        
+
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         try
         {

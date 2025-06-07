@@ -3,7 +3,6 @@ using IDFCR.Http.Authentication;
 using IDFCR.Shared.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CF.Identity.Api.Endpoints.Connect;
 
@@ -34,7 +33,7 @@ public static class IntrospectEndpoint
             .Produces<IntrospectResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(new AuthorizeAttribute());
-            //.RequireRateLimiting("authentication-rate-limits");
+        //.RequireRateLimiting("authentication-rate-limits");
         return builder;
     }
 }

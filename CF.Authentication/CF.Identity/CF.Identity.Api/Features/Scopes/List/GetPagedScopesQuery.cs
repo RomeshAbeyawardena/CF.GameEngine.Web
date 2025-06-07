@@ -1,5 +1,4 @@
-﻿using CF.Identity.Infrastructure.Features;
-using CF.Identity.Infrastructure.Features.Scope;
+﻿using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Paging;
 using IDFCR.Shared.Abstractions.Roles;
@@ -11,7 +10,7 @@ namespace CF.Identity.Api.Features.Scopes.List;
 
 public record GetPagedScopesQuery
     : MappablePagedQuery<IPagedScopeFilter>, IUnitPagedRequest<ScopeDto>,
-      IPagedScopeFilter, 
+      IPagedScopeFilter,
       IRoleRequirement
 {
     protected override IPagedScopeFilter Source => this;

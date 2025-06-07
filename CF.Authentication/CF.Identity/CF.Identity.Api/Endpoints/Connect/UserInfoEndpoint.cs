@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Api.Features.User.Info;
-using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Http.Authentication;
 using IDFCR.Http.Authentication.Abstractions;
 using Microsoft.AspNetCore.Authorization;
@@ -11,16 +10,16 @@ public static class UserInfoEndpoint
     public static async Task<IResult> GetUserInfoAsync(IAuthenticatedUserContext authenticatedUserContext, CancellationToken cancellationToken)
     {
         await Task.CompletedTask;
-        
-        var userId = authenticatedUserContext.User?.GetUserId() 
+
+        var userId = authenticatedUserContext.User?.GetUserId()
             ?? throw new NullReferenceException();
-        var name = authenticatedUserContext.User?.GetUserDisplayName() 
+        var name = authenticatedUserContext.User?.GetUserDisplayName()
             ?? throw new NullReferenceException();
-        var username = authenticatedUserContext.User?.GetUserName() 
+        var username = authenticatedUserContext.User?.GetUserName()
             ?? throw new NullReferenceException();
-        var email = authenticatedUserContext.User?.GetUserEmail() 
+        var email = authenticatedUserContext.User?.GetUserEmail()
             ?? throw new NullReferenceException();
-        
+
         return Results.Ok(
             new UserInfoResponse(userId, name, username, email)
             );
@@ -32,7 +31,7 @@ public static class UserInfoEndpoint
             .Produces<UserInfoResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(new AuthorizeAttribute());
-            //.RequireRateLimiting("authentication-rate-limits");
+        //.RequireRateLimiting("authentication-rate-limits");
         return builder;
     }
 }
