@@ -1,14 +1,22 @@
-﻿namespace IDFCR.Shared.Abstractions.Roles;
+﻿using System.Collections.Concurrent;
+
+namespace IDFCR.Shared.Abstractions.Roles;
 
 public static class RoleRegistrar
 {
-    private readonly static List<IRoleRegistrar> globalRegistrars = [];
-    public static IEnumerable<IRoleRegistrar> GlobalRegistrars => globalRegistrars;
+    private readonly static Lazy<ConcurrentBag<IRoleRegistrar>> globalRegistrars = new (() => []);
+    private static IEnumerable<IRoleDescriptor> FilterByCategory(IEnumerable<IRoleDescriptor> roles, RoleCategory? category) =>
+    category.HasValue ? roles.Where(r => r.Category == category.Value) : roles;
 
-    public static void SetGlobalRegistrar<T>()
-        where T : IRoleRegistrar, new()
+    public static IEnumerable<IRoleRegistrar> GlobalRegistrars => [.. globalRegistrars.Value];
+
+    public static void RegisterGlobal<T>()
+     where T : IRoleRegistrar, new()
     {
-        globalRegistrars.Add(new T());
+        if (!GlobalRegistrars.Any(r => r is T))
+        {
+            globalRegistrars.Value.Add(new T());
+        }
     }
 
     public static IEnumerable<string> List<T>(RoleCategory? category = null, params string[] additionalRoles)
@@ -16,10 +24,8 @@ public static class RoleRegistrar
     {
         var registrar = new T();
 
-        var roles = category.HasValue ? registrar.Where(r => r.Category == category)
-            : registrar;
-
-        var globalRoles = GlobalRegistrars.SelectMany(x => x)?.Where(r => r.Category == category) ?? [];
+        var roles = FilterByCategory(registrar, category);
+        var globalRoles = FilterByCategory(GlobalRegistrars.SelectMany(x => x), category);
 
         if (globalRoles.Any())
         {
