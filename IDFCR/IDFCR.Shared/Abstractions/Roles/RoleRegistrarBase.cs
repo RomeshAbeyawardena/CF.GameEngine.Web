@@ -6,7 +6,7 @@ public static class RoleRegistrar
 {
     internal readonly static Lazy<ConcurrentBag<IRoleRegistrar>> globalRegistrars = new (() => []);
     private static IEnumerable<IRoleDescriptor> FilterByCategory(IEnumerable<IRoleDescriptor> roles, RoleCategory? category) =>
-    category.HasValue ? roles.Where(r => r.Category == category.Value) : roles;
+    category.HasValue ? roles.Where(r => !category.HasValue || r.Category.HasFlag(category.Value)) : roles;
 
     public static IEnumerable<IRoleRegistrar> GlobalRegistrars => [.. globalRegistrars.Value];
 
