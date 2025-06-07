@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.AccessToken;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Mediatr;
 namespace CF.Identity.Api.Features.AccessTokens.Get;
@@ -10,6 +11,6 @@ public record FindAccessTokenQuery(string? ReferenceToken = null,
     bool ShowAll = false, bool NoTracking = true, bool Bypass = false)
     : IUnitRequestCollection<AccessTokenDto>, IAccessTokenFilter, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalRead, AccessTokenRoles.AccessTokenRead];
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<AccessTokenRoles>(RoleCategory.Read, SystemRoles.GlobalRead);
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }

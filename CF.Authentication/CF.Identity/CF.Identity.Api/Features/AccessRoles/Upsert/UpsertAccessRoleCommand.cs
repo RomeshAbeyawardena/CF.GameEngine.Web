@@ -7,6 +7,7 @@ namespace CF.Identity.Api.Features.AccessRoles.Upsert;
 
 public record UpsertAccessRoleCommand(EditableAccessRoleDto AccessRole, bool Bypass = false) : IUnitRequest<Guid>, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalWrite, Roles.RoleWrite];
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar
+        .List<Roles>(IDFCR.Shared.Abstractions.RoleCategory.Write, SystemRoles.GlobalWrite);
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }
