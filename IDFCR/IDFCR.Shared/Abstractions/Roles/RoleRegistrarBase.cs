@@ -2,14 +2,31 @@
 
 public static class RoleRegistrar
 {
+    private readonly static List<IRoleRegistrar> globalRegistrars = [];
+    public static IEnumerable<IRoleRegistrar> GlobalRegistrars => globalRegistrars;
+
+    public static void SetGlobalRegistrar<T>()
+        where T : IRoleRegistrar, new()
+    {
+        globalRegistrars.Add(new T());
+    }
+
     public static IEnumerable<string> List<T>(RoleCategory? category = null, params string[] additionalRoles)
         where T : IRoleRegistrar, new()
     {
         var registrar = new T();
 
-        return category.HasValue 
-            ? registrar.Where(r => r.Category == category).Select(role => role.Key).Union(additionalRoles)
-            : registrar.Select(role => role.Key).Union(additionalRoles);
+        var roles = category.HasValue ? registrar.Where(r => r.Category == category)
+            : registrar;
+
+        var globalRoles = GlobalRegistrars.SelectMany(x => x)?.Where(r => r.Category == category) ?? [];
+
+        if (globalRoles.Any())
+        {
+            roles = roles.Union(globalRoles);
+        }
+
+        return [.. roles.Select(role => role.Key).Union(additionalRoles)];
     }
 
     public static string FlattenedRoles<T>(RoleCategory? category = null, params string[] additionalRoles)
