@@ -5,6 +5,7 @@ using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
 using FluentValidation;
 using IDFCR.Http.Authentication.Extensions;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using IDFCR.Shared.Http.Middleware;
@@ -42,6 +43,7 @@ builder.Services.AddBackendDependencies("CFIdentity")
 
 builder.Services.AddAuthorization();
 
+RoleRegistrar.RegisterGlobal<SystemRoles>();
 
 var app = builder.Build();
 

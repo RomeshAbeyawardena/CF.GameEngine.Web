@@ -13,7 +13,7 @@ namespace CF.Identity.Api.Features.Clients.Post;
 public record PostClientCommand(EditableClientDto Client, bool Bypass = false) 
     : IUnitRequest<Guid>, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ClientRoles>(RoleCategory.Write, SystemRoles.GlobalWrite);
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ClientRoles>(RoleCategory.Write);
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }
 

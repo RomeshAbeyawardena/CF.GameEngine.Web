@@ -9,7 +9,7 @@ namespace CF.Identity.Api.Features.AccessTokens.Delete;
 
 public record BulkExpireAccessTokenCommand(IEnumerable<Guid> AccessTokenIds, string? RevokeReason = null, string? RevokedBy = null, bool Bypass = false) : IUnitRequest, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<AccessTokenRoles>(RoleCategory.Write, SystemRoles.GlobalWrite);
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<AccessTokenRoles>(RoleCategory.Write);
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }
 

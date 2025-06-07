@@ -11,6 +11,6 @@ public record FindAccessTokenQuery(string? ReferenceToken = null,
     bool ShowAll = false, bool NoTracking = true, bool Bypass = false)
     : IUnitRequestCollection<AccessTokenDto>, IAccessTokenFilter, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<AccessTokenRoles>(RoleCategory.Read, SystemRoles.GlobalRead);
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<AccessTokenRoles>(RoleCategory.Read);
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }

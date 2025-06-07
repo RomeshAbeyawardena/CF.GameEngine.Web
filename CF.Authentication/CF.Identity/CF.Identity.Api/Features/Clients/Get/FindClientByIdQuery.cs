@@ -8,6 +8,6 @@ namespace CF.Identity.Api.Features.Clients.Get;
 
 public record FindClientByIdQuery(Guid ClientId, bool Bypass = false) : IUnitRequest<ClientDetailResponse>, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ClientRoles>(RoleCategory.Read, SystemRoles.GlobalRead);
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ClientRoles>(RoleCategory.Read);
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }

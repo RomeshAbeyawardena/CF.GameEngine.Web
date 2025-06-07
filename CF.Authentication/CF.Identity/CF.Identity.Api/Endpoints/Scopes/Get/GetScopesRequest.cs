@@ -1,4 +1,4 @@
-﻿using CF.Identity.Api.Features.Scopes.Get;
+﻿using CF.Identity.Api.Features.Scopes.List;
 using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Shared.Abstractions.Records;
 

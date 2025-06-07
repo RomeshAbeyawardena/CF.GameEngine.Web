@@ -1,5 +1,6 @@
 ﻿using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Scope;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Extensions;
@@ -9,7 +10,7 @@ namespace CF.Identity.Api.Features.Scopes.Get;
 
 public record FindScopeByIdQuery(Guid ScopeId, bool Bypass = false) : IUnitRequest<ScopeDto>, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalRead, ScopeRoles.ScopeRead];
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ScopeRoles>(RoleCategory.Read);
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }
 

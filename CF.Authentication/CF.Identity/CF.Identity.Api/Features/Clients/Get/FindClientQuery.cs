@@ -10,6 +10,6 @@ public record FindClientQuery(string? Key = null, DateTimeOffset? ValidFrom = nu
     bool NoTracking = true, bool Bypass = false) 
     : IUnitRequestCollection<ClientDetailResponse>, IClientFilter, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ClientRoles>(RoleCategory.Read, SystemRoles.GlobalRead);
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ClientRoles>(RoleCategory.Read);
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }

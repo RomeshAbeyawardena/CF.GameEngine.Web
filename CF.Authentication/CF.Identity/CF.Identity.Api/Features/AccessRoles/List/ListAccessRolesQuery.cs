@@ -1,5 +1,4 @@
-﻿using CF.Identity.Infrastructure.Features;
-using CF.Identity.Infrastructure.Features.AccessRoles;
+﻿using CF.Identity.Infrastructure.Features.AccessRoles;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Paging;
 using IDFCR.Shared.Abstractions.Roles;
@@ -10,7 +9,7 @@ namespace CF.Identity.Api.Features.AccessRoles.List;
 public record ListAccessRolesQuery
     : MappablePagedQuery<IPagedAccessRoleFilter>, IUnitPagedRequest<AccessRoleDto>, IPagedAccessRoleFilter, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<Roles>(RoleCategory.Read, SystemRoles.GlobalRead);
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<Roles>(RoleCategory.Read);
 
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 

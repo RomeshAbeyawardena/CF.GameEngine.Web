@@ -3,13 +3,14 @@ using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Mediatr;
+using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Api.Features.Clients.Upsert;
 
 public record UpsertClientCommand(EditableClientDto Client, bool Bypass = false) 
     : IUnitRequest<Guid>, IRoleRequirement
 {
-    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalWrite, ClientRoles.ClientWrite];
+    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ClientRoles>(RoleCategory.Write);
     RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 }
 
