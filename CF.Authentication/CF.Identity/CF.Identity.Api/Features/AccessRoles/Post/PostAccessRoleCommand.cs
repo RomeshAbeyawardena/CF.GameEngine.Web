@@ -1,11 +1,14 @@
 ﻿using CF.Identity.Infrastructure.Features.AccessRoles;
-using IDFCR.Shared.Abstractions.Roles;
+using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
+using IDFCR.Shared.Abstractions.Roles.Records;
 using IDFCR.Shared.Mediatr;
+using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Api.Features.AccessRoles.Post;
 
-public record PostAccessRoleCommand(EditableAccessRoleDto AccessRole, bool Bypass = false) : IUnitRequest<Guid>, IRoleRequirement
+public record PostAccessRoleCommand(EditableAccessRoleDto AccessRole, bool Bypass = false) 
+    : RoleRequirementBase(() => RoleRegistrar.List<Roles>(RoleCategory.Write)), IUnitRequest<Guid>
 {
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<Roles>(IDFCR.Shared.Abstractions.RoleCategory.Write);
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
+    
+    
 }

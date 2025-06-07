@@ -2,16 +2,14 @@
 using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
-using IDFCR.Shared.Abstractions.Roles;
+using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
+using IDFCR.Shared.Abstractions.Roles.Records;
 using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.Scopes.Upsert;
 
-public record UpsertScopeCommand(EditableScopeDto Scope, bool Bypass = false) : IUnitRequest<Guid>, IRoleRequirement
-{
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ScopeRoles>(RoleCategory.Write);
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
-}
+public record UpsertScopeCommand(EditableScopeDto Scope, bool Bypass = false) 
+    : RoleRequirementBase(() => RoleRegistrar.List<ScopeRoles>(RoleCategory.Write)), IUnitRequest<Guid>;
 
 public class UpsertScopeCommandHandler(IScopeRepository scopeRepository)
     : IUnitRequestHandler<UpsertScopeCommand, Guid>

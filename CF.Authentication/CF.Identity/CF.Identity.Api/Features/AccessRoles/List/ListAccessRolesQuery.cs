@@ -8,12 +8,11 @@ using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
 
 namespace CF.Identity.Api.Features.AccessRoles.List;
 
+[RoleRequirement(nameof(GetRoles))]
 public record ListAccessRolesQuery
     : MappablePagedQuery<IPagedAccessRoleFilter>, IUnitPagedRequest<AccessRoleDto>, IPagedAccessRoleFilter 
 {
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<Roles>(RoleCategory.Read);
-
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
+    public static readonly Func<IEnumerable<string>> GetRoles = () => RoleRegistrar.List<Roles>(RoleCategory.Read);
 
     protected override IPagedAccessRoleFilter Source => this;
 
