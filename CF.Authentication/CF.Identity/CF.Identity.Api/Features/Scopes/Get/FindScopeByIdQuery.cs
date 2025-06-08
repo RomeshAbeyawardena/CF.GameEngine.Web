@@ -1,17 +1,14 @@
-﻿using CF.Identity.Infrastructure.Features;
-using CF.Identity.Infrastructure.Features.Scope;
+﻿using CF.Identity.Infrastructure.Features.Scope;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
-using IDFCR.Shared.Abstractions.Roles;
+using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
+using IDFCR.Shared.Abstractions.Roles.Records;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.Scopes.Get;
 
-public record FindScopeByIdQuery(Guid ScopeId, bool Bypass = false) : IUnitRequest<ScopeDto>, IRoleRequirement
-{
-    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalRead, ScopeRoles.ScopeRead];
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
-}
+public record FindScopeByIdQuery(Guid ScopeId, bool Bypass = false) : RoleRequirementBase(() => RoleRegistrar.List<ScopeRoles>(RoleCategory.Read)), IUnitRequest<ScopeDto>;
 
 public class FindScopeByIdQueryHandler(IScopeRepository scopeRepository) : IUnitRequestHandler<FindScopeByIdQuery, ScopeDto>
 {

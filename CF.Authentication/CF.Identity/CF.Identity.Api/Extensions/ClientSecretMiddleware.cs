@@ -1,34 +1,36 @@
 ﻿using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
+using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using System.Text;
 
 namespace CF.Identity.Api.Extensions;
 
-public class ClientSecretException(string message, Exception? innerException = null, string? exposableMessage = null, string? details = null) 
+public class ClientSecretException(string message, Exception? innerException = null, string? exposableMessage = null, string? details = null)
     : Exception(message, innerException), IExposableException
 {
     string IExposableException.Message => exposableMessage ?? Message;
     string? IExposableException.Details => details;
 }
 
-public class ClientSecretMiddleware 
+public class ClientSecretMiddleware
 {
     private static async Task AuthenticationFailed(Exception exception, HttpContext context, ILogger logger)
     {
-        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        var message = "Authentication failed";
 
-        var message = string.Empty;
-        
-        if(exception is IExposableException exposableException)
+        if (exception is IExposableException exposableException)
         {
             message = exposableException.Message;
         }
 
-        await context.Response.WriteAsync($"Authentication failed {(string.IsNullOrEmpty(message) ? string.Empty : ":" + message)}");
+        var result = UnitResult.Failed<object>(new Exception(message, exception), FailureReason: FailureReason.Unauthorized);
+
+        await result.ToApiResult().ExecuteAsync(context);
         logger.LogError(exception, "Client secret authentication failed: {Message}", exception.Message);
     }
 
@@ -41,7 +43,7 @@ public class ClientSecretMiddleware
 
         try
         {
-            
+
             string[] requiredPaths = ["api", "connect"];
             var path = (context.Request.Path.Value ?? string.Empty).ToLowerInvariant();
             if (!requiredPaths.Any(p => path.StartsWith($"/{p}")))
@@ -57,7 +59,6 @@ public class ClientSecretMiddleware
                 throw new ClientSecretException("Authentication header missing", exposableMessage: exposableMessage);
             }
 
-            
             var encoding = services.GetRequiredService<Encoding>();
 
             var raw = encoding.GetString(Convert.FromBase64String(auth));
@@ -93,6 +94,10 @@ public class ClientSecretMiddleware
 
             context.Items.Add(nameof(AuthenticatedClient), new AuthenticatedClient(clientId, clientResult));
             await next(context);
+        }
+        catch (FormatException ex)
+        {
+            await AuthenticationFailed(ex, context, logger);
         }
         catch (ClientSecretException ex)
         {

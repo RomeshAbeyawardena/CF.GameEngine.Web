@@ -32,8 +32,9 @@ internal class AccessTokenProtection : PIIProtectionBase<DbAccessToken>, IAccess
 
     private const string ClientIdKey = nameof(ClientIdKey);
 
-    public IClient Client { 
-        get => Get<IClient>(ClientIdKey) ?? throw new NullReferenceException(); 
-        set => Set(ClientIdKey, value); 
+    public IClient Client
+    {
+        get => Get<IClient>(ClientIdKey) ?? throw new NullReferenceException();
+        set => Set(ClientIdKey, value);
     }
 }

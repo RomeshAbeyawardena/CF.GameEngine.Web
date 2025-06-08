@@ -1,15 +1,14 @@
 ﻿using CF.Identity.Api.Features.User;
-using CF.Identity.Api.Features.User.Post;
 using CF.Identity.Infrastructure.Features.Users;
 using IDFCR.Shared.Abstractions.Records;
 
 namespace CF.Identity.Api.Endpoints.Users.Post;
 
-public record PostUserRequest(string Username, string EmailAddress, string Password, string Firstname,string Lastname, 
+public record PostUserRequest(string Username, string EmailAddress, string Password, string Firstname, string Lastname,
     string PrimaryTelephoneNumber, string? PreferredUsername = null) : MappableBase<IUser>
 {
     public string? Middlename { get; set; }
-    public string? Client { get; set; } 
+    public string? Client { get; set; }
     public Guid? ClientId { get; set; }
     public string? Scope { get; set; }
 

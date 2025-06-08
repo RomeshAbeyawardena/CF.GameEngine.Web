@@ -14,7 +14,7 @@ public class DbUser : MappableBase<IUser>, IUser
     public string EmailAddressHmac { get; set; } = null!;
     public string EmailAddressCI { get; set; } = null!;
     public string HashedPassword { get; set; } = null!;
-    
+
     public string Username { get; set; } = null!;
     public string UsernameHmac { get; set; } = null!;
     public string UsernameCI { get; set; } = null!;
@@ -31,7 +31,7 @@ public class DbUser : MappableBase<IUser>, IUser
     public Guid Id { get; set; }
     public bool IsSystem { get; set; }
     public string RowVersion { get; set; } = null!;
-    
+
     public string PrimaryTelephoneNumber { get; set; } = null!;
     public string PrimaryTelephoneNumberHmac { get; set; } = null!;
 

@@ -12,10 +12,10 @@ namespace CF.Identity.MigrationUtility.Seeds;
 
 internal static partial class Seed
 {
-    internal static async Task TrySeedApiKeyAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
+    internal static async Task TrySeedApiKeyAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args,
         IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        if(Roles is null)
+        if (Roles is null)
         {
             return;
         }
@@ -28,17 +28,17 @@ internal static partial class Seed
         client ??= await context.Clients.FirstOrDefaultAsync(x => x.IsSystem, cancellationToken)
             ?? throw new NullReferenceException("Seeding can not continue ");
 
-        
+
         if (!await context.AccessTokens.AnyAsync(x => x.ClientId == client.Id, cancellationToken))
         {
             var randomNumberGenerator = serviceProvider.GetRequiredService<RandomNumberGenerator>();
             var jwtSettings = serviceProvider.GetRequiredService<IJwtSettings>();
             logger.LogInformation("{fullName}", jwtSettings.GetType().FullName);
-            
+
             var referenceToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 32);
-            
+
             var refreshToken = JwtHelper.GenerateSecureRandomBase64(randomNumberGenerator, 16);
-            
+
             var validity = DateTimeOffset.UtcNow.AddYears(1);
             var newApiKey = new DbAccessToken
             {
@@ -89,7 +89,7 @@ internal static partial class Seed
 
             if (args.Any(x => x.Equals("--output", StringComparison.InvariantCultureIgnoreCase)))
             {
-                await File.AppendAllTextAsync("ApiKey.txt", output,  cancellationToken);
+                await File.AppendAllTextAsync("ApiKey.txt", output, cancellationToken);
             }
         }
         else

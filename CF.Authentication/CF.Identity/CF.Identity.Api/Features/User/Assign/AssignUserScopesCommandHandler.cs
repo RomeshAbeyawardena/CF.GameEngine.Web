@@ -9,13 +9,13 @@ using MediatR;
 
 namespace CF.Identity.Api.Features.User.Assign;
 
-public class AssignUserScopesCommandHandler(IAuthenticatedUserContext authenticatedUserContext, 
+public class AssignUserScopesCommandHandler(IAuthenticatedUserContext authenticatedUserContext,
     IMediator mediator, IUserRepository userRepository) : IUnitRequestHandler<AssignUserScopesCommand>
 {
     public async Task<IUnitResult> Handle(AssignUserScopesCommand request, CancellationToken cancellationToken)
     {
         var client = authenticatedUserContext.Client;
-        if(client is null || !client.UserId.HasValue)
+        if (client is null || !client.UserId.HasValue)
         {
             return UnitResult.NotFound<ScopeDto>(request.ClientId);
         }
@@ -27,7 +27,7 @@ public class AssignUserScopesCommandHandler(IAuthenticatedUserContext authentica
         var scopes = (await mediator.Send(new FindScopesQuery(client.Id, client.UserId, Keys: request.Scopes, IncludePrivilegedScoped: includePrivilegedScopes), cancellationToken))
             .GetResultOrDefault();
 
-        if(scopes is null)
+        if (scopes is null)
         {
             return UnitResult.NotFound<ScopeDto>(request.Scopes);
         }

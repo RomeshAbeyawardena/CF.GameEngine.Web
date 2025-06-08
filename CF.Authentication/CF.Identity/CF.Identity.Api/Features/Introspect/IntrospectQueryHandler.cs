@@ -2,8 +2,6 @@
 using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure;
 using CF.Identity.Infrastructure.Features.AccessToken;
-using CF.Identity.Infrastructure.SqlServer.Models;
-using CF.Identity.Infrastructure.SqlServer.SPA;
 using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Extensions;
@@ -15,7 +13,7 @@ using System.Text;
 
 namespace CF.Identity.Api.Features.Introspect;
 
-public class IntrospectQueryHandler(IMediator mediator, IAccessTokenProtection accessTokenProtection, TimeProvider timeProvider, IJwtSettings jwtSettings) 
+public class IntrospectQueryHandler(IMediator mediator, IAccessTokenProtection accessTokenProtection, TimeProvider timeProvider, IJwtSettings jwtSettings)
     : IUnitRequestHandler<IntrospectQuery, IntrospectResponse>
 {
     public async Task<IUnitResult<IntrospectResponse>> Handle(IntrospectQuery request, CancellationToken cancellationToken)
@@ -33,13 +31,13 @@ public class IntrospectQueryHandler(IMediator mediator, IAccessTokenProtection a
         var utcNow = timeProvider.GetUtcNow();
         var range = DateTimeOffsetRange.GetValidatyDateRange(utcNow);
 
-        var foundApiTokenResponse = await mediator.Send(new FindAccessTokenQuery(hashedToken, request.ClientId, 
+        var foundApiTokenResponse = await mediator.Send(new FindAccessTokenQuery(hashedToken, request.ClientId,
             ValidFrom: range.FromValue, ValidTo: range.ToValue), cancellationToken);
 
         var latestToken = foundApiTokenResponse.GetOneOrDefault(orderedTranform: x => x
             .OrderByDescending(y => y.ValidFrom)
             .ThenByDescending(y => y.ValidTo));
-        
+
         if (latestToken is null)
         {
             return new UnitResult(new UnauthorizedAccessException("Token not found")).As<IntrospectResponse>();
@@ -60,7 +58,7 @@ public class IntrospectQueryHandler(IMediator mediator, IAccessTokenProtection a
             ClockSkew = TimeSpan.Zero
         });
 
-        if(!result.IsValid)
+        if (!result.IsValid)
         {
             return new UnitResult(new UnauthorizedAccessException("Token is not valid")).As<IntrospectResponse>();
         }

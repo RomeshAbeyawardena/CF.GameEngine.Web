@@ -1,5 +1,4 @@
-﻿using IDFCR.Shared.Abstractions;
-using IDFCR.Shared.Abstractions.Filters;
+﻿using IDFCR.Shared.Abstractions.Filters;
 
 namespace CF.Identity.Infrastructure.Features.Users;
 

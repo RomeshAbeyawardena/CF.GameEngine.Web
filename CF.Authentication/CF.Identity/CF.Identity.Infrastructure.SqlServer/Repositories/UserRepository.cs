@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CF.Identity.Infrastructure.SqlServer.Repositories;
 
-internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvider timeProvider, 
-    CFIdentityDbContext context, IUserPIIProtection userCredentialProtectionProvider, ICommonNameRepository commonNameRepository) 
+internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvider timeProvider,
+    CFIdentityDbContext context, IUserPIIProtection userCredentialProtectionProvider, ICommonNameRepository commonNameRepository)
     : RepositoryBase<IUser, DbUser, UserDto>(timeProvider, context), IUserRepository
 {
     private async Task EnsureUserPIIProtectionIsPrimed(Guid clientId, CancellationToken cancellationToken)
@@ -98,7 +98,7 @@ internal class UserRepository(IFilter<IUserFilter, DbUser> userFilter, TimeProvi
         var foundUser = await Context.Users
             .Include(x => x.UserScopes).FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
-        if(foundUser is null)
+        if (foundUser is null)
         {
             foundUser = Context.Users.Local.FirstOrDefault(x => x.Id == userId);
 

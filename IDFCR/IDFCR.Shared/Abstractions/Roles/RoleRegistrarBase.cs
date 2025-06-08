@@ -1,15 +1,38 @@
-﻿namespace IDFCR.Shared.Abstractions.Roles;
+﻿using System.Collections.Concurrent;
+
+namespace IDFCR.Shared.Abstractions.Roles;
 
 public static class RoleRegistrar
 {
+    internal readonly static Lazy<ConcurrentBag<IRoleRegistrar>> globalRegistrars = new (() => []);
+    private static IEnumerable<IRoleDescriptor> FilterByCategory(IEnumerable<IRoleDescriptor> roles, RoleCategory? category) =>
+    category.HasValue ? roles.Where(r => !category.HasValue || r.Category.HasFlag(category.Value)) : roles;
+
+    public static IEnumerable<IRoleRegistrar> GlobalRegistrars => [.. globalRegistrars.Value];
+
+    public static void RegisterGlobal<T>()
+     where T : IRoleRegistrar, new()
+    {
+        if (!GlobalRegistrars.Any(r => r is T))
+        {
+            globalRegistrars.Value.Add(new T());
+        }
+    }
+
     public static IEnumerable<string> List<T>(RoleCategory? category = null, params string[] additionalRoles)
         where T : IRoleRegistrar, new()
     {
         var registrar = new T();
 
-        return category.HasValue 
-            ? registrar.Where(r => r.Category == category).Select(role => role.Key).Union(additionalRoles)
-            : registrar.Select(role => role.Key).Union(additionalRoles);
+        var roles = FilterByCategory(registrar, category);
+        var globalRoles = FilterByCategory(GlobalRegistrars.SelectMany(x => x), category);
+
+        if (globalRoles.Any())
+        {
+            roles = roles.Union(globalRoles);
+        }
+
+        return [.. roles.Select(role => role.Key).Union(additionalRoles)];
     }
 
     public static string FlattenedRoles<T>(RoleCategory? category = null, params string[] additionalRoles)
@@ -30,7 +53,7 @@ public abstract class RoleRegistrarBase : IRoleRegistrar
     protected readonly Dictionary<string, IRoleDescriptor> _roles = [];
     public string? Prefix { get; set; }
 
-    public bool TryRegisterRole(string roleName, IRoleDescriptor roleDescriptor, out string key)
+    public bool TryRegisterRole(string roleName, IRoleDescriptorBuilder roleDescriptor, out string key)
     {
         key = $"{Prefix}{roleName}";
         if (string.IsNullOrWhiteSpace(roleName) || _roles.ContainsKey(key))
@@ -38,7 +61,9 @@ public abstract class RoleRegistrarBase : IRoleRegistrar
             return false;
         }
 
-        return _roles.TryAdd(key, roleDescriptor);
+        roleDescriptor.Key = key;
+
+        return _roles.TryAdd(key, roleDescriptor.Build());
     }
 
     public IEnumerator<IRoleDescriptor> GetEnumerator() => _roles.Values.GetEnumerator();
@@ -51,9 +76,9 @@ public abstract class RoleRegistrarBase : IRoleRegistrar
 
     public bool TryRegisterRole(string roleName, RoleCategory roleCategory, Action<IRoleDescriptorBuilder> buildRole)
     {
-        var builder = new RoleDescriptorBuilder(roleName, roleCategory);
+        var builder = new RoleDescriptorBuilder(roleCategory);
         buildRole(builder);
-
-        return TryRegisterRole(roleName, builder.Build(), out _);
+        
+        return TryRegisterRole(roleName, builder, out _);
     }
 }

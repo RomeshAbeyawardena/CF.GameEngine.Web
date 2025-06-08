@@ -1,21 +1,20 @@
-﻿using CF.Identity.Infrastructure.Features;
-using CF.Identity.Infrastructure.Features.Scope;
+﻿using CF.Identity.Infrastructure.Features.Scope;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Paging;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Mediatr;
-using IRoleRequirement = IDFCR.Shared.Abstractions.Roles.IRoleRequirement;
-using RoleRequirementType = IDFCR.Shared.Abstractions.Roles.RoleRequirementType;
 
-namespace CF.Identity.Api.Features.Scopes.Get;
+namespace CF.Identity.Api.Features.Scopes.List;
 
+[RoleRequirement(nameof(GetRoles))]
 public record GetPagedScopesQuery
     : MappablePagedQuery<IPagedScopeFilter>, IUnitPagedRequest<ScopeDto>,
-      IPagedScopeFilter, 
-      IRoleRequirement
+      IPagedScopeFilter
 {
     protected override IPagedScopeFilter Source => this;
-    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalRead, ScopeRoles.ScopeRead];
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
 
+    public static readonly Func<IEnumerable<string>> GetRoles = () => RoleRegistrar.List<ScopeRoles>(RoleCategory.Read);
+    
     public Guid? ClientId { get; set; }
     public Guid? UserId { get; set; }
     public string? Key { get; set; }

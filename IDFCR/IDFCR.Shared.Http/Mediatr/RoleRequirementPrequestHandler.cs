@@ -7,7 +7,7 @@ namespace IDFCR.Shared.Http.Mediatr;
 
 public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleRequirementPrequestHandler<TRequest, TResponse>> logger,
     IHttpContextWrapper contextAccessor, IEnumerable<IRoleRequirementHandlerInterceptor<TRequest>> roleRequirementHandlerInterceptors) : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull, IRequest<TResponse>, IRoleRequirement
+    where TRequest : notnull, IRequest<TResponse>
     where TResponse : class
 {
     private async Task<bool> RunAllAsync(bool isBypass, IEnumerable<IRoleRequirementHandlerInterceptor<TRequest>> interceptors, TRequest request, CancellationToken cancellationToken)
@@ -42,14 +42,23 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
             throw new InvalidOperationException("This is not running in a valid HttpContext");
         }
 
+        var roleRequirement = request as IRoleRequirement 
+            ?? RoleRequirementAttributeReader.GetRoleRequirement(request);
+
+        if (roleRequirement is null)
+        {
+            logger.LogDebug("No role requirement found for request {RequestType}, skipping role requirement check", request.GetType().Name);
+            return await next(cancellationToken);
+        }
+
         var context = contextAccessor.Context;
 
         var byPassInterceptors = roleRequirementHandlerInterceptors
             .Where(x => x.Type == RoleRequirementHandlerInterceptorType.Bypass);
 
-        var state = await RunAllAsync(true, byPassInterceptors, request, cancellationToken); ;
+        var state = await RunAllAsync(true, byPassInterceptors, request, cancellationToken);
         
-        if (state || request.Bypass)
+        if (state || roleRequirement.Bypass)
         {
             logger.LogWarning("Bypassing role requirement for request {RequestType}, ensure this was not used by a front-end facing endpoint that required authorisation",
                 request.GetType().Name);
@@ -63,20 +72,20 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
             throw new UnauthorizedAccessException("User is not authenticated");
         }
 
-        var roles = request.Roles;
+        var roles = roleRequirement.Roles;
 
         if (roles is null || !roles.Any())
         {
             return await next(cancellationToken);
         }
 
-        if (request.RoleRequirementType == RoleRequirementType.All
+        if (roleRequirement.RoleRequirementType == RoleRequirementType.All
             && !roles.All(user.IsInRole))
         {
             throw new UnauthorizedAccessException("User is not authorised");
         }
 
-        if (request.RoleRequirementType == RoleRequirementType.Some
+        if (roleRequirement.RoleRequirementType == RoleRequirementType.Some
             && !roles.Any(user.IsInRole))
         {
             throw new UnauthorizedAccessException("User is not authorised");

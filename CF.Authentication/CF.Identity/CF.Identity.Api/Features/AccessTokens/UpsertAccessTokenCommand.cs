@@ -1,16 +1,14 @@
-﻿using CF.Identity.Infrastructure.Features;
-using CF.Identity.Infrastructure.Features.AccessToken;
-using IDFCR.Shared.Abstractions.Roles;
+﻿using CF.Identity.Infrastructure.Features.AccessToken;
 using IDFCR.Shared.Abstractions.Results;
+using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
+using IDFCR.Shared.Abstractions.Roles.Records;
 using IDFCR.Shared.Mediatr;
+using IDFCR.Shared.Abstractions;
 
 namespace CF.Identity.Api.Features.AccessTokens;
 
-public record UpsertAccessTokenCommand(AccessTokenDto AccessToken, bool Bypass = false) : IUnitRequest<Guid>, IRoleRequirement
-{
-    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalWrite, AccessTokenRoles.AccessTokenWrite];
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
-}
+public record UpsertAccessTokenCommand(AccessTokenDto AccessToken, bool Bypass = false) 
+    : RoleRequirementBase(() => RoleRegistrar.List<AccessTokenRoles>(RoleCategory.Write)), IUnitRequest<Guid>;
 
 public class UpsertAccessTokenCommandHandler(IAccessTokenRepository accessTokenRepository) : IUnitRequestHandler<UpsertAccessTokenCommand, Guid>
 {

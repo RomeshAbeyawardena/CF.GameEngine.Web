@@ -16,7 +16,7 @@ public interface IClientSummary : IMappable<IClient>, IIdentifer
 {
     string Reference { get; }
     string Name { get; }
-    string? DisplayName { get; } 
+    string? DisplayName { get; }
     bool IsSystem { get; }
 }
 

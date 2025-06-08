@@ -49,7 +49,7 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
         _commonNamePIIProtection = commonNamePIIProtection;
         SetMetaData(x => x.Metadata);
         SetRowVersion(x => x.RowVersion);
-        
+
         ProtectSymmetric(x => x.EmailAddress);
         MapProtectionInfoTo(x => x.EmailAddress, BackingStore.CasingImpression, x => x.EmailAddressCI);
         MapProtectionInfoTo(x => x.EmailAddress, BackingStore.Hmac, x => x.EmailAddressHmac);
@@ -67,8 +67,9 @@ internal class UserPIIProtection : PIIProtectionBase<DbUser>, IUserPIIProtection
     }
 
     private const string ClientKey = "client";
-    public IClient Client { 
-        get => Get<IClient>(ClientKey) 
+    public IClient Client
+    {
+        get => Get<IClient>(ClientKey)
             ?? throw new NullReferenceException("Client dependency not found");
         set => Set(ClientKey, value);
     }

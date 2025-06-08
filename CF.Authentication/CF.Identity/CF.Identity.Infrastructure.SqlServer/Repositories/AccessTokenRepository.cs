@@ -1,4 +1,4 @@
-﻿ using CF.Identity.Infrastructure.Features.AccessToken;
+﻿using CF.Identity.Infrastructure.Features.AccessToken;
 using CF.Identity.Infrastructure.SqlServer.Filters;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using CF.Identity.Infrastructure.SqlServer.SPA;
@@ -28,7 +28,7 @@ internal class AccessTokenRepository(IAccessTokenSpaProtection accessTokenProtec
     public async Task<IUnitResultCollection<Guid>> BulkExpireAsync(IEnumerable<Guid> ids, string? revokeReason, string? revokedBy, CancellationToken cancellationToken)
     {
         List<Guid> updatedIds = [];
-        foreach(var id in ids)
+        foreach (var id in ids)
         {
             //this is low-level to make it cheaper to run;
             var accessToken = await Context.AccessTokens.FindAsync([id], cancellationToken);

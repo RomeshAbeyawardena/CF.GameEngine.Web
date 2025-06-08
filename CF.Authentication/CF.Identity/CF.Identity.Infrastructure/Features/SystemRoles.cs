@@ -11,13 +11,15 @@ public class SystemRoles : RoleRegistrarBase
 
     public SystemRoles()
     {
-        TryRegisterRole(GlobalRead, b => 
-            b.AddDisplayName(Resources.GlobalReadRoleName)
+        TryRegisterRole(GlobalRead, b =>
+            b.SetCategory(RoleCategory.Read)
+            .AddDisplayName(Resources.GlobalReadRoleName)
             .AddDescription(Resources.GlobalReadRoleDescription)
             .Privileged());
 
         TryRegisterRole(GlobalWrite, b =>
-            b.AddDisplayName(Resources.GlobalWriteRoleName)
+            b.SetCategory(RoleCategory.Write)
+            .AddDisplayName(Resources.GlobalWriteRoleName)
             .AddDescription(Resources.GlobalWriteRoleDescription)
             .Privileged());
     }

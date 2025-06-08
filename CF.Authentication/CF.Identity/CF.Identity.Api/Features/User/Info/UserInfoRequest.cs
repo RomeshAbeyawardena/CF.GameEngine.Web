@@ -16,10 +16,10 @@ public class UserInfoRequestHandler(IMediator mediator) : IUnitRequestHandler<Us
         var usersResult = await mediator.Send(new FindUserByIdQuery(request.AccessToken!.UserId), cancellationToken);
 
         var user = usersResult.GetResultOrDefault();
-        
+
         if (user is not null)
         {
-            return UnitResult.FromResult(new UserInfoResponse(user.Id.ToString(), user.FormatName(), 
+            return UnitResult.FromResult(new UserInfoResponse(user.Id.ToString(), user.FormatName(),
                 user.PreferredUsername ?? user.Username, user.EmailAddress), UnitAction.Get);
         }
 

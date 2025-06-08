@@ -13,7 +13,7 @@ internal static partial class Verify
     {
         var client = await context.Clients.AsNoTracking().FirstOrDefaultAsync(c => c.IsSystem, cancellationToken);
 
-        if(client is null)
+        if (client is null)
         {
             logger.LogError("No system client found in the database. Please ensure that the system client has been seeded correctly.");
             return false;

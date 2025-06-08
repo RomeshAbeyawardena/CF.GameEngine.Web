@@ -1,13 +1,13 @@
-﻿using CF.Identity.Infrastructure.Features;
-using CF.Identity.Infrastructure.Features.Users;
-using IDFCR.Shared.Abstractions.Roles;
+﻿using CF.Identity.Infrastructure.Features.Users;
+using IDFCR.Shared.Abstractions;
+using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
+using IDFCR.Shared.Abstractions.Roles.Records;
 using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.User.Post;
 
-public record PostUserCommand(EditableUserDto User) : IUnitRequest<Guid>, IRoleRequirement
+public record PostUserCommand(EditableUserDto User, bool Bypass = false) 
+    : RoleRequirementBase(() => RoleRegistrar.List<UserRoles>(RoleCategory.Write)), IUnitRequest<Guid>
 {
-    bool IRoleRequirement.Bypass => false;
-    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalWrite, UserRoles.UserWrite];
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
+    
 }

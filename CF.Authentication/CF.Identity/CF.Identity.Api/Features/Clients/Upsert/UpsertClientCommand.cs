@@ -1,17 +1,14 @@
-﻿using CF.Identity.Infrastructure.Features;
-using CF.Identity.Infrastructure.Features.Clients;
-using IDFCR.Shared.Abstractions.Roles;
+﻿using CF.Identity.Infrastructure.Features.Clients;
+using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Results;
+using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
+using IDFCR.Shared.Abstractions.Roles.Records;
 using IDFCR.Shared.Mediatr;
 
 namespace CF.Identity.Api.Features.Clients.Upsert;
 
-public record UpsertClientCommand(EditableClientDto Client, bool Bypass = false) 
-    : IUnitRequest<Guid>, IRoleRequirement
-{
-    IEnumerable<string> IRoleRequirement.Roles => [SystemRoles.GlobalWrite, ClientRoles.ClientWrite];
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
-}
+public record UpsertClientCommand(EditableClientDto Client, bool Bypass = false)
+    : RoleRequirementBase(() => RoleRegistrar.List<ClientRoles>(RoleCategory.Write)), IUnitRequest<Guid>;
 
 public class UpsertClientCommandHandler(IClientRepository clientRepository) : IUnitRequestHandler<UpsertClientCommand, Guid>
 {

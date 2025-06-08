@@ -16,7 +16,7 @@ public class AccessTokenDto() : MappableBase<IAccessToken>, IEditableAccessToken
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public DateTimeOffset? SuspendedTimestampUtc { get; set; }
-    public string? RevokeReason { get; set;  }
+    public string? RevokeReason { get; set; }
     public string? RevokedBy { get; set; }
 
     public override void Map(IAccessToken source)

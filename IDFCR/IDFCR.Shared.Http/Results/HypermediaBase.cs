@@ -7,7 +7,7 @@ namespace IDFCR.Shared.Http.Results;
 
 public abstract record HypermediaBase : IHypermedia
 {
-    private readonly Dictionary<string, object?> _dictionary = [];
+    private readonly Dictionary<string, object?> _dictionary = new(5, new CaseInsensitiveComparer<string>());
     internal readonly Dictionary<string, ILink?> _links = [];
     internal readonly Dictionary<string, object?> _meta = [];
 

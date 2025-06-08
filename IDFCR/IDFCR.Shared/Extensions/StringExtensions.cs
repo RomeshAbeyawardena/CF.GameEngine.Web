@@ -1,6 +1,9 @@
-﻿using System.Globalization;
+﻿using System.Collections.Concurrent;
+using System.Globalization;
 using System.Security.Authentication;
 using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace IDFCR.Shared.Extensions;
 
@@ -81,6 +84,47 @@ public static class StringExtensions
 
         return new string([.. result]).Trim('-');
     }
+
+    public static string ToCamelCasePreservingAcronyms(this string input)
+    {
+        var upperCaseWordRegex = new Regex("[A-Z]+");
+
+        var result = new List<char>(input);
+        bool isFirstChar = true;
+        var matches = upperCaseWordRegex.Matches(input);
+        foreach (Match match in matches)
+        {
+            if (isFirstChar)
+            {
+                result[match.Index] = char.ToLowerInvariant(match.Value[0]);
+                isFirstChar = false;
+            }
+
+            if (match.Index == 0 && match.Length > 1 && IsAllUpper(match.Value))
+            {
+                result[match.Index] = char.ToLowerInvariant(result[match.Index]);
+                for (int j = 1; j < match.Length - 1; j++)
+                {
+                    result[match.Index + j] = char.ToLowerInvariant(result[match.Index + j]);
+                }
+            }
+
+            var nextCharIndex = match.Index + 1;
+
+            if(nextCharIndex < result.Count)
+            {
+                if (char.IsUpper(result[nextCharIndex]))
+                {
+                    continue;
+                }
+            }
+        }
+
+        return new string([.. result]) ?? string.Empty;
+    }
+
+    private static bool IsAllUpper(string word) =>
+        word.All(char.IsLetter) && word.ToUpperInvariant() == word;
 
     public static string ReplaceAll(this string value, string newValue, params string[] values)
     {

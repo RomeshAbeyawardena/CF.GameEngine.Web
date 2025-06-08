@@ -34,7 +34,7 @@ internal class AccessRoleRepository(TimeProvider timeProvider, CFIdentityDbConte
     public Task<IUnitPagedResult<AccessRoleDto>> ListRolesAsync(IPagedAccessRoleFilter filter, CancellationToken cancellationToken)
     {
         var queryFilter = new AccessRoleFilter(filter);
-        return GetPagedAsync(filter, 
+        return GetPagedAsync(filter,
             new EntityOrder(filter, nameof(AccessRoleDto.Key)),
             Set<DbAccessRole>(filter)
             .Where(queryFilter.ApplyFilter(Builder)), cancellationToken);

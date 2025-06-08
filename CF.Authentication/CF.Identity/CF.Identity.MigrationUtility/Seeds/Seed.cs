@@ -1,5 +1,4 @@
 ﻿using CF.Identity.Infrastructure.SqlServer;
-using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Utility.Shared;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +10,7 @@ namespace CF.Identity.MigrationUtility.Seeds;
 internal static partial class Seed
 {
     static IEnumerable<IRoleDescriptor>? Roles { get; set; }
-    public static async Task<MigrationResult> SeedAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args, 
+    public static async Task<MigrationResult> SeedAsync(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args,
         IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         bool hasWarnings = false;
@@ -32,7 +31,7 @@ internal static partial class Seed
             {
                 hasWarnings = true;
                 logger.LogWarning("Test data seeding is not recommended out of development environments.");
-                
+
             }
         }
 
@@ -49,8 +48,8 @@ internal static partial class Seed
         }
 
         await context.SaveChangesAsync(cancellationToken);
-        return new MigrationResult(nameof(SeedAsync), hasWarnings 
-            ? MigrationStatus.CompletedWithWarnings 
+        return new MigrationResult(nameof(SeedAsync), hasWarnings
+            ? MigrationStatus.CompletedWithWarnings
             : MigrationStatus.Completed);
     }
 }

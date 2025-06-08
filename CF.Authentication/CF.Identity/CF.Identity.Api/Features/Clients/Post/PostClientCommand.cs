@@ -1,28 +1,10 @@
-﻿using CF.Identity.Api.Features.Clients.Upsert;
-using CF.Identity.Infrastructure.Features;
-using CF.Identity.Infrastructure.Features.Clients;
+﻿using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
-using IDFCR.Shared.Abstractions.Results;
-using IDFCR.Shared.Abstractions.Roles;
-using IDFCR.Shared.EntityFramework;
+using RoleRegistrar = IDFCR.Shared.Abstractions.Roles.RoleRegistrar;
+using IDFCR.Shared.Abstractions.Roles.Records;
 using IDFCR.Shared.Mediatr;
-using MediatR;
 
 namespace CF.Identity.Api.Features.Clients.Post;
 
-public record PostClientCommand(EditableClientDto Client, bool Bypass = false) 
-    : IUnitRequest<Guid>, IRoleRequirement
-{
-    IEnumerable<string> IRoleRequirement.Roles => RoleRegistrar.List<ClientRoles>(RoleCategory.Write, SystemRoles.GlobalWrite);
-    RoleRequirementType IRoleRequirement.RoleRequirementType => RoleRequirementType.Some;
-}
-
-public class PostClientCommandHandler(IMediator mediator, ITransactionalUnitOfWork transactionalUnitOfWork) : IUnitRequestHandler<PostClientCommand, Guid>
-{
-    public async Task<IUnitResult<Guid>> Handle(PostClientCommand request, CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(new UpsertClientCommand(request.Client, request.Bypass), cancellationToken);
-        await transactionalUnitOfWork.SaveChangesAsync(cancellationToken);
-        return result;
-    }
-}
+public record PostClientCommand(EditableClientDto Client, bool Bypass = false)
+    : RoleRequirementBase(() => RoleRegistrar.List<ClientRoles>(RoleCategory.Write)), IUnitRequest<Guid>;

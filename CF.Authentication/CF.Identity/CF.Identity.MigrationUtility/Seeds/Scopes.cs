@@ -1,7 +1,6 @@
 ﻿using CF.Identity.Infrastructure.SqlServer;
 using CF.Identity.Infrastructure.SqlServer.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace CF.Identity.MigrationUtility.Seeds;
@@ -10,7 +9,7 @@ internal static partial class Seed
 {
     internal static async Task TrySeedScopesAsync(ILogger logger, CFIdentityDbContext context, CancellationToken cancellationToken)
     {
-        if(Roles is null)
+        if (Roles is null)
         {
             return;
         }
@@ -22,14 +21,14 @@ internal static partial class Seed
             bool hasDisplayName = !string.IsNullOrWhiteSpace(info.DisplayName),
                  hasDescription = !string.IsNullOrWhiteSpace(info.Description);
 
-            if(!hasDisplayName && !hasDescription)
+            if (!hasDisplayName && !hasDescription)
             {
                 continue; // no need to update if both are null or empty
             }
 
-            var scope = await context.Scopes.FirstOrDefaultAsync(s => 
-            s.Key == key && (s.Name != info.DisplayName 
-                || s.Description != info.Description), 
+            var scope = await context.Scopes.FirstOrDefaultAsync(s =>
+            s.Key == key && (s.Name != info.DisplayName
+                || s.Description != info.Description),
             cancellationToken);
 
             if (scope is null)
@@ -40,7 +39,7 @@ internal static partial class Seed
             logger.LogInformation("Updating scope: {key}...", key);
 
             //only touch fields that need updating!
-            if (hasDisplayName) 
+            if (hasDisplayName)
             {
                 scope.Name = info.DisplayName!;
                 logger.LogTrace("Updated display name");
@@ -66,7 +65,7 @@ internal static partial class Seed
 
         foreach (var scope in missingScopes)
         {
-            if(!scopeDictionary.TryGetValue(scope, out var existingScope))
+            if (!scopeDictionary.TryGetValue(scope, out var existingScope))
             {
                 continue;
             }

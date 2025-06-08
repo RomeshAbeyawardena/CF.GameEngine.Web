@@ -1,9 +1,6 @@
-﻿using CF.Identity.Api.Features.User;
-using CF.Identity.Api.Features.User.Post;
+﻿using CF.Identity.Api.Features.User.Post;
 using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.Features.Users;
-using IDFCR.Shared;
-using IDFCR.Shared.Abstractions;
 using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
@@ -19,7 +16,7 @@ public static class Endpoint
         IMediator mediator, CancellationToken cancellationToken)
     {
         var data = request.MapToEditable();
-        
+
         var result = await mediator.Send(new PostUserCommand(data), cancellationToken);
         return result.NegotiateResult(httpContextAccessor, Endpoints.Url);
     }

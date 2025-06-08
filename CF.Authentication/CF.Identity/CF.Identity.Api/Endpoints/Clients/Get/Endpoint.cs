@@ -8,13 +8,12 @@ using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace CF.Identity.Api.Endpoints.Clients.Get;
 
 public static class Endpoint
 {
-    public static async Task<IResult> GetClientAsync([FromRoute]Guid id, IHttpContextAccessor httpContextAccessor,
+    public static async Task<IResult> GetClientAsync([FromRoute] Guid id, IHttpContextAccessor httpContextAccessor,
         IMediator mediator, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new FindClientByIdQuery(id), cancellationToken);

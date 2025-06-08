@@ -5,11 +5,12 @@ namespace CF.Identity.Api.Features.User;
 
 public class UserSummaryDto : MappableBase<IUser>, IUserSummary
 {
-    protected override IUser Source => new UserDto { 
-        IsSystem = IsSystem, 
-        ClientId = ClientId, 
-        PreferredUsername = PreferredUsername, 
-        Id = Id 
+    protected override IUser Source => new UserDto
+    {
+        IsSystem = IsSystem,
+        ClientId = ClientId,
+        PreferredUsername = PreferredUsername,
+        Id = Id
     };
 
     public string Display => PreferredUsername ?? $"User-{Id.ToString("N")[..6]}";

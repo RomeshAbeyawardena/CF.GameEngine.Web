@@ -5,10 +5,12 @@ using CF.Identity.Infrastructure.Features;
 using CF.Identity.Infrastructure.SqlServer.Extensions;
 using FluentValidation;
 using IDFCR.Http.Authentication.Extensions;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.FluentValidation.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using IDFCR.Shared.Http.Middleware;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,53 @@ builder.Services.AddBackendDependencies("CFIdentity")
             Description = "Identity API"
         });
 
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "Bearer {0}",
+            Scheme = "Bearer",
+        });
+
+        // X-API-KEY header
+        options.AddSecurityDefinition("XApiKey", new OpenApiSecurityScheme
+        {
+            Description = "Client API Key needed to determine trust. Example: \"X-API-KEY: {key}\"",
+            Name = "x-api-key",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "ApiKeyScheme"
+        });
+
+        // Apply both globally
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "XApiKey"
+                    }
+                },
+                Array.Empty<string>()
+            },
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Authorization"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+
         options
             .UseRuntimeServer()
             .UseOpenApiVersionFromConfig()
@@ -42,6 +91,7 @@ builder.Services.AddBackendDependencies("CFIdentity")
 
 builder.Services.AddAuthorization();
 
+RoleRegistrar.RegisterGlobal<SystemRoles>();
 
 var app = builder.Build();
 

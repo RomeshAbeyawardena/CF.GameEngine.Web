@@ -52,7 +52,7 @@ public class UpsertScopeValidator : AbstractValidator<UpsertScopeCommand>
 
     private async Task<bool> ExistAsync(EditableScopeDto scope, CancellationToken token)
     {
-        if(string.IsNullOrWhiteSpace(scope.Client) || scope.ClientId.HasValue)
+        if (string.IsNullOrWhiteSpace(scope.Client) || scope.ClientId.HasValue)
         {
             return true;
         }

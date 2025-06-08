@@ -4,6 +4,7 @@ using CF.Identity.Infrastructure.Features.Scope;
 using IDFCR.Http.Authentication.Abstractions;
 using IDFCR.Http.Authentication.Extensions;
 using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Roles;
 using IDFCR.Shared.Extensions;
 using IDFCR.Shared.Http.Extensions;
 using MediatR;
@@ -13,7 +14,7 @@ namespace CF.Identity.Api.Endpoints.Scopes.Get;
 
 public static class Endpoint
 {
-    public static async Task<IResult> GetScopeAsync([FromRoute]Guid id, IMediator mediator, IHttpContextAccessor contextAccessor, CancellationToken cancellationToken)
+    public static async Task<IResult> GetScopeAsync([FromRoute] Guid id, IMediator mediator, IHttpContextAccessor contextAccessor, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new FindScopeByIdQuery(id), cancellationToken);
         return result.NegotiateResult(contextAccessor, Endpoints.BaseUrl);
@@ -30,6 +31,9 @@ public static class Endpoint
         }
 
         var query = request.ToQuery();
+
+        var roles = RoleRegistrar.List<ScopeRoles>(RoleCategory.Read);
+
         var result = await mediator.Send(query, cancellationToken);
         return result.NegotiateResult(contextAccessor, Endpoints.BaseUrl);
     }

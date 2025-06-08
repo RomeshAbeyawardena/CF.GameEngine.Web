@@ -11,12 +11,12 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
         builder.ToTable("User", "dbo");
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd().HasColumnName("UserId").IsRequired();
-        
+
         builder.Property(x => x.EmailAddress).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.EmailAddressHmac).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.EmailAddressCI).IsRequired().HasMaxLength(344);
         builder.Property(x => x.HashedPassword).IsRequired().HasMaxLength(2000);
-        
+
         builder.Property(x => x.Username).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.UsernameHmac).IsRequired().HasMaxLength(2000);
         builder.Property(x => x.UsernameCI).IsRequired().HasMaxLength(344);
@@ -37,7 +37,7 @@ internal class UserEntityConfiguration : IEntityTypeConfiguration<DbUser>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(x => x.ClientId).HasColumnName("ClientId");
-        
+
         builder.Property(x => x.PreferredUsername).HasMaxLength(2000);
         builder.Property(x => x.PreferredUsernameHmac).HasMaxLength(2000);
         builder.Property(x => x.PreferredUsernameCI).IsRequired().HasMaxLength(344);
