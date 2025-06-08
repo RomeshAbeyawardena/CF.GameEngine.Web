@@ -38,8 +38,9 @@ builder.Services.AddBackendDependencies("CFIdentity")
             Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
             Name = "Authorization",
             In = ParameterLocation.Header,
-            Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer"
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "Bearer {0}",
+            Scheme = "Bearer",
         });
 
         // X-API-KEY header
@@ -62,6 +63,17 @@ builder.Services.AddBackendDependencies("CFIdentity")
                     {
                         Type = ReferenceType.SecurityScheme,
                         Id = "XApiKey"
+                    }
+                },
+                Array.Empty<string>()
+            },
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Authorization"
                     }
                 },
                 Array.Empty<string>()

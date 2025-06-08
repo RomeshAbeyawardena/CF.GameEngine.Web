@@ -6,8 +6,17 @@ namespace IDFCR.Shared.Tests;
 internal class StringExtensionTests
 {
     [TestCase("mary-jean", "Mary-Jean")]
-    public void Test(string value, string expectedValue)
+    public void NormaliseName_as_expected(string value, string expectedValue)
     {
         Assert.That(value.NormaliseName(), Is.EqualTo(expectedValue));
+    }
+
+    [TestCase("MyHTMLParser", "myHTMLParser")]
+    [TestCase("SomeClass", "someClass")]
+    [TestCase("SomeOtherClass", "someOtherClass")]
+    [TestCase("MyAJAXResult", "myAJAXResult")]
+    public void ToCamelCasePreservingAcronyms_as_expected(string value, string expectedValue)
+    {
+        Assert.That(value.ToCamelCasePreservingAcronyms(), Is.EqualTo(expectedValue));
     }
 }

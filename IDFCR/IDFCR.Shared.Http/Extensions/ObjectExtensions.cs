@@ -1,4 +1,5 @@
-﻿using IDFCR.Shared.Http.Results;
+﻿using IDFCR.Shared.Extensions;
+using IDFCR.Shared.Http.Results;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -37,7 +38,7 @@ public static class ObjectExtensions
             }
 
             var getProp = Expression.Property(typedInput, prop);
-            var key = Expression.Constant(prop.Name);
+            var key = Expression.Constant(prop.Name.ToCamelCasePreservingAcronyms());
             var value = Expression.Convert(getProp, typeof(object));
 
             var addCall = Expression.Call(
