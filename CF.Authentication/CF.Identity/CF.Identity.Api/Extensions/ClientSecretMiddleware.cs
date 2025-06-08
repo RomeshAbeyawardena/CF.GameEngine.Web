@@ -1,8 +1,10 @@
 ﻿using CF.Identity.Api.Features.Clients.Get;
 using CF.Identity.Infrastructure.Features.Clients;
 using IDFCR.Shared.Abstractions;
+using IDFCR.Shared.Abstractions.Results;
 using IDFCR.Shared.Exceptions;
 using IDFCR.Shared.Extensions;
+using IDFCR.Shared.Http.Extensions;
 using MediatR;
 using System.Text;
 
@@ -19,16 +21,16 @@ public class ClientSecretMiddleware
 {
     private static async Task AuthenticationFailed(Exception exception, HttpContext context, ILogger logger)
     {
-        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-
-        var message = string.Empty;
+        var message = "Authentication failed";
 
         if (exception is IExposableException exposableException)
         {
             message = exposableException.Message;
         }
 
-        await context.Response.WriteAsync($"Authentication failed {(string.IsNullOrEmpty(message) ? string.Empty : ":" + message)}");
+        var result = UnitResult.Failed<object>(new Exception(message, exception), FailureReason: FailureReason.Unauthorized);
+
+        await context.Response.WriteAsJsonAsync(result.ToApiResult());
         logger.LogError(exception, "Client secret authentication failed: {Message}", exception.Message);
     }
 
@@ -56,7 +58,6 @@ public class ClientSecretMiddleware
             {
                 throw new ClientSecretException("Authentication header missing", exposableMessage: exposableMessage);
             }
-
 
             var encoding = services.GetRequiredService<Encoding>();
 
@@ -93,6 +94,10 @@ public class ClientSecretMiddleware
 
             context.Items.Add(nameof(AuthenticatedClient), new AuthenticatedClient(clientId, clientResult));
             await next(context);
+        }
+        catch (FormatException ex)
+        {
+            await AuthenticationFailed(ex, context, logger);
         }
         catch (ClientSecretException ex)
         {
