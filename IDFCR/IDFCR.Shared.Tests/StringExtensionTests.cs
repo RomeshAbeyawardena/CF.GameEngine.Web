@@ -15,7 +15,7 @@ internal class StringExtensionTests
     [TestCase("SomeClass", "someClass")]
     [TestCase("SomeOtherClass", "someOtherClass")]
     [TestCase("MyAJAXResult", "myAJAXResult")]
-    [TestCase("AJAXResult", "aJAXResult")]
+    [TestCase("AJAXResult", "ajaxResult")]
     public void ToCamelCasePreservingAcronyms_as_expected(string value, string expectedValue)
     {
         Assert.That(value.ToCamelCasePreservingAcronyms(), Is.EqualTo(expectedValue));

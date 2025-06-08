@@ -100,6 +100,15 @@ public static class StringExtensions
                 isFirstChar = false;
             }
 
+            if (match.Index == 0 && match.Length > 1 && IsAllUpper(match.Value))
+            {
+                result[match.Index] = char.ToLowerInvariant(result[match.Index]);
+                for (int j = 1; j < match.Length - 1; j++)
+                {
+                    result[match.Index + j] = char.ToLowerInvariant(result[match.Index + j]);
+                }
+            }
+
             var nextCharIndex = match.Index + 1;
 
             if(nextCharIndex < result.Count)
@@ -113,6 +122,9 @@ public static class StringExtensions
 
         return new string([.. result]) ?? string.Empty;
     }
+
+    private static bool IsAllUpper(string word) =>
+        word.All(char.IsLetter) && word.ToUpperInvariant() == word;
 
     public static string ReplaceAll(this string value, string newValue, params string[] values)
     {
