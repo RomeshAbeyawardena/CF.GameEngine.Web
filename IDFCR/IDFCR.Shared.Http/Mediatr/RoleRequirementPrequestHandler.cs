@@ -43,7 +43,7 @@ public class RoleRequirementPrequestHandler<TRequest, TResponse>(ILogger<RoleReq
         }
 
         var roleRequirement = request as IRoleRequirement 
-            ?? RoleRequirementAttributeReader.GetRoleRequirement<TRequest>();
+            ?? RoleRequirementAttributeReader.GetRoleRequirement(request);
 
         if (roleRequirement is null)
         {
