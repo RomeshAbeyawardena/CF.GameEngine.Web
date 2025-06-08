@@ -39,7 +39,7 @@ internal class HypermediaResultTests
 
         var result = JsonSerializer.Serialize(item, new JsonSerializerOptions { WriteIndented = true });
         Assert.That(result, Is.Not.Null.Or.Empty, "Result should not be null or empty.");
-        Assert.That(result, Is.EqualTo("{\r\n  \"Id\": \"3ed72f33-6fc0-478e-ac94-260b9f63dfc4\",\r\n  \"TitleId\": \"5491f701-caef-4f51-84bc-5b6bd750c0ef\",\r\n  \"Name\": \"John\",\r\n  \"Email\": \"Doe\",\r\n  \"PhoneNumber\": \"394423943\",\r\n  \"Address\": \"22 Sanderstreet\",\r\n  \"_links\": {\r\n    \"self\": {\r\n      \"Href\": \"api/customer/3ed72f33-6fc0-478e-ac94-260b9f63dfc4\",\r\n      \"Method\": \"GET\",\r\n      \"Type\": \"Customer\"\r\n    }\r\n  },\r\n  \"_meta\": {\r\n    \"created\": \"2025-05-26T20:29:40Z\"\r\n  }\r\n}"));
+        Assert.That(result, Is.EqualTo("{\r\n  \"id\": \"3ed72f33-6fc0-478e-ac94-260b9f63dfc4\",\r\n  \"titleId\": \"5491f701-caef-4f51-84bc-5b6bd750c0ef\",\r\n  \"name\": \"John\",\r\n  \"email\": \"Doe\",\r\n  \"phoneNumber\": \"394423943\",\r\n  \"address\": \"22 Sanderstreet\",\r\n  \"_links\": {\r\n    \"self\": {\r\n      \"Href\": \"api/customer/3ed72f33-6fc0-478e-ac94-260b9f63dfc4\",\r\n      \"Method\": \"GET\",\r\n      \"Type\": \"Customer\"\r\n    }\r\n  },\r\n  \"_meta\": {\r\n    \"created\": \"2025-05-26T20:29:40Z\"\r\n  }\r\n}"));
 
         expectedItem = new Customer(Guid.Parse("3ed72f33-6fc0-478e-ac94-260b9f63dfc4"), Guid.Parse("5491f701-caef-4f51-84bc-5b6bd750c0ef"), "John", null, null, null);
         item = new Hypermedia<Customer>(expectedItem);
