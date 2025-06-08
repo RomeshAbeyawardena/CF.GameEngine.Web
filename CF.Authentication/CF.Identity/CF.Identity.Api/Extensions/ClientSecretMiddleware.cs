@@ -30,7 +30,7 @@ public class ClientSecretMiddleware
 
         var result = UnitResult.Failed<object>(new Exception(message, exception), FailureReason: FailureReason.Unauthorized);
 
-        await context.Response.WriteAsJsonAsync(result.ToApiResult());
+        await result.ToApiResult().ExecuteAsync(context);
         logger.LogError(exception, "Client secret authentication failed: {Message}", exception.Message);
     }
 
