@@ -79,6 +79,6 @@ public static class ObjectExtensions
             _cache.Value[type] = converter;
         }
 
-        return converter(value);
+        return new Dictionary<string, object?>(converter(value), new CaseInsensitiveComparer<string>());
     }
 }
