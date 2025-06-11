@@ -5,7 +5,7 @@ namespace IDFCR.Utility.Shared.Tests;
 
 public class Tests
 {
-    private void AssertDictionary(IDictionary<string, StringValues> dictionary, string expectedKey, StringValues expectedValue)
+    private static void AssertDictionary(IDictionary<string, StringValues> dictionary, string expectedKey, StringValues expectedValue)
     {
         Assert.Multiple(() =>
         {

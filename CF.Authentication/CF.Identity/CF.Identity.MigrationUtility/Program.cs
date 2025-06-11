@@ -23,7 +23,16 @@ using var migrationUtility = EFMigrationUtility
 static async Task<MigrationResult> ApplyIntegration(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args,
     IServiceProvider serviceProvider, CancellationToken cancellationToken)
 {
-    
+    var arguments = ArgumentParser.GetArguments(args);
+
+    if(!arguments.TryGetValue("in", out var input))
+    {
+        return new MigrationResult(nameof(ApplyIntegration), MigrationStatus.Failed, "No input file provided. Use --in to specify the file path.");
+    }
+
+    var file = File.Exists(input.FirstOrDefault());
+
+    return new MigrationResult(nameof(ApplyIntegration), MigrationStatus.Completed, "No integration to apply.");
 }
 
 static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args,
