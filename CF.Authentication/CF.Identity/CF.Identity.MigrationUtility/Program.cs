@@ -20,6 +20,12 @@ using var migrationUtility = EFMigrationUtility
     .Extend("--flush-seed-data", "Flushes seeded data, only touches tables the seed touches, if there are additional relational bindings this will fail.",
         Flush.FlushSeedAsync);
 
+static async Task<MigrationResult> ApplyIntegration(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args,
+    IServiceProvider serviceProvider, CancellationToken cancellationToken)
+{
+    
+}
+
 static async Task<MigrationResult> VerifySeedData(ILogger logger, CFIdentityDbContext context, IEnumerable<string> args,
     IServiceProvider serviceProvider, CancellationToken cancellationToken)
 {
