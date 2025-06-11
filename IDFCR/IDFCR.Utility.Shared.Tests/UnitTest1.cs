@@ -5,7 +5,7 @@ namespace IDFCR.Utility.Shared.Tests;
 
 public class Tests
 {
-    private void AssertDictionary(IDictionary<string, StringValues> dictionary, string expectedKey, string expectedValue)
+    private void AssertDictionary(IDictionary<string, StringValues> dictionary, string expectedKey, StringValues expectedValue)
     {
         Assert.Multiple(() =>
         {
@@ -37,5 +37,8 @@ public class Tests
         AssertDictionary(args, "single_arg", bool.TrueString);
         AssertDictionary(args, "single-argument", bool.TrueString);
         AssertDictionary(args, "argument_value", bool.TrueString);
+
+        args = ArgumentParser.GetArguments(["--tag", "blue", "--tag", "red", "--tag", "green", "--tag", "yellow", "--tag", "orange"]);
+        AssertDictionary(args, "tag", new StringValues(["blue","red", "green", "yellow", "orange"]));
     }
 }

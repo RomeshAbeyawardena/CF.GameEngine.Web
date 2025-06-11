@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Primitives;
+using System.Collections.Concurrent;
 
 namespace IDFCR.Utility.Shared.Extensions;
 
@@ -28,10 +29,9 @@ public static class ArgumentParser
     }
     public static IDictionary<string, StringValues> GetArguments(IEnumerable<string> arguments)
     {
-        var hash = new HashSet<string>(arguments);
         var argumentState = new ArgumentState();
         var dictionary = new Dictionary<string, StringValues>();
-        foreach (var v in hash)
+        foreach (var v in arguments)
         {
 
             if (!argumentState.IsInParameterValue && v.StartsWith('-'))
