@@ -1,10 +1,11 @@
 ﻿using IDFCR.Utility.Shared.Extensions;
+using Microsoft.Extensions.Primitives;
 
 namespace IDFCR.Utility.Shared.Tests;
 
 public class Tests
 {
-    private void AssertDictionary(IDictionary<string, string> dictionary, string expectedKey, string expectedValue)
+    private void AssertDictionary(IDictionary<string, StringValues> dictionary, string expectedKey, string expectedValue)
     {
         Assert.Multiple(() =>
         {

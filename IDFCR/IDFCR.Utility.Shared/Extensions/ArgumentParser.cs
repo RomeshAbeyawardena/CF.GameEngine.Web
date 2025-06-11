@@ -1,4 +1,6 @@
-﻿namespace IDFCR.Utility.Shared.Extensions;
+﻿using Microsoft.Extensions.Primitives;
+
+namespace IDFCR.Utility.Shared.Extensions;
 
 public static class ArgumentParser
 {
@@ -12,15 +14,26 @@ public static class ArgumentParser
             CurrentParameter = null;
             IsInParameterValue = false;
         }
+
+        public static void Append(IDictionary<string, StringValues> target, string key, string value)
+        {
+            var trimmedValue = value.Trim();
+            if (!target.TryAdd(key, trimmedValue))
+            {
+                var collection = target[key].ToList();
+                collection.Add(trimmedValue);
+                target[key] = collection.ToArray();
+            }
+        }
     }
-    public static IDictionary<string, string> GetArguments(IEnumerable<string> arguments)
+    public static IDictionary<string, StringValues> GetArguments(IEnumerable<string> arguments)
     {
         var hash = new HashSet<string>(arguments);
         var argumentState = new ArgumentState();
-        var dictionary = new Dictionary<string, string>();
+        var dictionary = new Dictionary<string, StringValues>();
         foreach (var v in hash)
         {
-            Console.Write(v);
+
             if (!argumentState.IsInParameterValue && v.StartsWith('-'))
             {
                 argumentState.IsInParameterValue = true;
@@ -32,12 +45,12 @@ public static class ArgumentParser
             {
                 if (!string.IsNullOrWhiteSpace(v) && !v.StartsWith('-'))
                 {
-                    dictionary.Add(argumentState.CurrentParameter, v.Trim());
+                    ArgumentState.Append(dictionary, argumentState.CurrentParameter, v);
                     argumentState.Reset();
                 }
                 else
                 {
-                    dictionary.Add(argumentState.CurrentParameter, bool.TrueString);
+                    ArgumentState.Append(dictionary, argumentState.CurrentParameter, bool.TrueString);
                     argumentState.CurrentParameter = v.TrimStart('-');
                 }
             }
@@ -45,7 +58,7 @@ public static class ArgumentParser
 
         if (argumentState.IsInParameterValue && argumentState.CurrentParameter?.Length > 0)
         {
-            dictionary.Add(argumentState.CurrentParameter, bool.TrueString);
+            ArgumentState.Append(dictionary, argumentState.CurrentParameter, bool.TrueString);
         }
 
         return dictionary;
