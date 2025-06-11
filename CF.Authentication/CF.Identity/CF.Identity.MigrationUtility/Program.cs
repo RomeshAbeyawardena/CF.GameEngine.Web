@@ -10,6 +10,9 @@ using IDFCR.Utility.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+//using CF.Identity.MigrationUtility;
+//var template = await TemplateReader.ReadTemplate("Template.ini");
+//Console.WriteLine("x");
 using var migrationUtility = EFMigrationUtility
     .MigrationUtility<CFIdentityDbContext>(new EFMigrationUtilityName("CF.Identity", "1.0"), args, "123dacb9-a24c-4c4d-b2c5-bf465343f8d8",
     (h, s) => s.AddSingleton<UserInfo>()
@@ -25,7 +28,7 @@ static async Task<MigrationResult> ApplyIntegration(ILogger logger, CFIdentityDb
 {
     var arguments = ArgumentParser.GetArguments(args);
 
-    if(!arguments.TryGetValue("in", out var input))
+    if (!arguments.TryGetValue("in", out var input))
     {
         return new MigrationResult(nameof(ApplyIntegration), MigrationStatus.Failed, "No input file provided. Use --in to specify the file path.");
     }

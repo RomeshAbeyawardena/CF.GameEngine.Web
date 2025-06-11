@@ -20,4 +20,9 @@
   <ItemGroup>
     <ProjectReference Include="..\CF.Identity.Infrastructure.SqlServer\CF.Identity.Infrastructure.SqlServer.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Template.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
