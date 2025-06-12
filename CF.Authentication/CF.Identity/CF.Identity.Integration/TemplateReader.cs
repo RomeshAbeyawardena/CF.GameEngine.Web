@@ -1,24 +1,46 @@
-﻿namespace CF.Identity.Integration;
+﻿using System.Xml;
+using System.Xml.Schema;
+
+namespace CF.Identity.Integration;
 
 internal static class TemplateValidator
 {
+    public static void ValidateXml(string xmlPath, string xsdPath)
+    {
+        var settings = new XmlReaderSettings
+        {
+            ValidationType = ValidationType.Schema,
+            DtdProcessing = DtdProcessing.Ignore,
+            ValidationFlags =
+                XmlSchemaValidationFlags.ReportValidationWarnings |
+                XmlSchemaValidationFlags.ProcessIdentityConstraints |
+                XmlSchemaValidationFlags.ProcessSchemaLocation
+        };
+
+        settings.Schemas.Add(null, xsdPath);
+        settings.ValidationEventHandler += (sender, args) =>
+        {
+            throw new XmlSchemaValidationException(
+                $"Validation error: {args.Message} (Line {args.Exception?.LineNumber}, Position {args.Exception?.LinePosition})"
+            );
+        };
+
+        using var reader = XmlReader.Create(xmlPath, settings);
+        while (reader.Read()) { } // Will throw if invalid
+    }
+
+
     public static void ValidateTemplate(IEnumerable<Section> sections)
     {
-        if (sections is null || !sections.Any())
-        {
-            throw new ArgumentException("Template must contain at least one section.");
-        }
-        foreach (var section in sections)
-        {
-            if (string.IsNullOrWhiteSpace(section.Name))
-            {
-                throw new ArgumentException("Section name cannot be empty.");
-            }
-            if (section.Content is null || !section.Content.Any())
-            {
-                throw new ArgumentException($"Section '{section.Name}' must contain at least one key-value pair.");
-            }
-        }
+        ValidateXml("validator.xml", "validator.xsd");
+    }
+
+    private static void OnValidate(object? sender, ValidationEventArgs e)
+    {
+        throw new XmlSchemaValidationException(
+           $"Line {e.Exception?.LineNumber}, Position {e.Exception?.LinePosition}: {e.Message}",
+           e.Exception
+       );
     }
 }
 
