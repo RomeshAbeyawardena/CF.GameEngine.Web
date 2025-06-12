@@ -51,7 +51,7 @@
     <target ref="subscriber//ProductCode" message="Product Code is mandatory for subscription identification." />
     <target ref="subscriber//AgreementNumber" message="Agreement Number is required to validate the contract." />
     <target ref="subscriber//CustomerReference" message="Customer Reference must be specified for CRM linkage." />
-
+    
     <!-- Client Section -->
     <target ref="client//Identifier" message="Client Identifier is required for uniquely identifying the tenant." />
     <target ref="client//ClientName" message="Client Display Name is missing." />
@@ -86,7 +86,5 @@
     <target ref="fallback//Username" message="Fallback Username is required when fallback is enabled." condition="integration.config//ProvideFallback == true" />
     <target ref="fallback//Password" message="Fallback Password must be supplied." condition="integration.config//ProvideFallback == true" />
     <target ref="fallback//Secret" message="Fallback Secret is mandatory for token signing." condition="integration.config//ProvideFallback == true" />
-
   </validation>
-
 </validator>
