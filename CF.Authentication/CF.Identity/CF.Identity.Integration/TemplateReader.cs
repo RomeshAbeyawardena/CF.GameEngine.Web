@@ -5,7 +5,7 @@ namespace CF.Identity.Integration;
 
 internal static class TemplateValidator
 {
-    public static void ValidateXml(string xmlPath, string xsdPath)
+    public static void ValidateXml(IXmlValidationTemplate validationTemplate)
     {
         var settings = new XmlReaderSettings
         {
@@ -17,7 +17,7 @@ internal static class TemplateValidator
                 XmlSchemaValidationFlags.ProcessSchemaLocation
         };
 
-        settings.Schemas.Add(null, xsdPath);
+        settings.Schemas.Add(null, validationTemplate.XsdPath);
         settings.ValidationEventHandler += (sender, args) =>
         {
             throw new XmlSchemaValidationException(
@@ -25,22 +25,15 @@ internal static class TemplateValidator
             );
         };
 
-        using var reader = XmlReader.Create(xmlPath, settings);
+        using var reader = XmlReader.Create(validationTemplate.XmlPath, settings);
         while (reader.Read()) { } // Will throw if invalid
     }
 
 
-    public static void ValidateTemplate(IEnumerable<Section> sections)
+    public static void ValidateTemplate(IXmlValidationTemplate template, IEnumerable<Section> sections)
     {
-        ValidateXml("validator.xml", "validator.xsd");
-    }
+        ValidateXml(template);
 
-    private static void OnValidate(object? sender, ValidationEventArgs e)
-    {
-        throw new XmlSchemaValidationException(
-           $"Line {e.Exception?.LineNumber}, Position {e.Exception?.LinePosition}: {e.Message}",
-           e.Exception
-       );
     }
 }
 
