@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<validator>
+  <nodes>
+    <node key="subscriber" node-index="0" required="true">
+      <element type="string" required="true">SubscriberId</element>
+      <element type="string" required="true">ProductCode</element>
+      <element type="string" required="true">AgreementNumber</element>
+      <element type="string" required="true">CustomerReference</element>
+    </node>
+    <node key="client" node-index="1" required="true">
+      <element type="string" required="true">Identifier</element>
+      <element type="string" required="true">ClientName</element>
+      <element type="string" required="true">ClientSecret</element>
+      <element type="date" default="null" validation-format="{dd-MM-yyyy HH:mm:ss}" required="true">ValidFrom</element>
+      <element type="date" default="null" validation-format="{dd-MM-yyyy HH:mm:ss}" required="true">ValueTo</element>
+    </node>
+    <node key="scope" required="true" declares-expectation="true" can-have-multiple="true">
+      <root>
+        <parameter type="int" name="count" />
+      </root>
+      <element type="string" required="true">Key</element>
+      <element type="string" required="true">Name</element>
+      <element type="string">Description</element>
+    </node>
+    <node key="user" required="true" declares-expectation="true" can-have-multiple="true">
+      <root>
+        <parameter type="int" name="count" />
+      </root>
+      <element type="string" required="true">Firstname</element>
+      <element type="string" required="true">Lastname</element>
+      <element>Middlename</element>
+      <element type="string" required="true">EmailAddress</element>
+      <element type="string" required="true">PreferredUsername</element>
+      <element type="string" required="true">PrimaryTelephoneNumber</element>
+    </node>
+    <node key="integration.config">
+      <element type="bool" required="true">DisableSystemUserAccess</element>
+      <element type="bool" required="true">ProvideFallback</element>
+      <element type="bool" required="true">SkipExistingEntities</element>
+    </node>
+    <node key="fallback" enable-toggle="true" MinimumOccurences="0" MaximumOccurences="1">
+      <element type="string" required="true">Username</element>
+      <element type="string" required="true">Password</element>
+      <element type="string" required="true">Secret</element>
+    </node>
+  </nodes>
+</validator>

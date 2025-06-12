@@ -1,19 +1,23 @@
-﻿using Microsoft.Extensions.Primitives;
+﻿namespace CF.Identity.Integration;
 
-namespace CF.Identity.MigrationUtility;
-
-public class Section
+internal static class TemplateValidator
 {
-    public string? Name { get; set; }
-    public Dictionary<string, StringValues> Content { get; } = [];
-    public static void Append(IDictionary<string, StringValues> target, string key, string value)
+    public static void ValidateTemplate(IEnumerable<Section> sections)
     {
-        var trimmedValue = value.Trim();
-        if (!target.TryAdd(key, trimmedValue))
+        if (sections is null || !sections.Any())
         {
-            var collection = target[key].ToList();
-            collection.Add(trimmedValue);
-            target[key] = collection.ToArray();
+            throw new ArgumentException("Template must contain at least one section.");
+        }
+        foreach (var section in sections)
+        {
+            if (string.IsNullOrWhiteSpace(section.Name))
+            {
+                throw new ArgumentException("Section name cannot be empty.");
+            }
+            if (section.Content is null || !section.Content.Any())
+            {
+                throw new ArgumentException($"Section '{section.Name}' must contain at least one key-value pair.");
+            }
         }
     }
 }
