@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+  <xs:element name="validator">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="nodes">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="node" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="root" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="parameter" minOccurs="1" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="type" type="xs:string" use="required"/>
+                              <xs:attribute name="name" type="xs:string" use="required"/>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="element" minOccurs="1" maxOccurs="unbounded">
+                      <xs:complexType mixed="true">
+                        <xs:attribute name="type" type="xs:string"/>
+                        <xs:attribute name="required" type="xs:boolean"/>
+                        <xs:attribute name="default" type="xs:string"/>
+                        <xs:attribute name="validation-format" type="xs:string"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="key" type="xs:string" use="required"/>
+                  <xs:attribute name="node-index" type="xs:integer" use="optional"/>
+                  <xs:attribute name="required" type="xs:boolean" use="optional"/>
+                  <xs:attribute name="declares-expectation" type="xs:boolean" use="optional"/>
+                  <xs:attribute name="can-have-multiple" type="xs:boolean" use="optional"/>
+                  <xs:attribute name="enable-toggle" type="xs:boolean" use="optional"/>
+                  <xs:attribute name="MinimumOccurences" type="xs:integer" use="optional"/>
+                  <xs:attribute name="MaximumOccurences" type="xs:integer" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="validation" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="target" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="ref" type="xs:string" use="required"/>
+                  <xs:attribute name="message" type="xs:string" use="required"/>
+                  <xs:attribute name="condition" type="xs:string" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<validator>
+<validator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="validator.xsd">
   <nodes>
     <node key="subscriber" node-index="0" required="true">
       <element type="string" required="true">SubscriberId</element>
@@ -45,7 +46,6 @@
     </node>
   </nodes>
   <validation>
-
     <!-- Subscriber Section -->
     <target ref="subscriber//SubscriberId" message="Subscriber ID is a required field." />
     <target ref="subscriber//ProductCode" message="Product Code is mandatory for subscription identification." />
