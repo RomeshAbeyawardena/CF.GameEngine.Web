@@ -44,4 +44,49 @@
       <element type="string" required="true">Secret</element>
     </node>
   </nodes>
+  <validation>
+
+    <!-- Subscriber Section -->
+    <target ref="subscriber//SubscriberId" message="Subscriber ID is a required field." />
+    <target ref="subscriber//ProductCode" message="Product Code is mandatory for subscription identification." />
+    <target ref="subscriber//AgreementNumber" message="Agreement Number is required to validate the contract." />
+    <target ref="subscriber//CustomerReference" message="Customer Reference must be specified for CRM linkage." />
+
+    <!-- Client Section -->
+    <target ref="client//Identifier" message="Client Identifier is required for uniquely identifying the tenant." />
+    <target ref="client//ClientName" message="Client Display Name is missing." />
+    <target ref="client//ClientSecret" message="Client Secret must be provided for OAuth registration." />
+    <target ref="client//ValidFrom" message="ValidFrom must be either a valid datetime or 'null'." />
+    <target ref="client//ValueTo" message="ValueTo must be either a valid datetime or 'null'." />
+
+    <!-- Scopes -->
+    <target ref="scope//Key" message="Scope Key is required — this will be used in claims and authorisation." />
+    <target ref="scope//Name" message="Scope Name is mandatory for display purposes." />
+    <target ref="scope::count" message="Declared scope count does not match actual items supplied." />
+
+    <!-- Users -->
+    <target ref="user//Firstname" message="User Firstname is required." />
+    <target ref="user//Lastname" message="User Lastname is required." />
+    <target ref="user//EmailAddress" message="User Email Address must be provided." />
+    <target ref="user//PreferredUsername" message="Preferred Username is mandatory for user authentication." />
+    <target ref="user//PrimaryTelephoneNumber" message="Primary Telephone Number must not be empty." />
+    <target ref="user::count" message="Declared user count does not match the number of users provided." />
+
+    <!-- Global.Config -->
+    <target ref="global.config//AssignScopesToUser" message="Please indicate whether scopes are assigned to users." />
+    <target ref="global.config//AssignScopesToClient" message="Please indicate whether scopes are assigned to the client." />
+    <target ref="global.config//EnforceUserPasswordResetUponSignIn" message="Specify if password reset is required on sign-in." />
+
+    <!-- Integration.Config -->
+    <target ref="integration.config//DisableSystemUserAccess" message="System user access toggle must be set." />
+    <target ref="integration.config//ProvideFallback" message="You must explicitly specify if fallback credentials are enabled." />
+    <target ref="integration.config//SkipExistingEntities" message="Set whether to skip already seeded entities or not." />
+
+    <!-- Fallback -->
+    <target ref="fallback//Username" message="Fallback Username is required when fallback is enabled." condition="integration.config//ProvideFallback == true" />
+    <target ref="fallback//Password" message="Fallback Password must be supplied." condition="integration.config//ProvideFallback == true" />
+    <target ref="fallback//Secret" message="Fallback Secret is mandatory for token signing." condition="integration.config//ProvideFallback == true" />
+
+  </validation>
+
 </validator>
