@@ -62,6 +62,16 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         }
     }
 
+    protected virtual bool OnDelete(TDb? entity, object[] keyValues, CancellationToken cancellationToken)
+    {
+        return true;
+    }
+
+    protected virtual Task<bool> OnDeleteAsync(TDb? entity, object[] keyValues, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(OnDelete(entity, keyValues, cancellationToken));
+    }
+
     protected virtual void OnCommit(int affectedRows)
     {
 
@@ -219,7 +229,11 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
             return new UnitResult(new EntityNotFoundException(typeof(T), keyValues));
         }
 
-        DbSet.Remove(entity);
+        if (await OnDeleteAsync(entity, keyValues, cancellationToken))
+        {
+            DbSet.Remove(entity);
+        }
+
         return new UnitResult(null, UnitAction.Delete, true);
     }
 }
