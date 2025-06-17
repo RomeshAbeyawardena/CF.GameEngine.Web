@@ -223,7 +223,7 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
 
     public async virtual Task<IUnitResult> DeleteAsync(object[] keyValues, CancellationToken cancellationToken)
     {
-        var entity = await DbSet.FindAsync([keyValues], cancellationToken);
+        var entity = await DbSet.FindAsync(keyValues, cancellationToken);
         if (entity == null)
         {
             return new UnitResult(new EntityNotFoundException(typeof(T), keyValues));
