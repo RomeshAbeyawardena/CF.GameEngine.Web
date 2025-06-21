@@ -39,17 +39,17 @@ public record DateTimeOffsetRange(DateTimeOffset FromValue, DateTimeOffset? ToVa
         return new DateTimeOffsetRange(from, to);
     }
 
-    public static bool TryFromStringArray(IEnumerable<string> dateRange, DateTimeOffset defaultDate, out DateTimeOffsetRange range)
+    public static (string?, bool) TryFromStringArray(IEnumerable<string> dateRange, DateTimeOffset defaultDate, out DateTimeOffsetRange range)
     {
         range = GetValidatyDateRange(defaultDate);
         try
         {
             range = FromStringArray(dateRange, defaultDate);
-            return true;
+            return (string.Empty, true);
         }
-        catch
+        catch(Exception exception)
         {
-            return false;
+            return (exception.Message, false);
         }
     }
 }
