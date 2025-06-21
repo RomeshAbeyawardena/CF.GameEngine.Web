@@ -7,7 +7,7 @@ public record DateTimeOffsetRange(DateTimeOffset FromValue, DateTimeOffset? ToVa
         return new(fromValue.Date.AddDays(1).AddTicks(-1), toValue.GetValueOrDefault(fromValue));
     }
 
-    public static DateTimeOffsetRange FromStringArray(IEnumerable<string> dateRange, DateTimeOffset defaultDate)
+    public static DateTimeOffsetRange FromStringArray(IEnumerable<string?> dateRange, DateTimeOffset defaultDate, bool throwOnError = false)
     {
         if(dateRange.Count() > 2)
         {
@@ -17,14 +17,18 @@ public record DateTimeOffsetRange(DateTimeOffset FromValue, DateTimeOffset? ToVa
         DateTimeOffset from = defaultDate.Date,
             to = defaultDate.Date.AddDays(1).AddMicroseconds(-1);
 
-        var fromDate = dateRange.FirstOrDefault() ?? throw new NullReferenceException("From date is missing");
-        var toDate = dateRange.ElementAtOrDefault(1) ?? throw new NullReferenceException("To date is missing");
+        var fromDate = dateRange.FirstOrDefault();
+        var toDate = dateRange.ElementAtOrDefault(1);
 
         bool hasFromDate = false;
         if (!string.IsNullOrWhiteSpace(fromDate) && DateTimeOffset.TryParse(fromDate, out var date))
         {
             from = date;
             hasFromDate = true;
+        }
+        else if (throwOnError)
+        {
+            throw new NullReferenceException("From date is missing");
         }
 
         if (!string.IsNullOrWhiteSpace(toDate) && DateTimeOffset.TryParse(toDate, out date))
@@ -35,16 +39,20 @@ public record DateTimeOffsetRange(DateTimeOffset FromValue, DateTimeOffset? ToVa
         {
             to = from.AddDays(1).AddMicroseconds(-1);
         }
+        else if (throwOnError)
+        {
+            throw new NullReferenceException("To date is missing");
+        }
 
         return new DateTimeOffsetRange(from, to);
     }
 
-    public static (string?, bool) TryFromStringArray(IEnumerable<string> dateRange, DateTimeOffset defaultDate, out DateTimeOffsetRange range)
+    public static (string?, bool) TryFromStringArray(IEnumerable<string?> dateRange, DateTimeOffset defaultDate, out DateTimeOffsetRange range)
     {
         range = GetValidatyDateRange(defaultDate);
         try
         {
-            range = FromStringArray(dateRange, defaultDate);
+            range = FromStringArray(dateRange, defaultDate, true);
             return (string.Empty, true);
         }
         catch(Exception exception)
