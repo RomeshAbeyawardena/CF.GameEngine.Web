@@ -7,7 +7,7 @@ public record DateTimeOffsetRange(DateTimeOffset FromValue, DateTimeOffset? ToVa
         return new(fromValue.Date.AddDays(1).AddTicks(-1), toValue.GetValueOrDefault(fromValue));
     }
 
-    public static DateTimeOffsetRange FromStringArray(IEnumerable<string> dateRange, DateTimeOffset defaultDate)
+    public static DateTimeOffsetRange FromStringArray(IEnumerable<string?> dateRange, DateTimeOffset defaultDate)
     {
         if(dateRange.Count() > 2)
         {
