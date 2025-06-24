@@ -5,6 +5,13 @@ namespace IDFCR.Shared.Extensions;
 
 public static class UnitResultExtensions
 {
+    public static T? GetMeta<T>(this IUnitResult result, string key)
+    {
+        return result.TryGetValue(key, out var value) && value is T t
+            ? t
+            : default;
+    }
+
     private static void CloneMeta<TDestination>(IReadOnlyDictionary<string, object?> data, IUnitResult<TDestination> target)
     {
         foreach(var (key, value) in data)
