@@ -71,7 +71,7 @@ public class InternalManagedCache<TKey, T>(TimeProvider timeProvider, int limit 
 
         pending.TryAdd(key, task);
 
-        return await task;
+        return await task.ConfigureAwait(false);
     }
 
     public bool TryGetValue(TKey key, out T? value)
