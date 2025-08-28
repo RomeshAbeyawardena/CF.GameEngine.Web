@@ -9,6 +9,7 @@ using System.Linq.Dynamic.Core;
 using IDFCR.Shared.Abstractions.Paging;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using IDFCR.Shared.Abstractions.Filters;
+using System.Linq.Expressions;
 
 namespace IDFCR.Shared.EntityFramework;
 
@@ -95,10 +96,18 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         return query;
     }
 
-    protected Task<IUnitPagedResult<T>> GetPagedAsync<TFilter>(TFilter filter, CancellationToken cancellationToken)
+    protected Task<IUnitPagedResult<T>> GetPagedAsync<TFilter>(TFilter filter, CancellationToken cancellationToken, 
+        Func<ExpressionStarter<TDb>, Expression<Func<TDb, bool>>>? filterAction = null)
         where TFilter : IPagedQuery, IEntityOrder, IFilter
     {
-        return GetPagedAsync(filter, filter, Set<TDb>(filter), cancellationToken);
+        var query = Set<TDb>(filter);
+
+        if (filterAction is not null)
+        {
+            query = query.Where(filterAction(Builder));
+        }
+
+        return GetPagedAsync(filter, filter, query, cancellationToken);
     }
 
     protected Task<IUnitPagedResult<T>> GetPagedAsync<TFilter>(TFilter filter, IQueryable<TDb> source, CancellationToken cancellationToken)
