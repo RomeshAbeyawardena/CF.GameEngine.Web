@@ -95,6 +95,12 @@ public abstract class RepositoryBase<TDbContext, TAbstraction, TDb, T>(
         return query;
     }
 
+    protected Task<IUnitPagedResult<T>> GetPagedAsync<TFilter>(TFilter filter, CancellationToken cancellationToken)
+        where TFilter : IPagedQuery, IEntityOrder, IFilter
+    {
+        return GetPagedAsync(filter, filter, Set<TDb>(filter), cancellationToken);
+    }
+
     protected Task<IUnitPagedResult<T>> GetPagedAsync<TFilter>(TFilter filter, IQueryable<TDb> source, CancellationToken cancellationToken)
         where TFilter : IPagedQuery, IEntityOrder
     {
