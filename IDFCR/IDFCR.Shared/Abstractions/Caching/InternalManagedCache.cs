@@ -38,7 +38,6 @@ public class InternalManagedCache<TKey, T>(TimeProvider timeProvider, int limit 
             if (cache.TryGetValue(key, out var entry))
             {
                 ((ManagedCacheEntry<T>)entry).MarkAsModified(timeProvider);
-
                 return entry.Value;
             }
 
